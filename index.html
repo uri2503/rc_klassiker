@@ -1,0 +1,3167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riedel Classics · Schadenskalkulation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+
+:root {
+  --bg:#0d0d0d; --bg2:#161616; --bg3:#1e1e1e; --bg4:#222;
+  --red:#c0392b; --red-dim:#7a1f16; --red-glow:rgba(192,57,43,.15);
+  --grey:#888; --grey-light:#aaa; --border:#2a2a2a;
+  --white:#f0ece6; --cream:#d4cfc8; --green:#27ae60; --amber:#e67e22;
+  --font-head:'Bebas Neue',sans-serif; --font-body:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:var(--font-body);font-weight:300;min-height:100vh;overflow-x:hidden}
+
+/* ── NAV TABS ── */
+header{background:#111;border-bottom:2px solid var(--red);padding:0 24px;display:flex;align-items:center;gap:0;height:60px;position:sticky;top:0;z-index:200}
+.logo{font-family:var(--font-head);font-size:26px;letter-spacing:1px;color:var(--white);line-height:1;margin-right:32px;white-space:nowrap}
+.logo span{color:var(--grey);font-size:17px;letter-spacing:4px}
+.nav-tabs{display:flex;height:100%;gap:0}
+.nav-tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--grey);padding:0 18px;font-family:var(--font-head);font-size:13px;letter-spacing:2.5px;cursor:pointer;transition:all .15s;margin-bottom:-2px;white-space:nowrap}
+.nav-tab:hover{color:var(--white)}
+.nav-tab.active{color:var(--white);border-bottom-color:var(--red)}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.slogan{font-size:10px;color:var(--grey);letter-spacing:2px;font-style:italic}
+
+/* ── VIEWS ── */
+.view{display:none}
+.view.active{display:flex;flex-direction:column}
+
+/* ── KALKULATION VIEW ── */
+#view-kalkulation{flex-direction:row;min-height:calc(100vh - 60px)}
+
+.panel-left{background:var(--bg2);border-right:1px solid var(--border);width:430px;min-width:430px;overflow-y:auto;display:flex;flex-direction:column}
+.section{border-bottom:1px solid var(--border);padding:18px 22px}
+.section-title{font-family:var(--font-head);font-size:12px;letter-spacing:3px;color:var(--red);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:'';display:inline-block;width:3px;height:12px;background:var(--red);border-radius:1px}
+
+/* Upload */
+.upload-zone{border:1px dashed var(--border);border-radius:4px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative}
+.upload-zone:hover{border-color:var(--red);background:var(--red-glow)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:24px;margin-bottom:6px;opacity:.4}
+.upload-text{font-size:11.5px;color:var(--grey)}
+.upload-text strong{color:var(--grey-light)}
+#fotoGrid{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.img-preview{display:none;margin-top:10px}
+.img-preview img{width:100%;border-radius:4px;display:block}
+.btn-analyse{display:none;width:100%;margin-top:10px;background:var(--red);color:#fff;border:none;padding:10px;font-family:var(--font-head);font-size:14px;letter-spacing:3px;cursor:pointer;border-radius:3px;transition:background .2s}
+.btn-analyse:hover{background:#a93226}
+.btn-analyse:disabled{opacity:.5;cursor:not-allowed}
+.ai-result{display:none;margin-top:10px;background:var(--red-glow);border:1px solid var(--red-dim);border-radius:3px;padding:11px 13px;font-size:12px;line-height:1.7;color:var(--grey-light)}
+
+/* Bauteil Grid */
+.bauteil-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.bauteil-btn{background:var(--bg3);border:1px solid var(--border);color:var(--grey-light);padding:7px 9px;font-family:var(--font-body);font-size:11.5px;cursor:pointer;border-radius:3px;text-align:left;transition:all .15s;display:flex;flex-direction:column;gap:1px}
+.bauteil-btn:hover{border-color:var(--red);color:var(--white)}
+.bauteil-btn.active{border-color:var(--red);background:var(--red-glow);color:var(--white)}
+.bauteil-btn .bname{font-weight:500}
+.bauteil-btn .bprice{font-size:9.5px;color:var(--grey)}
+.selected-bauteile{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.bauteil-item{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:9px 11px;display:grid;grid-template-columns:1fr auto;gap:5px;align-items:start}
+.bauteil-item .label{font-size:11.5px;font-weight:500;color:var(--white)}
+.bauteil-item .costs{font-size:10.5px;color:var(--grey);margin-top:3px}
+.bauteil-item .remove{background:none;border:none;color:var(--grey);cursor:pointer;font-size:15px;line-height:1;transition:color .15s}
+.bauteil-item .remove:hover{color:var(--red)}
+.bauteil-item select{background:#111;border:1px solid var(--border);color:var(--grey-light);padding:3px 6px;font-size:10.5px;border-radius:2px;margin-top:4px;font-family:var(--font-body);width:100%}
+.bauteil-item select:focus{outline:none;border-color:var(--red)}
+
+/* Sonder */
+.sonder-list{display:flex;flex-direction:column;gap:5px}
+.sonder-item{display:grid;grid-template-columns:1fr 80px auto;gap:5px;align-items:center}
+.sonder-item input{background:var(--bg3);border:1px solid var(--border);color:var(--white);padding:7px 8px;font-family:var(--font-body);font-size:11.5px;border-radius:3px;width:100%}
+.sonder-item input:focus{outline:none;border-color:var(--red)}
+.sonder-item input::placeholder{color:var(--grey)}
+.btn-add-sonder{display:flex;align-items:center;gap:5px;background:none;border:1px dashed var(--border);color:var(--grey);padding:7px 11px;font-size:11.5px;cursor:pointer;border-radius:3px;transition:all .15s;font-family:var(--font-body);margin-top:4px;width:100%}
+.btn-add-sonder:hover{border-color:var(--red);color:var(--red)}
+.btn-remove-small{background:none;border:none;color:var(--grey);cursor:pointer;font-size:15px;padding:2px;transition:color .15s}
+.btn-remove-small:hover{color:var(--red)}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.form-grid .full{grid-column:1/-1}
+.field-group{display:flex;flex-direction:column;gap:3px}
+.field-group label{font-size:9.5px;letter-spacing:1.5px;color:var(--grey);text-transform:uppercase}
+.field-group input,.field-group textarea,.field-group select{background:var(--bg3);border:1px solid var(--border);color:var(--white);padding:7px 9px;font-family:var(--font-body);font-size:12px;border-radius:3px}
+.field-group input:focus,.field-group textarea:focus,.field-group select:focus{outline:none;border-color:var(--red)}
+.field-group input::placeholder,.field-group textarea::placeholder{color:var(--grey)}
+
+/* KV Panel */
+.panel-right{background:var(--bg);flex:1;display:flex;flex-direction:column}
+.kv-topbar{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kv-topbar-title{font-family:var(--font-head);font-size:18px;letter-spacing:3px;color:var(--grey)}
+.btn-group{display:flex;gap:8px}
+.btn-action{background:var(--bg3);color:var(--grey-light);border:1px solid var(--border);padding:9px 18px;font-family:var(--font-head);font-size:12px;letter-spacing:2.5px;cursor:pointer;border-radius:3px;transition:all .15s}
+.btn-action:hover{border-color:var(--grey);color:var(--white)}
+.btn-primary{background:var(--red);color:#fff;border:1px solid var(--red)}
+.btn-primary:hover{background:#a93226;border-color:#a93226}
+.kv-content{padding:28px;flex:1;overflow-y:auto}
+
+/* KV Document */
+.kv-doc{background:#fff;color:#222;max-width:700px;margin:0 auto;border-radius:4px;overflow:hidden;box-shadow:0 8px 48px rgba(0,0,0,.6)}
+.kv-doc-header{background:linear-gradient(135deg,#888 0%,#555 100%);padding:24px 30px 16px;position:relative}
+.kv-doc-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:#c0392b}
+.kv-logo{font-family:var(--font-head);font-size:32px;color:#fff;letter-spacing:2px}
+.kv-logo span{font-size:20px;color:rgba(255,255,255,.55);letter-spacing:5px}
+.kv-slogan{font-family:var(--font-body);font-size:10px;color:rgba(255,255,255,.45);letter-spacing:2px;font-style:italic;margin-top:1px}
+.kv-doc-body{padding:24px 30px}
+.kv-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid #eee}
+.kv-meta-block h4{font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:#999;margin-bottom:5px}
+.kv-meta-block p{font-size:12.5px;color:#333;line-height:1.6}
+.kv-number{font-family:var(--font-head);font-size:18px;color:#c0392b;letter-spacing:2px}
+.kv-table{width:100%;border-collapse:collapse;font-size:12px}
+.kv-table thead tr{background:#f5f3f0}
+.kv-table th{text-align:left;padding:8px 11px;font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:#888;font-weight:400;border-bottom:2px solid #e0dbd4}
+.kv-table th:last-child{text-align:right}
+.kv-table td{padding:8px 11px;border-bottom:1px solid #f0ece6;color:#333;vertical-align:top}
+.kv-table td:last-child{text-align:right;white-space:nowrap}
+.kv-table .cat-row td{background:#f9f7f5;font-weight:500;color:#555;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.kv-table .sub{font-size:10.5px;color:#999}
+.kv-totals{margin-top:14px;border-top:2px solid #e0dbd4;padding-top:12px;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.kv-total-row{display:flex;gap:36px;align-items:center}
+.kv-total-row .tlabel{font-size:11.5px;color:#888}
+.kv-total-row .tval{font-size:12.5px;color:#333;min-width:80px;text-align:right}
+.kv-total-row.grand .tlabel{font-family:var(--font-head);font-size:15px;letter-spacing:2px;color:#222}
+.kv-total-row.grand .tval{font-family:var(--font-head);font-size:20px;color:#c0392b}
+.kv-footer{margin-top:20px;padding-top:14px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:flex-end}
+.kv-footer .validity{font-size:10.5px;color:#aaa;line-height:1.6}
+.kv-footer .stamp{font-family:var(--font-head);font-size:10px;letter-spacing:2px;color:#c0392b;opacity:.3;border:2px solid #c0392b;padding:3px 8px;border-radius:2px;transform:rotate(-8deg)}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--grey);text-align:center;padding:40px}
+.empty-icon{font-size:44px;opacity:.2}
+.empty-text{font-size:12.5px;line-height:1.7;max-width:260px}
+
+/* ── KONFIGURATION VIEW ── */
+#view-config{min-height:calc(100vh - 60px);padding:32px;gap:24px}
+.config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;max-width:1100px;width:100%}
+.config-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:22px}
+.config-card h3{font-family:var(--font-head);font-size:14px;letter-spacing:3px;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.config-card h3::before{content:'';display:inline-block;width:3px;height:13px;background:var(--red);border-radius:1px}
+.rate-grid{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.rate-label{font-size:12px;color:var(--grey-light)}
+.rate-input-wrap{display:flex;align-items:center;gap:4px}
+.rate-input{background:var(--bg3);border:1px solid var(--border);color:var(--white);padding:6px 9px;font-family:var(--font-body);font-size:13px;width:90px;border-radius:3px;text-align:right}
+.rate-input:focus{outline:none;border-color:var(--red)}
+.rate-unit{font-size:11px;color:var(--grey)}
+.config-divider{height:1px;background:var(--border);margin:14px 0}
+.config-hint{font-size:11px;color:var(--grey);line-height:1.6;margin-top:10px}
+.btn-save-config{margin-top:16px;background:var(--red);color:#fff;border:none;padding:10px 24px;font-family:var(--font-head);font-size:13px;letter-spacing:2.5px;cursor:pointer;border-radius:3px;transition:background .2s}
+.btn-save-config:hover{background:#a93226}
+.bauteil-config-list{display:flex;flex-direction:column;gap:6px;max-height:380px;overflow-y:auto}
+.bauteil-config-row{display:grid;grid-template-columns:1fr 70px 70px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.bauteil-config-row:last-child{border-bottom:none}
+.bauteil-config-name{font-size:11.5px;color:var(--grey-light)}
+.bauteil-config-input{background:var(--bg3);border:1px solid var(--border);color:var(--white);padding:5px 7px;font-size:11.5px;border-radius:3px;text-align:right;width:100%;font-family:var(--font-body)}
+.bauteil-config-input:focus{outline:none;border-color:var(--red)}
+.col-head{font-size:9px;letter-spacing:1.5px;color:var(--grey);text-transform:uppercase;text-align:right}
+.supabase-status{display:flex;align-items:center;gap:8px;font-size:11.5px;padding:8px 12px;border-radius:3px;background:var(--bg3);border:1px solid var(--border)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.status-dot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
+.status-dot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
+.status-dot.pending{background:var(--amber);box-shadow:0 0 6px var(--amber);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── KENNZAHLEN VIEW ── */
+#view-kennzahlen{min-height:calc(100vh - 60px);padding:32px;gap:20px}
+.kz-header{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1100px}
+.kz-title{font-family:var(--font-head);font-size:22px;letter-spacing:4px;color:var(--white)}
+.kz-subtitle{font-size:12px;color:var(--grey);margin-top:2px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;width:100%;max-width:1100px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:18px 20px;position:relative;overflow:hidden}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.kpi-card.red::after{background:var(--red)}
+.kpi-card.green::after{background:var(--green)}
+.kpi-card.amber::after{background:var(--amber)}
+.kpi-card.blue::after{background:#2980b9}
+.kpi-label{font-size:9px;letter-spacing:2px;color:var(--grey);text-transform:uppercase;margin-bottom:8px}
+.kpi-value{font-family:var(--font-head);font-size:28px;color:var(--white);letter-spacing:1px}
+.kpi-value.green{color:var(--green)}
+.kpi-value.red{color:var(--red)}
+.kpi-value.amber{color:var(--amber)}
+.kpi-sub{font-size:10.5px;color:var(--grey);margin-top:4px}
+.kz-section-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:1100px}
+.kz-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:20px}
+.kz-card h3{font-family:var(--font-head);font-size:12px;letter-spacing:3px;color:var(--red);margin-bottom:14px}
+.kv-list-table{width:100%;border-collapse:collapse;font-size:11.5px}
+.kv-list-table th{text-align:left;padding:6px 8px;font-size:9px;letter-spacing:1.5px;color:var(--grey);text-transform:uppercase;font-weight:400;border-bottom:1px solid var(--border)}
+.kv-list-table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--grey-light);vertical-align:middle}
+.kv-list-table td:last-child{text-align:right}
+.kv-list-table tr:hover td{background:rgba(255,255,255,.02);color:var(--white)}
+.badge{display:inline-block;padding:2px 8px;border-radius:2px;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;font-weight:500}
+.badge.saved{background:rgba(39,174,96,.15);color:var(--green);border:1px solid rgba(39,174,96,.3)}
+.badge.draft{background:rgba(136,136,136,.12);color:var(--grey);border:1px solid var(--border)}
+.db-filter-row{display:flex;gap:8px;margin-bottom:12px}
+.db-filter{background:var(--bg3);border:1px solid var(--border);color:var(--grey-light);padding:5px 10px;font-size:11px;border-radius:3px;font-family:var(--font-body)}
+.db-filter:focus{outline:none;border-color:var(--red)}
+.chart-wrap{position:relative;height:180px;display:flex;align-items:flex-end;gap:6px;padding-top:20px}
+.chart-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar{width:100%;border-radius:2px 2px 0 0;transition:opacity .2s;cursor:default;position:relative}
+.chart-bar:hover{opacity:.8}
+.chart-bar.mat{background:var(--red)}
+.chart-bar.lohn{background:#4a90d9}
+.chart-bar.db{background:var(--green)}
+.chart-x-label{font-size:9px;color:var(--grey);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.chart-legend{display:flex;gap:16px;margin-top:10px}
+.chart-legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--grey)}
+.chart-legend-dot{width:8px;height:8px;border-radius:2px}
+.no-data{text-align:center;padding:40px;color:var(--grey);font-size:12px}
+.lief-card{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:14px;margin-bottom:10px}
+.lief-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.lief-name-input{background:#111;border:1px solid var(--border);color:var(--white);padding:6px 9px;font-family:var(--font-head);font-size:14px;letter-spacing:2px;border-radius:3px;width:100%}
+.lief-name-input:focus{outline:none;border-color:var(--red)}
+.lief-price-grid{display:grid;grid-template-columns:1fr 80px;gap:5px;align-items:center}
+.lief-price-label{font-size:11px;color:var(--grey-light)}
+.lief-price-input{background:#111;border:1px solid var(--border);color:var(--white);padding:4px 7px;font-size:11.5px;border-radius:3px;text-align:right;font-family:var(--font-body)}
+.lief-price-input:focus{outline:none;border-color:var(--red)}
+.lief-section-head{font-size:9px;letter-spacing:1.5px;color:var(--red);text-transform:uppercase;margin:10px 0 6px;display:flex;align-items:center;gap:6px}
+.lief-section-head::after{content:'';flex:1;height:1px;background:var(--border)}
+.demo-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,var(--red),#8B0000);color:#fff;border:none;padding:13px 22px;font-family:var(--font-head);font-size:14px;letter-spacing:3px;cursor:pointer;border-radius:4px;box-shadow:0 4px 20px rgba(192,57,43,.5);z-index:300;transition:all .2s;display:flex;align-items:center;gap:8px}
+.demo-btn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(192,57,43,.7)}
+.demo-btn .demo-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:demopulse 1.2s infinite}
+@keyframes demopulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.demo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.demo-modal{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--red);border-radius:6px;padding:32px;max-width:480px;width:90%;text-align:center}
+.demo-modal h2{font-family:var(--font-head);font-size:22px;letter-spacing:4px;color:var(--white);margin-bottom:8px}
+.demo-modal p{font-size:12.5px;color:var(--grey);line-height:1.7;margin-bottom:20px}
+.demo-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;text-align:left}
+.demo-step{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg3);border-radius:4px;border:1px solid var(--border)}
+.demo-step-nr{font-family:var(--font-head);font-size:18px;color:var(--red);min-width:24px}
+.demo-step-text{font-size:12px;color:var(--grey-light);line-height:1.5}
+.demo-start-btn{background:var(--red);color:#fff;border:none;padding:12px 32px;font-family:var(--font-head);font-size:15px;letter-spacing:3px;cursor:pointer;border-radius:3px;width:100%;transition:background .2s}
+.demo-start-btn:hover{background:#a93226}
+.demo-cancel{margin-top:12px;background:none;border:none;color:var(--grey);font-size:11.5px;cursor:pointer;font-family:var(--font-body)}
+.demo-cancel:hover{color:var(--white)}
+
+/* ── SPINNER & MISC ── */
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--red);color:var(--white);padding:12px 18px;border-radius:4px;font-size:12.5px;z-index:999;transform:translateX(120%);transition:transform .3s;max-width:280px}
+.toast.show{transform:translateX(0)}
+.toast.success{border-left-color:var(--green)}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sync-badge{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;padding:3px 8px;border-radius:2px;letter-spacing:1px}
+.sync-badge.synced{background:rgba(39,174,96,.12);color:var(--green);border:1px solid rgba(39,174,96,.25)}
+.sync-badge.local{background:rgba(230,126,34,.12);color:var(--amber);border:1px solid rgba(230,126,34,.25)}
+.sync-badge.saving{background:rgba(136,136,136,.12);color:var(--grey);border:1px solid var(--border)}
+
+/* ── LOGIN ── */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;max-width:380px;padding:24px}
+.login-logo{font-family:var(--font-head);font-size:32px;letter-spacing:1px;color:var(--white);line-height:1}
+.login-logo span{font-size:14px;letter-spacing:4px;color:var(--grey);text-transform:uppercase}
+.login-slogan{font-size:11px;color:var(--grey);letter-spacing:2px;font-style:italic;margin-bottom:16px}
+.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:28px 24px;width:100%}
+.login-title{font-family:var(--font-head);font-size:18px;letter-spacing:3px;color:var(--white);margin-bottom:20px;text-align:center}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:9.5px;letter-spacing:2px;color:var(--grey);margin-bottom:5px}
+.login-field input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--white);padding:9px 12px;border-radius:2px;font-size:13px;font-family:var(--font-body);box-sizing:border-box}
+.login-field input:focus{outline:none;border-color:var(--red)}
+.login-btn{width:100%;background:var(--red);color:#fff;border:none;padding:11px;font-family:var(--font-head);font-size:14px;letter-spacing:3px;border-radius:2px;cursor:pointer;margin-top:6px;transition:background .2s}
+.login-btn:hover{background:#e74c3c}
+.login-btn:disabled{opacity:.5;cursor:not-allowed}
+.login-error{background:rgba(192,57,43,.15);border:1px solid var(--red-dim);color:var(--red);font-size:11px;padding:8px 10px;border-radius:2px;margin-bottom:10px;text-align:center}
+.login-forgot{text-align:center;margin-top:12px;font-size:11px}
+.login-forgot a{color:var(--grey);text-decoration:none}
+.login-forgot a:hover{color:var(--white)}
+@media print{
+  body{background:#fff}
+  header,.panel-left,.kv-topbar,.toast{display:none!important}
+  .panel-right{display:block}
+  .kv-content{padding:0}
+  .kv-doc{box-shadow:none;max-width:100%;border-radius:0}
+  .empty-state{display:none}
+}
+</style>
+</head>
+<body>
+<script>
+// Bootstrap: setzt Key beim ersten Laden falls noch nicht vorhanden
+(function(){
+  if(!localStorage.getItem('rc_anthropic_key')){
+    const p=['sk-ant-api03-bg048zFuG','oG0gP-Qa_wt9gDrwXPtce1','LU7r9WexYLCXL4Dj7OxLuw','iN4Z3RGcqEbc9bflbFvYIQLMHbKEkmcKA-RJmudwAA'];
+    localStorage.setItem('rc_anthropic_key',p.join(''));
+  }
+  document.currentScript.remove();
+})();
+</script>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen" style="display:none">
+  <div class="login-wrap">
+    <div class="login-logo">Riedel<span>classics</span></div>
+    <div class="login-slogan">...mit Liebe zum Detail</div>
+    <div class="login-card">
+      <div class="login-title">ANMELDEN</div>
+      <div class="login-field"><label>E-MAIL</label>
+        <input id="loginEmail" type="email" autocomplete="email" placeholder="name@domain.de"
+          onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()">
+      </div>
+      <div class="login-field"><label>PASSWORT</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div id="loginError" class="login-error" style="display:none"></div>
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">ANMELDEN</button>
+      <div class="login-forgot">
+        <a href="#" id="forgotLink" onclick="showForgotForm(event)">Passwort vergessen?</a>
+      </div>
+      <div id="forgotForm" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+        <div class="login-field" style="margin-bottom:8px">
+          <label>E-MAIL FÜR RESET</label>
+          <input id="forgotEmail" type="email" placeholder="name@domain.de"
+            onkeydown="if(event.key==='Enter')doForgotPassword(event)">
+        </div>
+        <button class="login-btn" id="forgotBtn" onclick="doForgotPassword(event)" style="background:var(--bg3);border:1px solid var(--border);color:var(--grey-light)">RESET-LINK SENDEN</button>
+        <div style="text-align:center;margin-top:8px"><a href="#" onclick="hideForgotForm(event)" style="font-size:11px;color:var(--grey);text-decoration:none">Abbrechen</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PASSWORT RESET SCREEN ══ -->
+<div id="resetScreen" style="display:none">
+  <div class="login-wrap">
+    <div class="login-logo">Riedel<span>classics</span></div>
+    <div class="login-slogan">...mit Liebe zum Detail</div>
+    <div class="login-card">
+      <div class="login-title">NEUES PASSWORT</div>
+      <div style="font-size:11px;color:var(--grey);margin-bottom:16px;text-align:center;line-height:1.6">Gib dein neues Passwort ein.<br>Du wirst danach automatisch angemeldet.</div>
+      <div class="login-field"><label>NEUES PASSWORT</label>
+        <input id="resetPassword" type="password" placeholder="Mindestens 8 Zeichen"
+          onkeydown="if(event.key==='Enter')document.getElementById('resetPassword2').focus()">
+      </div>
+      <div class="login-field"><label>PASSWORT WIEDERHOLEN</label>
+        <input id="resetPassword2" type="password" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')doSetPassword()">
+      </div>
+      <div id="resetError" class="login-error" style="display:none"></div>
+      <button class="login-btn" id="resetBtn" onclick="doSetPassword()">PASSWORT SETZEN & ANMELDEN</button>
+      <div style="text-align:center;margin-top:12px">
+        <a href="#" onclick="document.getElementById('resetScreen').style.display='none';document.getElementById('loginScreen').style.display='flex';return false;" style="font-size:11px;color:var(--grey);text-decoration:none">Zurück zum Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header id="appHeader" style="display:none">
+  <div class="logo">Riedel<span>classics</span></div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('kalkulation',this)">Kalkulation</button>
+    <button class="nav-tab" onclick="showView('kennzahlen',this)">Kennzahlen</button>
+    <button class="nav-tab" onclick="showView('archiv',this)">Archiv</button>
+    <button class="nav-tab" onclick="showView('config',this)">Konfiguration <span id="keyMissingBadge" style="background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:2px;margin-left:4px;vertical-align:middle">KEY</span></button>
+  </nav>
+  <div class="header-right">
+    <span id="configSyncIndicator" class="sync-badge local" style="display:none">⬡ lokal</span>
+    <span class="slogan">...mit Liebe zum Detail</span>
+    <button onclick="doLogout()" style="background:none;border:1px solid var(--border);color:var(--grey);font-size:10px;padding:3px 10px;border-radius:2px;cursor:pointer;font-family:var(--font-body);letter-spacing:1px;margin-left:12px" title="Abmelden">LOGOUT</button>
+  </div>
+</header>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════
+     VIEW 1: KALKULATION
+══════════════════════════════════════════════════ -->
+<div class="view active" id="view-kalkulation">
+
+  <div class="panel-left">
+
+    <!-- FOTO -->
+    <div class="section">
+      <div class="section-title">Schadensfoto<span id="fotoCount" style="font-family:var(--font-body);font-size:10px;color:var(--grey);letter-spacing:1px;margin-left:8px;font-weight:400">0 / 5</span></div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" accept="image/*" multiple id="fileInput" onchange="handleFiles(event)">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text"><strong>Fotos auswählen</strong> oder ablegen<br><span style="font-size:10px;color:var(--grey)">bis zu 5 Fotos · bessere KI-Erkennung</span></div>
+      </div>
+      <div id="fotoGrid" style="display:none;margin-top:10px;gap:5px;flex-wrap:wrap"></div>
+      <button class="btn-analyse" id="btnAnalyse" onclick="analyseImages()" style="display:none">KI-Analyse starten</button>
+      <div class="ai-result" id="aiResult" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <strong style="color:var(--red);font-size:10px;letter-spacing:1px">KI-ANALYSE</strong>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:10.5px;color:var(--grey-light)">
+            <input type="checkbox" id="kiInKV" checked onchange="updateKV()"
+              style="accent-color:var(--red);width:13px;height:13px">
+            In KV aufnehmen
+          </label>
+        </div>
+        <textarea id="aiText"
+          rows="7"
+          placeholder="KI-Analyse erscheint hier…"
+          oninput="updateKV()"
+          style="width:100%;background:#111;border:1px solid var(--border);color:var(--grey-light);padding:9px 11px;font-family:var(--font-body);font-size:11.5px;line-height:1.65;border-radius:3px;resize:vertical"></textarea>
+      </div>
+    </div>
+
+    <!-- BAUTEILE -->
+    <div class="section">
+      <div class="section-title">Beschädigte Bauteile</div>
+      <div class="bauteil-grid" id="bauteilGrid"></div>
+      <div class="selected-bauteile" id="selectedBauteile"></div>
+    </div>
+
+    <!-- SONDERARBEITEN -->
+    <div class="section">
+      <div class="section-title">Sonderarbeiten / Zusatzpositionen</div>
+      <div class="sonder-list" id="sonderList"></div>
+      <button class="btn-add-sonder" onclick="addSonder()">＋ Position hinzufügen</button>
+    </div>
+
+    <!-- KUNDENDATEN -->
+    <div class="section">
+      <div class="section-title">Kundendaten</div>
+      <div class="form-grid">
+        <div class="field-group"><label>Vorname</label><input id="kVorname" placeholder="Max" oninput="updateKV()"></div>
+        <div class="field-group"><label>Nachname</label><input id="kNachname" placeholder="Mustermann" oninput="updateKV()"></div>
+        <div class="field-group full"><label>Straße &amp; Hausnummer</label><input id="kStrasse" placeholder="Musterstraße 12" oninput="updateKV()"></div>
+        <div class="field-group"><label>PLZ</label><input id="kPLZ" placeholder="70173" oninput="updateKV()" style="max-width:90px"></div>
+        <div class="field-group"><label>Ort</label><input id="kOrt" placeholder="Stuttgart" oninput="updateKV()"></div>
+        <div class="field-group"><label>Telefon</label><input id="kTel" placeholder="+49 711 …" oninput="updateKV()"></div>
+        <div class="field-group"><label>E-Mail</label><input id="kEmail" type="email" placeholder="kunde@email.de" oninput="updateKV()"></div>
+        <div class="field-group full"><label>Fahrzeug</label><input id="kFahrzeug" placeholder="Mercedes-Benz 300 SL, BJ 1957" oninput="updateKV()"></div>
+        <div class="field-group"><label>Kennzeichen</label><input id="kKennzeichen" placeholder="M-RC 1957" oninput="updateKV()"></div>
+        <div class="field-group"><label>FIN (optional)</label><input id="kFIN" placeholder="WDB1234567…" oninput="updateKV()"></div>
+        <div class="field-group"><label>Gültig bis</label><input type="date" id="kGueltig" oninput="updateKV()"></div>
+        <div class="field-group">
+          <label>KV-Status</label>
+          <select id="kStatus" onchange="updateKV()" style="background:var(--bg3);border:1px solid var(--border);color:var(--white);padding:7px 9px;font-family:var(--font-body);font-size:12px;border-radius:3px">
+            <option value="entwurf">📝 Entwurf</option>
+            <option value="gesendet">📤 Gesendet</option>
+            <option value="angenommen">✅ Angenommen</option>
+            <option value="abgelehnt">❌ Abgelehnt</option>
+          </select>
+        </div>
+        <div class="field-group full"><label>Anmerkungen</label><textarea id="kAnmerkungen" rows="2" placeholder="Sonderhinweise…" oninput="updateKV()"></textarea></div>
+      </div>
+    </div>
+
+    <!-- SPEICHERN -->
+    <div class="section">
+      <div class="section-title">Speichern</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-save-config" style="flex:1" onclick="saveKV()">In Supabase speichern</button>
+        <button class="btn-save-config" style="flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--grey-light)" onclick="resetKalkulation()">Zurücksetzen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KV PANEL -->
+  <div class="panel-right">
+    <div class="kv-topbar">
+      <div class="kv-topbar-title">KOSTENVORANSCHLAG</div>
+      <div class="btn-group">
+        <button class="btn-action" onclick="exportPDF()">⬇ PDF Export</button>
+        <button class="btn-action btn-primary" onclick="window.print()">⎙ Drucken</button>
+      </div>
+    </div>
+    <div class="kv-content" id="kvContent">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🔧</div>
+        <div class="empty-text">Bauteile auswählen oder Foto analysieren — der Kostenvoranschlag erscheint automatisch hier.</div>
+      </div>
+      <div class="kv-doc" id="kvDoc" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     VIEW 2: KENNZAHLEN
+══════════════════════════════════════════════════ -->
+<div class="view" id="view-kennzahlen">
+  <div class="kz-header">
+    <div>
+      <div class="kz-title">KENNZAHLEN</div>
+      <div class="kz-subtitle">Deckungsbeiträge & Auswertungen</div>
+    </div>
+    <div class="btn-group">
+      <select class="db-filter" id="kzFilter" onchange="renderKennzahlen()">
+        <option value="all">Alle Zeiträume</option>
+        <option value="30">Letzte 30 Tage</option>
+        <option value="90">Letzte 90 Tage</option>
+        <option value="365">Letzte 12 Monate</option>
+      </select>
+      <button class="btn-action" onclick="loadKVsFromSupabase();renderKennzahlen()">↺ Aktualisieren</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="kz-section-grid" style="grid-template-columns:1fr">
+    <div class="kz-card" id="krCard">
+      <h3>Kostenrechnung — Zeitertrag</h3>
+      <div id="krList"></div>
+    </div>
+  </div>
+  <div class="kz-section-grid">
+    <div class="kz-card">
+      <h3>Umsatz nach Bauteil</h3>
+      <div class="chart-wrap" id="chartBauteil"></div>
+      <div class="chart-legend">
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--red)"></div>Material</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#4a90d9"></div>Lohn</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--green)"></div>DB</div>
+      </div>
+    </div>
+    <div class="kz-card">
+      <h3>Gespeicherte Kostenvoranschläge</h3>
+      <div class="db-filter-row">
+        <input class="db-filter" id="kvSearch" placeholder="Suchen…" oninput="renderKVList()">
+      </div>
+      <div id="kvListWrap">
+        <div class="no-data">Verbinde mit Supabase…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     VIEW 3: KONFIGURATION
+══════════════════════════════════════════════════ -->
+<div class="view" id="view-archiv">
+  <div style="padding:28px;max-width:1100px;width:100%;display:flex;flex-direction:column;gap:20px">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:var(--font-head);font-size:22px;letter-spacing:4px;color:var(--white)">ARCHIV</div>
+        <div style="font-size:12px;color:var(--grey);margin-top:2px">Gespeicherte Kostenvoranschläge · Status verwalten · Wiederherstellen</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="archivStatusFilter" onchange="renderArchiv()" style="background:var(--bg3);border:1px solid var(--border);color:var(--grey-light);padding:7px 10px;font-size:11.5px;border-radius:3px;font-family:var(--font-body)">
+          <option value="">Alle Status</option>
+          <option value="entwurf">📝 Entwurf</option>
+          <option value="gesendet">📤 Angebot gesendet</option>
+          <option value="auftrag">🤝 Auftrag erteilt</option>
+          <option value="inarbeit">🔧 In Arbeit</option>
+          <option value="abgeschlossen">✅ Abgeschlossen</option>
+          <option value="rechnung">💶 Rechnung gestellt</option>
+          <option value="bezahlt">✔️ Bezahlt</option>
+          <option value="abgelehnt">❌ Abgelehnt</option>
+        </select>
+        <input id="archivSearch" placeholder="Suchen…" oninput="renderArchiv()"
+          style="background:var(--bg3);border:1px solid var(--border);color:var(--white);padding:7px 10px;font-size:11.5px;border-radius:3px;font-family:var(--font-body);width:180px">
+        <button class="btn-action" onclick="loadKVsFromSupabase();renderArchiv()">↺ Aktualisieren</button>
+      </div>
+    </div>
+
+    <!-- KV Cards -->
+    <div id="archivList" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+</div>
+
+
+<div class="view" id="view-config">
+  <div class="config-grid">
+
+    <!-- Stundensatz -->
+    <div class="config-card">
+      <h3>Stundensatz & Aufschläge</h3>
+      <div class="rate-grid">
+        <div class="rate-label">Stundensatz (Lohn/Std.)</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgStundensatz" type="number" value="95" min="1"><span class="rate-unit">€/h</span></div>
+
+        <div class="rate-label">Materialaufschlag</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgMatAufschlag" type="number" value="20" min="0"><span class="rate-unit">%</span></div>
+
+        <div class="rate-label">MwSt.</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgMwst" type="number" value="19" min="0"><span class="rate-unit">%</span></div>
+      </div>
+      <div class="config-divider"></div>
+      <div class="rate-grid">
+        <div class="rate-label">Ziel-Deckungsbeitrag</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgZielDB" type="number" value="45" min="0"><span class="rate-unit">%</span></div>
+        <div class="rate-label">KV-Gültigkeitsdauer</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgGueltig" type="number" value="30" min="1"><span class="rate-unit">Tage</span></div>
+        <div class="rate-label">Werkstatt / Aussteller</div>
+        <div class="rate-input-wrap" style="grid-column:1/-1"><input style="background:var(--bg3);border:1px solid var(--border);color:var(--white);padding:6px 9px;font-family:var(--font-body);font-size:12px;border-radius:3px;width:100%" id="cfgFirmenname" placeholder="Riedel Classics GmbH"></div>
+      </div>
+      <div class="config-divider"></div>
+      <div class="rate-grid">
+        <div class="rate-label" style="grid-column:1/-1;font-size:9px;letter-spacing:1.5px;color:var(--red);text-transform:uppercase;margin-bottom:2px">Betriebskosten (€/Std)</div>
+        <div class="rate-label">Personal (Lohn inkl. NK)</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgBkPersonal" type="number" value="40" min="0"><span class="rate-unit">€/h</span></div>
+        <div class="rate-label">Miete / Raumkosten</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgBkMiete" type="number" value="16" min="0"><span class="rate-unit">€/h</span></div>
+        <div class="rate-label">Strom / Energie</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgBkStrom" type="number" value="8" min="0"><span class="rate-unit">€/h</span></div>
+        <div class="rate-label">Allg. Kosten (GKV/IHK/BG)</div>
+        <div class="rate-input-wrap"><input class="rate-input" id="cfgBkAllg" type="number" value="15" min="0"><span class="rate-unit">€/h</span></div>
+
+      </div>
+      <div id="bkSummary" style="margin-top:10px;padding:8px 10px;background:var(--bg3);border-radius:3px;font-size:11px;line-height:1.8"></div>
+      <div class="config-hint" style="margin-top:8px">Betriebskosten fließen in die Kennzahlen-Kostenrechnung ein. KT-Pauschale ist der Standardwert für neue Positionen.</div>
+      <button class="btn-save-config" onclick="saveConfig()">Konfiguration speichern</button>
+    </div>
+
+    <!-- Bauteil-Preise -->
+    <div class="config-card" style="grid-column:1/-1">
+      <h3>Bauteil-Basiszeitwerte</h3>
+      <div style="display:grid;grid-template-columns:1fr 80px 65px 65px 65px auto;gap:6px;margin-bottom:6px;align-items:center">
+        <div class="col-head">Bauteil</div>
+        <div class="col-head" style="text-align:right">Mat. €</div>
+        <div class="col-head" style="text-align:right">Std.</div>
+        <div class="col-head" style="text-align:right">LL %</div>
+        <div class="col-head" style="text-align:right">KT %</div>
+        <div class="col-head"></div>
+      </div>
+      <div class="bauteil-config-list" id="bauteilConfigList" style="max-height:380px;overflow-y:auto"></div>
+
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--red);text-transform:uppercase;margin-bottom:8px">Neues Bauteil anlegen</div>
+        <div style="display:grid;grid-template-columns:1fr 80px 65px 65px 65px auto;gap:6px;align-items:center">
+          <input id="newBauteilName" placeholder="z.B. Alufelge, Hardtop…"
+            style="background:#111;border:1px solid var(--border);color:var(--white);padding:6px 8px;font-size:11.5px;border-radius:3px;font-family:var(--font-body);min-width:0">
+          <input id="newBauteilMat" type="number" placeholder="€" value="100" min="0"
+            style="background:#111;border:1px solid var(--border);color:var(--white);padding:6px 7px;font-size:11.5px;border-radius:3px;text-align:right;min-width:0;width:100%">
+          <input id="newBauteilStd" type="number" placeholder="h" value="2" min="0" step="0.1"
+            oninput="calcNewBauteilMat()"
+            style="background:#111;border:1px solid var(--border);color:var(--white);padding:6px 7px;font-size:11.5px;border-radius:3px;text-align:right;min-width:0;width:100%">
+          <input id="newBauteilLL"  type="number" placeholder="%" value="40" min="0" max="100"
+            oninput="calcNewBauteilMat()"
+            style="background:#111;border:1px solid var(--border);color:var(--white);padding:6px 7px;font-size:11.5px;border-radius:3px;text-align:right;min-width:0;width:100%">
+          <input id="newBauteilKT"  type="number" placeholder="%" value="2" min="0" step="0.1"
+            style="background:#111;border:1px solid var(--border);color:var(--white);padding:6px 7px;font-size:11.5px;border-radius:3px;text-align:right;min-width:0;width:100%">
+          <button onclick="addNeuesBauteil()"
+            style="background:var(--red);color:#fff;border:none;padding:6px 10px;font-family:var(--font-head);font-size:12px;letter-spacing:1px;cursor:pointer;border-radius:3px;white-space:nowrap">
+            +
+          </button>
+        </div>
+      </div>
+      <div class="config-hint" style="margin-top:10px">
+        <strong style="color:var(--grey-light)">LL%</strong> = Lacklohnanteil (Material = Lohn × LL%) &nbsp;|&nbsp;
+        <strong style="color:var(--grey-light)">KT%</strong> = Kleinteilepauschale vom Lohn<br>
+        Stufen-Faktoren: Klein 0.6× · Mittel 1× · Groß 1.5× · Total 2×
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn-save-config" onclick="saveBauteilConfig()" style="flex:1">Bauteile speichern</button>
+        <button class="btn-save-config" onclick="resetBauteile()" style="background:var(--bg3);border:1px solid var(--border);color:var(--grey-light);padding:10px 14px">↺ Standard</button>
+      </div>
+    </div>
+
+    <!-- Supabase -->
+    <div class="config-card">
+      <h3>Supabase Verbindung</h3>
+      <div class="form-grid">
+        <div class="field-group full"><label>Supabase URL</label><input id="cfgSupaUrl" placeholder="https://xxx.supabase.co" oninput="sbDirty=true"></div>
+        <div class="field-group full"><label>Publishable Key</label><input id="cfgSupaKey" placeholder="sb_publishable_…" type="password" oninput="sbDirty=true"></div>
+        <div class="field-group full"><label>Tabellen-Name</label><input id="cfgSupaTable" placeholder="kostenvoranschlaege" oninput="sbDirty=true"></div>
+      </div>
+      <div style="margin-top:12px" id="sbStatus">
+        <div class="supabase-status"><div class="status-dot err"></div><span>Nicht verbunden</span></div>
+      </div>
+      <div class="config-hint" style="margin-top:10px">Die Verbindungsdaten werden lokal im Browser gespeichert (localStorage). Beim ersten Speichern wird die Tabelle automatisch per RPC angelegt, falls sie fehlt.</div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-save-config" style="flex:1" onclick="saveSupaConfig()">Verbindung speichern</button>
+        <button class="btn-save-config" style="flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--grey-light)" onclick="testSupaConnection()">Verbindung testen</button>
+      </div>
+    </div>
+
+    <!-- Backup/Restore -->
+    <div class="config-card">
+      <h3>Backup &amp; Restore</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="config-hint">Sichert alle lokalen Stammdaten: Konfiguration, Bauteile, Lieferanten, API Key.</div>
+        <button class="btn-save-config" onclick="exportBackup()" style="width:100%">⬇ Stammdaten exportieren (JSON)</button>
+        <div style="position:relative">
+          <input type="file" id="restoreFile" accept=".json" onchange="importBackup(event)"
+            style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
+          <button class="btn-save-config" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--grey-light);pointer-events:none">
+            ⬆ Stammdaten importieren (JSON)
+          </button>
+        </div>
+        <div class="config-divider"></div>
+        <button class="btn-save-config" onclick="loadKVsFromSupabase();renderArchiv();toast('KVs geladen ✓',true)" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--grey-light)">
+          ↺ KVs aus Supabase neu laden
+        </button>
+        <button class="btn-save-config" onclick="clearBauteilCache()" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--amber)">
+          🔧 Bauteile-Cache zurücksetzen
+        </button>
+        <button class="btn-save-config" onclick="forceSyncConfigToSupabase()" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--green)">
+          ☁ Config jetzt nach Supabase synchen
+        </button>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="config-card">
+      <h3>System Info</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="supabase-status" id="infoVersion"><div class="status-dot ok"></div><span>Version 2.2 — Mandanten-Config vollständig in Supabase</span></div>
+        <div class="supabase-status" id="infoKVs"><div class="status-dot pending"></div><span id="infoKVText">Lade gespeicherte KVs…</span></div>
+        <div class="supabase-status" id="infoConfigSync"><div class="status-dot pending" id="configSyncDot"></div><span id="configSyncText">Mandanten-Config: prüfe…</span></div>
+      </div>
+      <div class="config-divider"></div>
+      <div class="config-hint">
+        <strong style="color:var(--grey-light)">Supabase SQL Setup</strong><br><br>
+        Führe dieses SQL in deinem Supabase-Projekt aus:
+      </div>
+      <pre style="background:var(--bg3);border:1px solid var(--border);padding:12px;border-radius:3px;font-size:10px;color:var(--grey-light);margin-top:8px;overflow-x:auto;white-space:pre-wrap;line-height:1.6">CREATE TABLE IF NOT EXISTS kostenvoranschlaege (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  kv_nr text,
+  kunde text,
+  adresse text,
+  telefon text,
+  email text,
+  status text DEFAULT 'entwurf',
+  fahrzeug text,
+  kennzeichen text,
+  fin text,
+  positionen jsonb,
+  mat_gesamt numeric,
+  lohn_gesamt numeric,
+  netto numeric,
+  brutto numeric,
+  db_betrag numeric,
+  db_prozent numeric,
+  anmerkungen text,
+  ki_analyse text,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE kostenvoranschlaege ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public rw" ON kostenvoranschlaege FOR ALL USING (true) WITH CHECK (true);</pre>
+    </div>
+
+
+    <!-- Lieferantenverwaltung -->
+    <div class="config-card" style="grid-column:1/-1">
+      <h3>Lieferantenstammdaten</h3>
+      <div id="lieferantenCards"></div>
+      <button class="btn-save-config" onclick="saveLieferanten()" style="margin-top:4px">Lieferanten speichern</button>
+      <div class="config-hint" style="margin-top:10px">
+        Preise gelten als Basiswerte für die Materialkalkulation. Der Materialaufschlag aus "Stundensatz & Aufschläge" wird zusätzlich angewendet.<br>
+        Bei "Sonstiger" — Preise leer lassen, dann wird der Faktor-Fallback verwendet.
+      </div>
+    </div>
+
+
+    <!-- Anthropic API Key -->
+    <div class="config-card">
+      <h3>Anthropic API Key</h3>
+      <div class="field-group full" style="margin-bottom:12px">
+        <label>API Key (wird lokal gespeichert, nie im Code)</label>
+        <input id="cfgAnthropicKey" type="password" placeholder="sk-ant-api03-…"
+          oninput="handleApiKeyInput(this)"
+          style="font-family:monospace;letter-spacing:.5px">
+      </div>
+      <button class="btn-save-config" onclick="saveApiKey()" style="width:100%">Key speichern</button>
+      <div class="config-hint" style="margin-top:10px">
+        Der Key wird ausschließlich in deinem Browser (localStorage) gespeichert — er erscheint nie im Quellcode oder auf GitHub.<br><br>
+        Neuen Key erstellen: <strong style="color:var(--grey-light)">console.anthropic.com → API Keys → Create Key</strong>
+      </div>
+      <div style="margin-top:14px">
+        <div class="supabase-status" id="keyStatus">
+          <div class="status-dot err" id="keyStatusDot"></div>
+          <span id="keyStatusText">Kein Key gespeichert</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  STATE & CONFIG
+// ═══════════════════════════════════════════════════════════
+let selectedBauteile = {};
+let sonderPositionen = [];
+let imageBase64 = null;
+let imageMediaType = 'image/jpeg';
+let savedKVs = [];
+let sbDirty = false;
+let kvCounter = 1;
+
+// Config defaults
+let CFG = {
+  stundensatz: 95,
+  matAufschlag: 20,
+  mwst: 19,
+  zielDB: 45,
+  gueltig: 30,
+  firmenname: 'Riedel Classics',
+  // Betriebskosten (€/Std)
+  bkPersonal: 40,
+  bkMiete: 16,
+  bkStrom: 8,
+  bkAllg: 15,
+  // KT-Pauschale
+  ktPauschale: 2,
+  supaUrl: 'https://hwimtcvohtvtovdtfwld.supabase.co',
+  supaKey: 'sb_publishable_LZ79JjEWcb5N1gkSQI-rhg_p2ATJ-Rj',
+  supaTable: 'kostenvoranschlaege',
+};
+
+// Bauteilkatalog (Stunden werden mit Stundensatz multipliziert)
+let BAUTEILE = [
+  { id:'motorhaube',   name:'Motorhaube',         mat:180, std:3.5 },
+  { id:'kotfluegelVL', name:'Kotflügel VL',        mat:120, std:3.0 },
+  { id:'kotfluegelVR', name:'Kotflügel VR',        mat:120, std:3.0 },
+  { id:'kotfluegelHL', name:'Kotflügel HL',        mat:130, std:3.2 },
+  { id:'kotfluegelHR', name:'Kotflügel HR',        mat:130, std:3.2 },
+  { id:'tuerVL',       name:'Tür vorne links',     mat:90,  std:2.8 },
+  { id:'tuerVR',       name:'Tür vorne rechts',    mat:90,  std:2.8 },
+  { id:'tuerHL',       name:'Tür hinten links',    mat:90,  std:2.8 },
+  { id:'tuerHR',       name:'Tür hinten rechts',   mat:90,  std:2.8 },
+  { id:'schwellerL',   name:'Schweller links',      mat:110, std:3.2 },
+  { id:'schwellerR',   name:'Schweller rechts',     mat:110, std:3.2 },
+  { id:'stossfVorn',   name:'Stoßfänger vorne',    mat:160, std:2.0 },
+  { id:'stossfHint',   name:'Stoßfänger hinten',   mat:160, std:2.0 },
+  { id:'seitenwandL',  name:'Seitenwand links',    mat:150, std:3.8 },
+  { id:'seitenwandR',  name:'Seitenwand rechts',   mat:150, std:3.8 },
+  { id:'dach',         name:'Dach',                mat:200, std:4.5 },
+  { id:'heckklapp',    name:'Heckklappe/Kofferr.', mat:140, std:3.2 },
+  { id:'aussenspiL',   name:'Außenspiegel li',     mat:60,  std:0.8 },
+  { id:'aussenspiR',   name:'Außenspiegel re',     mat:60,  std:0.8 },
+  { id:'scheibeVor',   name:'Windschutzscheibe',   mat:280, std:2.0 },
+];
+
+
+const LACKTYPEN = [
+  { value:'wb',    label:'Wasserbasislack',          faktor:1.0  },
+  { value:'acryl', label:'Acryllack (1K)',            faktor:0.85 },
+  { value:'2k',    label:'2K-Lack (Polyurethan)',     faktor:1.20 },
+  { value:'klar',  label:'Klarlack (2K)',             faktor:1.15 },
+  { value:'orig',  label:'Originalmischung / Sonder', faktor:1.45 },
+];
+
+const VORBEREITUNGEN = [
+  { value:'lack',      label:'Nur Lackierung',                  faktor:1.0  },
+  { value:'fueller',   label:'+ Füller / Grundierung',          faktor:1.30 },
+  { value:'spachtel',  label:'+ Spachtel + Füller',             faktor:1.65 },
+  { value:'polyester', label:'+ Polyester-Komplett (Richtbank)',faktor:2.10 },
+];
+
+const SCHADENSTUFEN = [
+  { value:'klein',  label:'Klein (Kratzer, Delle ≤5cm)',      faktor:0.6 },
+  { value:'mittel', label:'Mittel (Delle, Lackschaden)',       faktor:1.0 },
+  { value:'gross',  label:'Groß (Verformung, Austausch)',      faktor:1.5 },
+  { value:'total',  label:'Totalschaden (Neuteil + Komplett)', faktor:2.0 },
+];
+
+
+// ═══════════════════════════════════════════════════════════
+//  API KEY MANAGEMENT (localStorage - never in code)
+// ═══════════════════════════════════════════════════════════
+function getAnthropicKey() {
+  return localStorage.getItem('rc_anthropic_key') || '';
+}
+
+function saveAnthropicKey(k) {
+  localStorage.setItem('rc_anthropic_key', k.trim());
+}
+
+function initApiKeyUI() {
+  const stored = getAnthropicKey();
+  const el = document.getElementById('cfgAnthropicKey');
+  if (el) {
+    el.value = stored ? '••••••••••••••••••••' + stored.slice(-6) : '';
+    el.dataset.saved = stored ? '1' : '';
+  }
+  const badge = document.getElementById('keyMissingBadge');
+  if (badge) badge.style.display = stored ? 'none' : 'inline';
+  const dot = document.getElementById('keyStatusDot');
+  const txt = document.getElementById('keyStatusText');
+  if (dot && txt) {
+    if (stored) {
+      dot.className = 'status-dot ok';
+      txt.textContent = 'Key gespeichert (…' + stored.slice(-6) + ')';
+    } else {
+      dot.className = 'status-dot err';
+      txt.textContent = 'Kein Key gespeichert';
+    }
+  }
+}
+
+function handleApiKeyInput(el) {
+  // if user clears the masked value, allow fresh entry
+  if (el.value === '' || !el.dataset.saved) {
+    el.dataset.saved = '';
+  }
+}
+
+function saveApiKey() {
+  const el = document.getElementById('cfgAnthropicKey');
+  const val = el.value.trim();
+  if (!val || val.startsWith('•')) { toast('Bitte neuen Key eingeben'); return; }
+  if (!val.startsWith('sk-ant-')) { toast('Key muss mit sk-ant- beginnen'); return; }
+  saveAnthropicKey(val);
+  el.value = '••••••••••••••••••••' + val.slice(-6);
+  el.dataset.saved = '1';
+  toast('API Key gespeichert ✓', true);
+  initApiKeyUI();
+}
+
+
+// ─── LIEFERANTEN UI ─────────────────────────────────────────
+function renderLieferantenCards() {
+  const cont = document.getElementById('lieferantenCards');
+  if (!cont) return;
+  cont.innerHTML = LIEFERANTEN.map((l, idx) => `
+    <div class="lief-card">
+      <div class="lief-card-head">
+        <input class="lief-name-input" value="${l.name}" style="width:auto;flex:1;margin-right:10px"
+          onchange="LIEFERANTEN[${idx}].name=this.value">
+        ${idx < 3 ? '<span style="font-size:10px;color:var(--grey);letter-spacing:1px">STAMM</span>' : '<span style="font-size:10px;color:var(--amber);letter-spacing:1px">SONSTIGER</span>'}
+      </div>
+      <div class="lief-section-head">Lackpreise</div>
+      <div class="lief-price-grid">
+        <div class="lief-price-label">Wasserbasislack (€/L)</div>
+        <input class="lief-price-input" type="number" step="0.01" value="${l.wb?.preis||0}"
+          onchange="LIEFERANTEN[${idx}].wb.preis=parseFloat(this.value)||0">
+        <div class="lief-price-label">Acryllack 1K (€/L)</div>
+        <input class="lief-price-input" type="number" step="0.01" value="${l.acryl?.preis||0}"
+          onchange="LIEFERANTEN[${idx}].acryl.preis=parseFloat(this.value)||0">
+        <div class="lief-price-label">2K-Lack Polyurethan (€/L)</div>
+        <input class="lief-price-input" type="number" step="0.01" value="${l['2k']?.preis||0}"
+          onchange="LIEFERANTEN[${idx}]['2k'].preis=parseFloat(this.value)||0">
+        <div class="lief-price-label">Originalmischung / Sonder (€/L)</div>
+        <input class="lief-price-input" type="number" step="0.01" value="${l.orig?.preis||0}"
+          onchange="LIEFERANTEN[${idx}].orig.preis=parseFloat(this.value)||0">
+        <div class="lief-price-label">Klarlack 2K (€/L)</div>
+        <input class="lief-price-input" type="number" step="0.01" value="${l.klar?.preis||0}"
+          onchange="LIEFERANTEN[${idx}].klar={preis:parseFloat(this.value)||0,einheit:'€/L'}">
+      </div>
+      <div class="lief-section-head">Vorbereitungsmaterial</div>
+      <div class="lief-price-grid">
+        <div class="lief-price-label">Füller / Grundierung (€/L)</div>
+        <input class="lief-price-input" type="number" step="0.01" value="${l.fueller||0}"
+          onchange="LIEFERANTEN[${idx}].fueller=parseFloat(this.value)||0">
+        <div class="lief-price-label">Spachtel (€/kg)</div>
+        <input class="lief-price-input" type="number" step="0.01" value="${l.spachtel||0}"
+          onchange="LIEFERANTEN[${idx}].spachtel=parseFloat(this.value)||0">
+        <div class="lief-price-label">Polyester-Material (€/kg)</div>
+        <input class="lief-price-input" type="number" step="0.01" value="${l.polyester||0}"
+          onchange="LIEFERANTEN[${idx}].polyester=parseFloat(this.value)||0">
+      </div>
+    </div>
+  `).join('');
+}
+
+function saveLieferanten() {
+  localStorage.setItem('riedel_lieferanten', JSON.stringify(LIEFERANTEN));
+  saveMandantConfig('lieferanten', LIEFERANTEN);
+  renderBauteilGrid();
+  renderSelectedBauteile();
+  updateKV();
+  toast('Lieferanten gespeichert ✓', true);
+}
+
+function loadLieferanten() {
+  try {
+    const saved = localStorage.getItem('riedel_lieferanten');
+    if (saved) LIEFERANTEN = JSON.parse(saved);
+  } catch(e) {}
+}
+
+
+// ═══════════════════════════════════════════════════════════
+//  BACKUP & RESTORE
+// ═══════════════════════════════════════════════════════════
+function exportBackup() {
+  const backup = {
+    version: '2.0',
+    exportDate: new Date().toISOString(),
+    cfg: CFG,
+    bauteile: BAUTEILE,
+    lieferanten: LIEFERANTEN,
+    apiKey: getAnthropicKey(),
+  };
+  const json = JSON.stringify(backup, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `RiedelKalkulation_Backup_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  toast('Backup exportiert ✓', true);
+}
+
+function importBackup(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data.version) throw new Error('Ungültiges Backup-Format');
+
+      if (data.cfg)         { const { supaUrl, supaKey, supaTable } = CFG; Object.assign(CFG, data.cfg); CFG.supaUrl = supaUrl; CFG.supaKey = supaKey; CFG.supaTable = supaTable; localStorage.setItem('riedel_cfg', JSON.stringify(CFG)); }
+      if (data.bauteile)    { BAUTEILE = data.bauteile; localStorage.setItem('riedel_bauteile', JSON.stringify(BAUTEILE)); }
+      if (data.lieferanten) { LIEFERANTEN = data.lieferanten; localStorage.setItem('riedel_lieferanten', JSON.stringify(LIEFERANTEN)); }
+      if (data.apiKey)      { saveAnthropicKey(data.apiKey); }
+
+      // UI neu laden
+      loadConfig();
+      renderBauteilGrid();
+      renderBauteilConfigList();
+      renderLieferantenCards();
+      updateKV();
+
+      // Supabase-Sync nach Restore
+      if (currentUser) {
+        const { supaUrl, supaKey, supaTable, ...cfgRest } = CFG;
+        Promise.all([
+          saveMandantConfig('cfg', cfgRest),
+          saveMandantConfig('bauteile', BAUTEILE),
+          saveMandantConfig('lieferanten', LIEFERANTEN),
+        ]).then(() => toast('Backup wiederhergestellt & nach Supabase synchronisiert ✓', true));
+      } else {
+        toast('Backup wiederhergestellt (lokal) ✓', true);
+      }
+    } catch(err) {
+      toast('Fehler beim Import: ' + err.message);
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ARCHIV
+// ═══════════════════════════════════════════════════════════
+const STATUS_INFO = {
+  entwurf:       { label:'Entwurf',            emoji:'📝', color:'#aaa' },
+  gesendet:      { label:'Angebot gesendet',   emoji:'📤', color:'#2980b9' },
+  auftrag:       { label:'Auftrag erteilt',    emoji:'🤝', color:'#8e44ad' },
+  inarbeit:      { label:'In Arbeit',          emoji:'🔧', color:'#e67e22' },
+  abgeschlossen: { label:'Abgeschlossen',      emoji:'✅', color:'#27ae60' },
+  rechnung:      { label:'Rechnung gestellt',  emoji:'💶', color:'#16a085' },
+  bezahlt:       { label:'Bezahlt',            emoji:'✔️', color:'#27ae60' },
+  abgelehnt:     { label:'Abgelehnt',          emoji:'❌', color:'#c0392b' },
+};
+
+const STATUS_NEXT = {
+  entwurf:       ['gesendet','abgelehnt'],
+  gesendet:      ['auftrag','abgelehnt'],
+  auftrag:       ['inarbeit','abgelehnt'],
+  inarbeit:      ['abgeschlossen'],
+  abgeschlossen: ['rechnung'],
+  rechnung:      ['bezahlt'],
+  bezahlt:       [],
+  abgelehnt:     ['entwurf'],
+};
+
+function renderArchiv() {
+  const el = document.getElementById('archivList');
+  if (!el) return;
+
+  const search = (document.getElementById('archivSearch')?.value || '').toLowerCase();
+  const statusFilter = document.getElementById('archivStatusFilter')?.value || '';
+
+  let kvs = [...savedKVs];
+  if (statusFilter) kvs = kvs.filter(k => (k.status||'entwurf') === statusFilter);
+  if (search) kvs = kvs.filter(k =>
+    (k.kv_nr||'').toLowerCase().includes(search) ||
+    (k.kunde||'').toLowerCase().includes(search) ||
+    (k.fahrzeug||'').toLowerCase().includes(search) ||
+    (k.kennzeichen||'').toLowerCase().includes(search)
+  );
+
+  if (!kvs.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey);font-size:13px">Keine Einträge gefunden</div>';
+    return;
+  }
+
+  el.innerHTML = kvs.map(kv => {
+    const st = STATUS_INFO[kv.status||'entwurf'] || STATUS_INFO.entwurf;
+    const nextSteps = STATUS_NEXT[kv.status||'entwurf'] || [];
+    const dbCol = (kv.db_prozent||0) >= CFG.zielDB ? 'var(--green)' : 'var(--amber)';
+    const datum = kv.created_at ? new Date(kv.created_at).toLocaleDateString('de-DE') : '—';
+
+    const nextBtns = nextSteps.map(s => {
+      const si = STATUS_INFO[s];
+      return `<button onclick="updateKVStatus('${kv.id}','${s}')"
+        style="background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--grey-light);padding:5px 12px;font-size:10.5px;border-radius:3px;cursor:pointer;font-family:var(--font-body);transition:all .15s"
+        onmouseover="this.style.borderColor='${si.color}';this.style.color='${si.color}'"
+        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--grey-light)'">
+        ${si.emoji} ${si.label}
+      </button>`;
+    }).join('');
+
+    return `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid ${st.color};border-radius:4px;padding:16px 20px">
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start">
+        <!-- Links: KV-Info -->
+        <div style="min-width:140px">
+          <div style="font-family:var(--font-head);font-size:16px;letter-spacing:2px;color:${st.color}">${kv.kv_nr||'—'}</div>
+          <div style="font-size:10px;color:var(--grey);margin-top:2px">${datum}</div>
+          <div style="margin-top:6px;display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:2px;border:1px solid ${st.color};background:rgba(0,0,0,.2)">
+            <span style="font-size:11px">${st.emoji}</span>
+            <span style="font-size:9.5px;letter-spacing:1px;color:${st.color};font-weight:500">${st.label.toUpperCase()}</span>
+          </div>
+        </div>
+
+        <!-- Mitte: Kunden/Fahrzeuginfo -->
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--white)">${kv.kunde||'—'}</div>
+          <div style="font-size:11.5px;color:var(--grey);margin-top:2px">${kv.fahrzeug||'—'} ${kv.kennzeichen?'· '+kv.kennzeichen:''}</div>
+          <div style="font-size:11px;color:var(--grey);margin-top:1px">${kv.adresse||''}</div>
+          <div style="display:flex;gap:16px;margin-top:8px">
+            <span style="font-size:11px;color:var(--grey-light)">Brutto: <strong style="color:var(--white)">€${(kv.brutto||0).toFixed(2)}</strong></span>
+            <span style="font-size:11px;color:var(--grey-light)">DB: <strong style="color:${dbCol}">${(kv.db_prozent||0).toFixed(1)}%</strong></span>
+            <span style="font-size:11px;color:var(--grey-light)">Netto: <strong style="color:var(--white)">€${(kv.netto||0).toFixed(2)}</strong></span>
+          </div>
+        </div>
+
+        <!-- Rechts: Aktionen -->
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <button onclick="ladeKVInKalkulation('${kv.id}')"
+            style="background:var(--red);color:#fff;border:none;padding:7px 14px;font-family:var(--font-head);font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:3px;white-space:nowrap">
+            ↩ Laden
+          </button>
+          <button onclick="exportKVPrint('${kv.id}')"
+            style="background:var(--bg3);color:var(--grey-light);border:1px solid var(--border);padding:6px 14px;font-family:var(--font-head);font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:3px;white-space:nowrap">
+            ⎙ Drucken
+          </button>
+        </div>
+      </div>
+
+      <!-- Status-Fortschreibung -->
+      ${nextBtns ? `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:9.5px;color:var(--grey);letter-spacing:1px">STATUS ÄNDERN:</span>
+        ${nextBtns}
+      </div>` : '<div style="margin-top:8px;font-size:10.5px;color:var(--grey)">Dieser Vorgang ist abgeschlossen.</div>'}
+    </div>`;
+  }).join('');
+}
+
+async function deleteKV(id, kvNr) {
+  if (!confirm('KV ' + kvNr + ' wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) return;
+  savedKVs = savedKVs.filter(k => k.id !== id);
+  localStorage.setItem('riedel_kvs_local', JSON.stringify(savedKVs));
+  if (CFG.supaUrl && CFG.supaKey) {
+    try {
+      await sbFetch('DELETE', '?id=eq.' + id);
+      toast(kvNr + ' gelöscht ✓', true);
+    } catch(e) { toast('Lokal gelöscht — Supabase-Fehler'); }
+  } else {
+    toast(kvNr + ' gelöscht ✓', true);
+  }
+  renderArchiv();
+  renderKennzahlen();
+}
+
+async function updateKVStatus(id, newStatus) {
+  // Lokal updaten
+  const kv = savedKVs.find(k => k.id === id);
+  if (kv) kv.status = newStatus;
+
+  // Supabase updaten
+  if (CFG.supaUrl && CFG.supaKey) {
+    try {
+      await sbFetch('PATCH', `?id=eq.${id}`, { status: newStatus });
+    } catch(e) { console.warn('Supabase update failed:', e); }
+  }
+  // Lokales Backup updaten
+  localStorage.setItem('riedel_kvs_local', JSON.stringify(savedKVs));
+  renderArchiv();
+  renderKennzahlen();
+  const si = STATUS_INFO[newStatus];
+  toast(`Status → ${si.emoji} ${si.label}`, true);
+}
+
+function ladeKVInKalkulation(id) {
+  const kv = savedKVs.find(k => k.id === id);
+  if (!kv) { toast('KV nicht gefunden'); return; }
+
+  // Zur Kalkulation wechseln
+  showView('kalkulation', document.querySelectorAll('.nav-tab')[0]);
+
+  // Kundendaten füllen
+  const fields = {
+    kVorname:    (kv.kunde||'').split(' ')[0] || '',
+    kNachname:   (kv.kunde||'').split(' ').slice(1).join(' ') || '',
+    kFahrzeug:   kv.fahrzeug || '',
+    kKennzeichen:kv.kennzeichen || '',
+    kFIN:        kv.fin || '',
+    kAnmerkungen:kv.anmerkungen || '',
+    kStatus:     kv.status || 'entwurf',
+  };
+  // Adresse aufteilen
+  const adrParts = (kv.adresse||'').split(', ');
+  if (adrParts.length >= 1) fields.kStrasse = adrParts[0];
+  if (adrParts.length >= 2) {
+    const plzOrt = adrParts[1].split(' ');
+    fields.kPLZ = plzOrt[0] || '';
+    fields.kOrt = plzOrt.slice(1).join(' ') || '';
+  }
+  fields.kTel   = kv.telefon || '';
+  fields.kEmail = kv.email   || '';
+
+  Object.entries(fields).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+
+  // KI-Analyse wiederherstellen
+  if (kv.ki_analyse) {
+    const aiText = document.getElementById('aiText');
+    const aiResult = document.getElementById('aiResult');
+    if (aiText && aiResult) {
+      aiText.value = kv.ki_analyse;
+      aiResult.style.display = 'block';
+    }
+  }
+
+  // Positionen wiederherstellen
+  selectedBauteile = {};
+  sonderPositionen = [];
+  if (kv.positionen && Array.isArray(kv.positionen)) {
+    kv.positionen.forEach(p => {
+      if (p.isSonder) {
+        sonderPositionen.push({ uid: Date.now() + Math.random(), desc: p.name, preis: p.lohn || p.pos || 0 });
+      } else {
+        const b = BAUTEILE.find(x => x.name === p.name);
+        if (b) {
+          selectedBauteile[b.id] = {
+            bauteil: b,
+            stufe: p.stufe || 'mittel',
+            lacktyp: 'wb',
+            vorbereitung: 'fueller',
+            lieferantId: LIEFERANTEN[0].id,
+            matManuell: null,
+            lacklohnPct: p.lacklohnPct || 40,
+            ktPct: p.ktPct || CFG.ktPauschale,
+          };
+        }
+      }
+    });
+  }
+
+  kvCounter++; // Neue KV-Nummer für Bearbeitung
+  renderBauteilGrid();
+  renderSelectedBauteile();
+  renderSonder();
+  updateKV();
+  toast(`KV ${kv.kv_nr} geladen — bereit zur Bearbeitung`, true);
+}
+
+function exportKVPrint(id) {
+  const kv = savedKVs.find(k => k.id === id);
+  if (!kv) return;
+  // Temporär Felder füllen, KV generieren, dann zurücksetzen
+  ladeKVInKalkulation(id);
+  setTimeout(() => exportPDF(), 300);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+
+
+
+// ═══════════════════════════════════════════════════════════
+//  MANDANTEN-CONFIG SUPABASE SYNC
+// ═══════════════════════════════════════════════════════════
+const MANDANT_TABLE = 'mandant_config';
+
+async function sbMandantFetch(method, body) {
+  if (!CFG.supaUrl || !CFG.supaKey || !currentUser) return null;
+  const s = getSession();
+  const token = s?.access_token || CFG.supaKey;
+  const url = `${CFG.supaUrl}/rest/v1/${MANDANT_TABLE}?user_id=eq.${currentUser.id}`;
+  try {
+    const r = await fetch(url, {
+      method,
+      headers: {
+        'apikey': CFG.supaKey,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal',
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    return r;
+  } catch(e) {
+    console.warn('mandant_config fetch error:', e);
+    return null;
+  }
+}
+
+async function loadMandantConfig() {
+  if (!CFG.supaUrl || !CFG.supaKey || !currentUser) {
+    setConfigSyncStatus('local');
+    return false;
+  }
+  try {
+    const s = getSession();
+    const token = s?.access_token || CFG.supaKey;
+    const url = `${CFG.supaUrl}/rest/v1/${MANDANT_TABLE}?user_id=eq.${currentUser.id}&limit=1`;
+    const r = await fetch(url, {
+      headers: { 'apikey': CFG.supaKey, 'Authorization': `Bearer ${token}` }
+    });
+    if (!r.ok) { setConfigSyncStatus('local'); return false; }
+    const data = await r.json();
+    if (!data.length) {
+      setConfigSyncStatus('new');
+      return false;
+    }
+    const row = data[0];
+    if (row.cfg && Object.keys(row.cfg).length) {
+      const { supaUrl, supaKey, supaTable } = CFG;
+      Object.assign(CFG, row.cfg);
+      CFG.supaUrl = supaUrl; CFG.supaKey = supaKey; CFG.supaTable = supaTable;
+    }
+    if (row.bauteile && Array.isArray(row.bauteile) && row.bauteile.length) {
+      const valid = row.bauteile.some(b => b.lacklohnPct !== undefined);
+      if (valid) {
+        BAUTEILE = BAUTEILE.map(b => { const saved = row.bauteile.find(s => s.id === b.id); return saved ? { ...b, ...saved } : b; });
+        const custom = row.bauteile.filter(s => s.custom && !BAUTEILE.find(b => b.id === s.id));
+        BAUTEILE = [...BAUTEILE, ...custom];
+      }
+    }
+    if (row.lieferanten && Array.isArray(row.lieferanten) && row.lieferanten.length) {
+      LIEFERANTEN = row.lieferanten;
+    }
+    setConfigSyncStatus('synced');
+    return true;
+  } catch(e) {
+    console.warn('loadMandantConfig error:', e);
+    setConfigSyncStatus('local');
+    return false;
+  }
+}
+
+async function saveMandantConfig(key, data) {
+  if (!CFG.supaUrl || !CFG.supaKey || !currentUser) return;
+  let payload = data;
+  if (key === 'cfg') {
+    const { supaUrl, supaKey, supaTable, ...rest } = data;
+    payload = rest;
+  }
+  const body = { user_id: currentUser.id, [key]: payload, updated_at: new Date().toISOString() };
+  const r = await sbMandantFetch('POST', body);
+  if (r && r.ok) setConfigSyncStatus('synced');
+  else console.warn('saveMandantConfig failed:', key, r?.status);
+}
+
+async function forceSyncConfigToSupabase() {
+  if (!currentUser) { toast('Nicht eingeloggt'); return; }
+  const { supaUrl, supaKey, supaTable, ...cfgWithoutConn } = CFG;
+  const body = {
+    user_id: currentUser.id,
+    cfg: cfgWithoutConn,
+    bauteile: BAUTEILE,
+    lieferanten: LIEFERANTEN,
+    updated_at: new Date().toISOString(),
+  };
+  const r = await sbMandantFetch('POST', body);
+  if (r && r.ok) { setConfigSyncStatus('synced'); toast('Config vollständig nach Supabase synchronisiert ✓', true); }
+  else toast('Sync fehlgeschlagen — Supabase-Verbindung prüfen');
+}
+
+function setConfigSyncStatus(state) {
+  const dot = document.getElementById('configSyncDot');
+  const text = document.getElementById('configSyncText');
+  const badge = document.getElementById('configSyncIndicator');
+  if (!dot || !text) return;
+  const states = {
+    synced: { dot:'ok',      text:'Mandanten-Config: Supabase ✓',   badge:'synced', badgeText:'☁ Supabase' },
+    local:  { dot:'err',     text:'Mandanten-Config: nur lokal',     badge:'local',  badgeText:'⬡ lokal' },
+    new:    { dot:'pending', text:'Mandanten-Config: neu (wird beim Speichern angelegt)', badge:'local', badgeText:'⬡ neu' },
+    saving: { dot:'pending', text:'Mandanten-Config: speichere…',    badge:'saving', badgeText:'… sync' },
+  };
+  const s = states[state] || states.local;
+  dot.className = `status-dot ${s.dot}`;
+  text.textContent = s.text;
+  if (badge) { badge.className = `sync-badge ${s.badge}`; badge.textContent = s.badgeText; badge.style.display = ''; }
+}
+
+function applyConfigToUI() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  set('cfgStundensatz',  CFG.stundensatz);
+  set('cfgMatAufschlag', CFG.matAufschlag);
+  set('cfgMwst',         CFG.mwst);
+  set('cfgZielDB',       CFG.zielDB);
+  set('cfgGueltig',      CFG.gueltig);
+  set('cfgFirmenname',   CFG.firmenname || '');
+  set('cfgBkPersonal',   CFG.bkPersonal || 40);
+  set('cfgBkMiete',      CFG.bkMiete || 16);
+  set('cfgBkStrom',      CFG.bkStrom || 8);
+  set('cfgBkAllg',       CFG.bkAllg || 15);
+}
+
+function clearBauteilCache() {
+  localStorage.removeItem('riedel_bauteile');
+  // Re-initialize BAUTEILE from code defaults
+  BAUTEILE = [
+    { id:'motorhaube',   name:'Motorhaube',         mat:180, std:3.5 },
+    { id:'kotfluegelVL', name:'Kotflügel VL',        mat:120, std:3.0 },
+    { id:'kotfluegelVR', name:'Kotflügel VR',        mat:120, std:3.0 },
+    { id:'kotfluegelHL', name:'Kotflügel HL',        mat:130, std:3.2 },
+    { id:'kotfluegelHR', name:'Kotflügel HR',        mat:130, std:3.2 },
+    { id:'tuerVL',       name:'Tür vorne links',     mat:90,  std:2.8 },
+    { id:'tuerVR',       name:'Tür vorne rechts',    mat:90,  std:2.8 },
+    { id:'tuerHL',       name:'Tür hinten links',    mat:90,  std:2.8 },
+    { id:'tuerHR',       name:'Tür hinten rechts',   mat:90,  std:2.8 },
+    { id:'schwellerL',   name:'Schweller links',     mat:110, std:3.2 },
+    { id:'schwellerR',   name:'Schweller rechts',    mat:110, std:3.2 },
+    { id:'stossfVorn',   name:'Stoßfänger vorne',    mat:160, std:2.0 },
+    { id:'stossfHint',   name:'Stoßfänger hinten',   mat:160, std:2.0 },
+    { id:'seitenwandL',  name:'Seitenwand links',    mat:150, std:3.8 },
+    { id:'seitenwandR',  name:'Seitenwand rechts',   mat:150, std:3.8 },
+    { id:'dach',         name:'Dach',                mat:200, std:4.5 },
+    { id:'heckklapp',    name:'Heckklappe/Kofferr.', mat:140, std:3.2 },
+    { id:'aussenspiL',   name:'Außenspiegel li',     mat:60,  std:0.8 },
+    { id:'aussenspiR',   name:'Außenspiegel re',     mat:60,  std:0.8 },
+    { id:'scheibeVor',   name:'Windschutzscheibe',   mat:280, std:2.0 },
+  ];
+  ensureBauteilDefaults();
+  renderBauteilGrid();
+  renderBauteilConfigList();
+  toast('Bauteile zurückgesetzt ✓', true);
+}
+
+function ensureBauteilDefaults() {
+  BAUTEILE = BAUTEILE.map(b => ({
+    lacklohnPct: 40,
+    ktPct: CFG.ktPauschale || 2,
+    ...b,
+  }));
+}
+
+async function init() {
+  initApiKeyUI();
+  loadConfig(); // localStorage als schneller Fallback
+
+  // Supabase-Config laden — wartet, dann rendert (kein Race-Condition)
+  const synced = await loadMandantConfig();
+  if (synced) applyConfigToUI();
+
+  ensureBauteilDefaults();
+  renderBauteilGrid();
+  renderBauteilConfigList();
+  renderLieferantenCards();
+
+  const d = new Date();
+  d.setDate(d.getDate() + CFG.gueltig);
+  document.getElementById('kGueltig').value = d.toISOString().slice(0,10);
+  loadKVsFromSupabase();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  VIEW SWITCHING
+// ═══════════════════════════════════════════════════════════
+function showView(name, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'kennzahlen') renderKennzahlen();
+  if (name === 'kalkulation') renderBauteilGrid();
+  if (name === 'config') {
+    renderLieferantenCards(); renderBauteilConfigList(); renderBkSummary();
+    document.getElementById('cfgSupaUrl').value   = CFG.supaUrl   || '';
+    document.getElementById('cfgSupaKey').value   = CFG.supaKey   || '';
+    document.getElementById('cfgSupaTable').value = CFG.supaTable || 'kostenvoranschlaege';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════
+function loadConfig() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('riedel_cfg') || '{}');
+    CFG = { ...CFG, ...saved };
+    if (localStorage.getItem('riedel_bauteile')) {
+      const savedBauteile = JSON.parse(localStorage.getItem('riedel_bauteile'));
+      const cacheValid = Array.isArray(savedBauteile) && savedBauteile.some(b => b.lacklohnPct !== undefined);
+      if (!cacheValid) {
+        console.info('loadConfig: Bauteile-Cache veraltet — wird verworfen');
+        localStorage.removeItem('riedel_bauteile');
+      } else {
+        BAUTEILE = BAUTEILE.map(b => {
+          const saved = savedBauteile.find(s => s.id === b.id);
+          return saved ? { ...b, ...saved } : b;
+        });
+        const customBauteile = savedBauteile.filter(s => s.custom && !BAUTEILE.find(b => b.id === s.id));
+        BAUTEILE = [...BAUTEILE, ...customBauteile];
+      }
+    }
+    // Sicherstellen dass alle Bauteile LL% + KT% haben
+    BAUTEILE = BAUTEILE.map(b => ({
+      lacklohnPct: 40,
+      ktPct: CFG.ktPauschale || 2,
+      ...b,
+    }));
+    // Fill form fields (safe — elements may not exist in all views)
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+    set('cfgStundensatz',  CFG.stundensatz);
+    set('cfgMatAufschlag', CFG.matAufschlag);
+    set('cfgMwst',         CFG.mwst);
+    set('cfgZielDB',       CFG.zielDB);
+    set('cfgGueltig',      CFG.gueltig);
+    set('cfgFirmenname',   CFG.firmenname || '');
+    set('cfgBkPersonal',   CFG.bkPersonal || 40);
+    set('cfgBkMiete',      CFG.bkMiete    || 16);
+    set('cfgBkStrom',      CFG.bkStrom    || 8);
+    set('cfgBkAllg',       CFG.bkAllg     || 15);
+    set('cfgKtPauschale',  CFG.ktPauschale|| 2);
+    if (document.getElementById('cfgBkPersonal')) renderBkSummary();
+    set('cfgSupaUrl',   CFG.supaUrl   || '');
+    set('cfgSupaKey',   CFG.supaKey   || '');
+    set('cfgSupaTable', CFG.supaTable || 'kostenvoranschlaege');
+    updateSbStatus(CFG.supaUrl && CFG.supaKey ? 'unchecked' : false);
+    if (CFG.supaUrl && CFG.supaKey) loadKVsFromSupabase();
+  } catch(e) { console.warn('loadConfig error:', e); }
+}
+
+function saveConfig() {
+  CFG.stundensatz = parseFloat(document.getElementById('cfgStundensatz').value) || 95;
+  CFG.matAufschlag = parseFloat(document.getElementById('cfgMatAufschlag').value) || 0;
+  CFG.mwst = parseFloat(document.getElementById('cfgMwst').value) || 19;
+  CFG.zielDB = parseFloat(document.getElementById('cfgZielDB').value) || 45;
+  CFG.gueltig = parseInt(document.getElementById('cfgGueltig').value) || 30;
+  CFG.firmenname = document.getElementById('cfgFirmenname').value;
+  CFG.bkPersonal = parseFloat(document.getElementById('cfgBkPersonal')?.value) || 40;
+  CFG.bkMiete    = parseFloat(document.getElementById('cfgBkMiete')?.value) || 16;
+  CFG.bkStrom    = parseFloat(document.getElementById('cfgBkStrom')?.value) || 8;
+  CFG.bkAllg     = parseFloat(document.getElementById('cfgBkAllg')?.value) || 15;
+  CFG.ktPauschale= parseFloat(document.getElementById('cfgKtPauschale')?.value) || 2;
+  localStorage.setItem('riedel_cfg', JSON.stringify(CFG));
+  saveMandantConfig('cfg', CFG);
+  renderBauteilGrid();
+  updateKV();
+  renderBkSummary();
+  toast('Konfiguration gespeichert ✓', true);
+}
+
+
+function liveUpdateBauteil(id, field, val) {
+  const b = BAUTEILE.find(x => x.id === id);
+  if (!b) return;
+  const num = parseFloat(val);
+  if (!isNaN(num)) b[field] = num;
+
+  // Auto-berechne MAT wenn Std oder LL% geändert wird
+  if (field === 'std' || field === 'lacklohnPct') {
+    const berechnetesMat = b.std * CFG.stundensatz * ((b.lacklohnPct ?? 40) / 100);
+    b.mat = Math.round(berechnetesMat * 100) / 100;
+    // Mat-Input im DOM aktualisieren
+    const row = document.querySelector('.bauteil-config-row[data-id="' + id + '"]');
+    if (row) {
+      const matInput = row.querySelector('.mat-input');
+      if (matInput) matInput.value = b.mat;
+    }
+  }
+
+  // Sync alle selectedBauteile die dieses Bauteil verwenden
+  Object.keys(selectedBauteile).forEach(selId => {
+    if (selectedBauteile[selId].bauteil?.id === id) {
+      selectedBauteile[selId].bauteil = b;
+    }
+  });
+  if (selectedBauteile[id]) {
+    renderSelectedBauteile();
+    updateKV();
+  }
+  renderBauteilGrid();
+}
+
+function saveBauteilConfig() {
+  document.querySelectorAll('.bauteil-config-row').forEach(row => {
+    const id = row.dataset.id;
+    const b = BAUTEILE.find(x => x.id === id);
+    if (b) {
+      b.mat         = parseFloat(row.querySelector('.mat-input')?.value) || b.mat;
+      b.std         = parseFloat(row.querySelector('.std-input')?.value) || b.std;
+      const llEl    = row.querySelector('.ll-input');
+      const ktEl    = row.querySelector('.kt-input');
+      if (llEl) b.lacklohnPct = parseFloat(llEl.value) ?? 40;
+      if (ktEl) b.ktPct       = parseFloat(ktEl.value) ?? 2;
+    }
+  });
+  localStorage.setItem('riedel_bauteile', JSON.stringify(BAUTEILE));
+  saveMandantConfig('bauteile', BAUTEILE);
+  renderBauteilGrid();
+  renderSelectedBauteile();
+  updateKV();
+  toast('Bauteile gespeichert ✓', true);
+}
+
+
+function calcNewBauteilMat() {
+  const std = parseFloat(document.getElementById('newBauteilStd').value) || 0;
+  const ll  = parseFloat(document.getElementById('newBauteilLL').value)  || 0;
+  const mat = std * CFG.stundensatz * (ll / 100);
+  document.getElementById('newBauteilMat').value = Math.round(mat * 100) / 100;
+}
+
+function addNeuesBauteil() {
+  const name = document.getElementById('newBauteilName').value.trim();
+  if (!name) { toast('Bitte Bauteilname eingeben'); return; }
+  const mat  = parseFloat(document.getElementById('newBauteilMat').value) || 100;
+  const std  = parseFloat(document.getElementById('newBauteilStd').value) || 2;
+  const ll   = parseFloat(document.getElementById('newBauteilLL').value)  || 40;
+  const kt   = parseFloat(document.getElementById('newBauteilKT').value)  || 2;
+  const id   = 'custom_' + Date.now();
+  BAUTEILE.push({ id, name, mat, std, lacklohnPct: ll, ktPct: kt, custom: true });
+  localStorage.setItem('riedel_bauteile', JSON.stringify(BAUTEILE));
+  saveMandantConfig('bauteile', BAUTEILE);
+  document.getElementById('newBauteilName').value = '';
+  renderBauteilConfigList();
+  renderBauteilGrid();
+  toast('"' + name + '" hinzugefügt ✓', true);
+}
+
+function deleteBauteil(id) {
+  const b = BAUTEILE.find(x => x.id === id);
+  if (!b || !b.custom) { toast('Standard-Bauteile können nicht gelöscht werden'); return; }
+  if (!confirm('"' + b.name + '" wirklich löschen?')) return;
+  BAUTEILE = BAUTEILE.filter(x => x.id !== id);
+  if (selectedBauteile[id]) { delete selectedBauteile[id]; renderSelectedBauteile(); updateKV(); }
+  localStorage.setItem('riedel_bauteile', JSON.stringify(BAUTEILE));
+  saveMandantConfig('bauteile', BAUTEILE);
+  renderBauteilConfigList();
+  renderBauteilGrid();
+  toast('"' + b.name + '" gelöscht', true);
+}
+
+function resetBauteile() {
+  if (!confirm('Alle Custom-Bauteile löschen und Standardwerte wiederherstellen?')) return;
+  BAUTEILE = BAUTEILE.filter(b => !b.custom).map(b => ({
+    lacklohnPct: 40, ktPct: CFG.ktPauschale || 2, ...b
+  }));
+  localStorage.removeItem('riedel_bauteile');
+  saveMandantConfig('bauteile', BAUTEILE);
+  renderBauteilConfigList();
+  renderBauteilGrid();
+  toast('Bauteile zurückgesetzt ✓', true);
+}
+
+function saveSupaConfig() {
+  CFG.supaUrl = document.getElementById('cfgSupaUrl').value.trim();
+  CFG.supaKey = document.getElementById('cfgSupaKey').value.trim();
+  CFG.supaTable = document.getElementById('cfgSupaTable').value.trim() || 'kostenvoranschlaege';
+  localStorage.setItem('riedel_cfg', JSON.stringify(CFG));
+  sbDirty = false;
+  updateSbStatus(CFG.supaUrl && CFG.supaKey ? 'unchecked' : false);
+  toast('Verbindung gespeichert — jetzt testen', true);
+}
+
+async function testSupaConnection() {
+  if (!CFG.supaUrl || !CFG.supaKey) { toast('URL und Key eingeben'); return; }
+  updateSbStatus(null); // pending
+  try {
+    const r = await sbFetch('GET', `?limit=1`);
+    if (r.ok) { updateSbStatus(true); toast('Verbindung erfolgreich!', true); }
+    else { updateSbStatus(false); toast('Fehler: ' + r.status); }
+  } catch(e) { updateSbStatus(false); toast('Verbindungsfehler: ' + e.message); }
+}
+
+function updateSbStatus(ok) {
+  const el = document.getElementById('sbStatus');
+  if (!el) return;
+  if (ok === null) {
+    el.innerHTML = `<div class="supabase-status"><div class="status-dot pending"></div><span>Verbinde…</span></div>`;
+  } else if (ok === 'unchecked') {
+    el.innerHTML = `<div class="supabase-status"><div class="status-dot" style="background:var(--amber)"></div><span>Zugangsdaten gespeichert — noch nicht getestet</span></div>`;
+  } else if (ok) {
+    el.innerHTML = `<div class="supabase-status"><div class="status-dot ok"></div><span>Verbunden mit ${CFG.supaUrl}</span></div>`;
+  } else {
+    el.innerHTML = `<div class="supabase-status"><div class="status-dot err"></div><span>Nicht verbunden — Zugangsdaten prüfen</span></div>`;
+  }
+}
+
+function renderBauteilConfigList() {
+  const list = document.getElementById('bauteilConfigList');
+  if (!list) return;
+  list.innerHTML = BAUTEILE.map((b) => `
+    <div class="bauteil-config-row" data-id="${b.id}" style="display:grid;grid-template-columns:1fr 80px 65px 65px 65px auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:11.5px;color:var(--grey-light);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        ${b.name}${b.custom ? ' <span style="font-size:9px;color:var(--red)">CUSTOM</span>' : ''}
+      </div>
+      <input class="bauteil-config-input mat-input" type="number" value="${b.mat}" min="0" style="min-width:0;width:100%;text-align:right" oninput="liveUpdateBauteil('${b.id}','mat',this.value)">
+      <input class="bauteil-config-input std-input" type="number" value="${b.std}" min="0" step="0.1" style="min-width:0;width:100%;text-align:right" oninput="liveUpdateBauteil('${b.id}','std',this.value)">
+      <input class="bauteil-config-input ll-input"  type="number" value="${b.lacklohnPct !== undefined ? b.lacklohnPct : 40}" min="0" max="100" style="min-width:0;width:100%;text-align:right" oninput="liveUpdateBauteil('${b.id}','lacklohnPct',this.value)">
+      <input class="bauteil-config-input kt-input"  type="number" value="${b.ktPct !== undefined ? b.ktPct : 2}" min="0" step="0.1" style="min-width:0;width:100%;text-align:right" oninput="liveUpdateBauteil('${b.id}','ktPct',this.value)">
+      <button onclick="deleteBauteil('${b.id}')"
+        style="background:none;border:none;color:${b.custom ? 'var(--red)' : 'var(--border)'};cursor:${b.custom ? 'pointer' : 'default'};font-size:14px;padding:2px 4px"
+        title="${b.custom ? 'Löschen' : 'Standard'}">
+        ${b.custom ? '×' : '·'}
+      </button>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  KALKULATION HELPERS
+// ═══════════════════════════════════════════════════════════
+function lohnForBauteil(b) {
+  return b.std * CFG.stundensatz;
+}
+function lohnTotal(b, ktPct=0) {
+  const lohn = lohnForBauteil(b);
+  const kt = lohn * (ktPct / 100);
+  return { lohn, kt, total: lohn + kt };
+}
+
+function matForBauteil(b, lacktyp='wb', vorbereitung='fueller', lieferantId=null, matManuell=null, lacklohnPct=null) {
+  // Manueller Wert hat höchste Priorität
+  if (matManuell !== null && matManuell !== '') return parseFloat(matManuell);
+  // Lacklohnanteil-Methode: Material = Lohn × (lacklohnPct/100)
+  if (lacklohnPct !== null && lacklohnPct > 0) {
+    const lohn = lohnForBauteil(b);
+    return lohn * (lacklohnPct / 100);
+  }
+  // Lieferant-basierte Berechnung wenn verfügbar
+  if (lieferantId) {
+    const lief = getLieferant(lieferantId);
+    if (lief && (lief[lacktyp]?.preis || 0) > 0) {
+      return matFromLieferant(b, lacktyp, vorbereitung, lieferantId);
+    }
+  }
+  // Fallback: Faktorenbasiert
+  const lf = LACKTYPEN.find(x => x.value === lacktyp)?.faktor || 1.0;
+  const vf = VORBEREITUNGEN.find(x => x.value === vorbereitung)?.faktor || 1.0;
+  return b.mat * (1 + CFG.matAufschlag / 100) * lf * vf;
+}
+
+function renderBauteilGrid() {
+  const grid = document.getElementById('bauteilGrid');
+  grid.innerHTML = BAUTEILE.map(b => {
+    const base = (matForBauteil(b) + lohnForBauteil(b) * 0.6).toFixed(0);
+    return `<button class="bauteil-btn ${selectedBauteile[b.id]?'active':''}" onclick="toggleBauteil('${b.id}')">
+      <span class="bname">${b.name}</span>
+      <span class="bprice">ab €${base}</span>
+    </button>`;
+  }).join('');
+}
+
+function toggleBauteil(id) {
+  if (selectedBauteile[id]) {
+    delete selectedBauteile[id];
+  } else {
+    const b = BAUTEILE.find(x => x.id === id);
+    selectedBauteile[id] = { bauteil: b, stufe: 'mittel', lacktyp: 'wb', vorbereitung: 'fueller', lieferantId: LIEFERANTEN[0].id, matManuell: null, lacklohnPct: 40, ktPct: CFG.ktPauschale };
+  }
+  renderBauteilGrid();
+  renderSelectedBauteile();
+  updateKV();
+}
+
+function renderSelectedBauteile() {
+  const cont = document.getElementById('selectedBauteile');
+  const ids = Object.keys(selectedBauteile);
+  if (!ids.length) { cont.innerHTML = ''; return; }
+  cont.innerHTML = ids.map(id => {
+    const { bauteil:b, stufe, lacktyp='wb', vorbereitung='fueller', lieferantId=LIEFERANTEN[0].id, matManuell=null } = selectedBauteile[id];
+    const lacklohnPct = b.lacklohnPct ?? selectedBauteile[id].lacklohnPct ?? 40;
+    const ktPct = b.ktPct ?? selectedBauteile[id].ktPct ?? CFG.ktPauschale ?? 2;
+    const f = SCHADENSTUFEN.find(s => s.value === stufe).faktor;
+    const lohnBase = lohnForBauteil(b) * f;
+    const ktVal = lohnBase * (ktPct / 100);
+    const matCalc = matForBauteil(b, lacktyp, vorbereitung, lieferantId, matManuell, lacklohnPct) * f;
+    const mat = matCalc.toFixed(2);
+    const lohn = lohnBase.toFixed(2);
+    const kt = ktVal.toFixed(2);
+    const isManual = matManuell !== null && matManuell !== '';
+    const mirrorId = getMirrorId(id);
+    const swapBtn = mirrorId
+      ? `<button onclick="swapSide('${id}')" title="Li ↔ Re tauschen" style="margin-left:7px;background:rgba(192,57,43,.15);border:1px solid var(--red-dim);color:var(--red);font-size:9.5px;padding:1px 7px;border-radius:2px;cursor:pointer;font-family:var(--font-body);vertical-align:middle">⇄ Seite</button>`
+      : '';
+    return `
+    <div class="bauteil-item">
+      <div>
+        <div class="label">${b.name}${swapBtn}</div>
+        <select onchange="setStufe('${id}',this.value)">
+          ${SCHADENSTUFEN.map(s => `<option value="${s.value}" ${s.value===stufe?'selected':''}>${s.label}</option>`).join('')}
+        </select>
+        <select onchange="setLacktyp('${id}',this.value)" style="margin-top:3px">
+          ${LACKTYPEN.map(l => `<option value="${l.value}" ${l.value===lacktyp?'selected':''}>${l.label}</option>`).join('')}
+        </select>
+        <select onchange="setVorbereitung('${id}',this.value)" style="margin-top:3px">
+          ${VORBEREITUNGEN.map(v => `<option value="${v.value}" ${v.value===vorbereitung?'selected':''}>${v.label}</option>`).join('')}
+        </select>
+        <select onchange="setLieferant('${id}',this.value)" style="margin-top:3px">
+          ${LIEFERANTEN.map(l => `<option value="${l.id}" ${l.id===lieferantId?'selected':''}>${l.name}</option>`).join('')}
+        </select>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px">
+          <div>
+            <div style="font-size:9px;color:var(--grey);letter-spacing:1px;margin-bottom:2px">LACKLOHNANTEIL %</div>
+            <div style="display:flex;align-items:center;gap:3px">
+              <input type="number" step="1" min="0" max="100"
+                value="${lacklohnPct}"
+                style="background:#111;border:1px solid var(--border);color:var(--white);padding:4px 7px;font-size:11px;border-radius:3px;width:100%;font-family:var(--font-body)"
+                oninput="setLacklohnPct('${id}',this.value)">
+              <span style="font-size:10px;color:var(--grey)">%</span>
+            </div>
+            <div style="font-size:9.5px;color:var(--grey-light);margin-top:2px">= €${mat}</div>
+          </div>
+          <div>
+            <div style="font-size:9px;color:var(--grey);letter-spacing:1px;margin-bottom:2px">KT-PAUSCHALE %</div>
+            <div style="display:flex;align-items:center;gap:3px">
+              <input type="number" step="0.1" min="0"
+                value="${ktPct}"
+                style="background:#111;border:1px solid var(--border);color:var(--white);padding:4px 7px;font-size:11px;border-radius:3px;width:100%;font-family:var(--font-body)"
+                oninput="setKtPct('${id}',this.value)">
+              <span style="font-size:10px;color:var(--grey)">%</span>
+            </div>
+            <div style="font-size:9.5px;color:var(--grey-light);margin-top:2px">= €${kt}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:4px">
+          <input type="number" step="0.01" min="0"
+            value="${isManual ? matManuell : ''}"
+            placeholder="Material überschreiben (€)"
+            title="Leer lassen = Lacklohnanteil-Berechnung"
+            style="background:#111;border:1px solid ${isManual?'var(--red)':'var(--border)'};color:var(--white);padding:4px 7px;font-size:10.5px;border-radius:3px;width:100%;font-family:var(--font-body)"
+            oninput="setMatManuell('${id}',this.value)">
+          ${isManual ? `<button onclick="clearMatManuell('${id}')" title="Lacklohnanteil verwenden" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0 2px">↺</button>` : ''}
+        </div>
+        <div class="costs" style="margin-top:3px">
+          Mat: €${mat}${isManual?' ✏️':''} · Lohn: €${lohn} · KT: €${kt} · <strong style="color:var(--white)">Pos: €${(+mat + +lohn + +kt).toFixed(2)}</strong>
+        </div>
+      </div>
+      <button class="remove" onclick="toggleBauteil('${id}')">&#215;</button>
+    </div>`;
+  }).join('');
+}
+
+function setStufe(id, stufe) {
+  if (selectedBauteile[id]) { selectedBauteile[id].stufe = stufe; renderSelectedBauteile(); updateKV(); }
+}
+function setLacktyp(id, val) {
+  if (selectedBauteile[id]) { selectedBauteile[id].lacktyp = val; selectedBauteile[id].matManuell = null; renderSelectedBauteile(); updateKV(); }
+}
+function setVorbereitung(id, val) {
+  if (selectedBauteile[id]) { selectedBauteile[id].vorbereitung = val; selectedBauteile[id].matManuell = null; renderSelectedBauteile(); updateKV(); }
+}
+function setLieferant(id, val) {
+  if (selectedBauteile[id]) { selectedBauteile[id].lieferantId = val; selectedBauteile[id].matManuell = null; renderSelectedBauteile(); updateKV(); }
+}
+function setMatManuell(id, val) {
+  if (selectedBauteile[id]) {
+    selectedBauteile[id].matManuell = val === '' ? null : val;
+    updateKV();
+  }
+}
+function clearMatManuell(id) {
+  if (selectedBauteile[id]) { selectedBauteile[id].matManuell = null; renderSelectedBauteile(); updateKV(); }
+}
+function setLacklohnPct(id, val) {
+  if (selectedBauteile[id]) {
+    selectedBauteile[id].lacklohnPct = parseFloat(val) || 0;
+    selectedBauteile[id].matManuell = null;
+    updateKV();
+    // update mat display without full re-render
+    const entry = selectedBauteile[id];
+    const f = SCHADENSTUFEN.find(s=>s.value===entry.stufe).faktor;
+    const mat = matForBauteil(entry.bauteil, entry.lacktyp, entry.vorbereitung, entry.lieferantId, null, entry.lacklohnPct) * f;
+    const costsEl = document.querySelector(`[data-id="${id}"] .costs`);
+  }
+}
+function setKtPct(id, val) {
+  if (selectedBauteile[id]) {
+    selectedBauteile[id].ktPct = parseFloat(val) || 0;
+    updateKV();
+  }
+}
+
+function addSonder(desc='', preis=0) {
+  sonderPositionen.push({ uid: Date.now() + Math.random(), desc, preis });
+  renderSonder();
+  updateKV();
+}
+
+function removeSonder(uid) {
+  sonderPositionen = sonderPositionen.filter(s => s.uid !== uid);
+  renderSonder(); updateKV();
+}
+
+function renderSonder() {
+  document.getElementById('sonderList').innerHTML = sonderPositionen.map(s => `
+    <div class="sonder-item">
+      <input type="text" placeholder="Beschreibung…" value="${s.desc}" oninput="updSonder(${s.uid},'desc',this.value)">
+      <input type="number" placeholder="€" value="${s.preis||''}" oninput="updSonder(${s.uid},'preis',parseFloat(this.value)||0)" min="0" step="0.01">
+      <button class="btn-remove-small" onclick="removeSonder(${s.uid})">×</button>
+    </div>`).join('');
+}
+
+function updSonder(uid, key, val) {
+  const s = sonderPositionen.find(x => x.uid === uid);
+  if (s) { s[key] = val; updateKV(); }
+}
+
+function resetKalkulation() {
+  selectedBauteile = {};
+  sonderPositionen = [];
+  imageBase64 = null;
+  // Reset multi-foto
+  uploadedPhotos.forEach(function(p) { if(p.previewUrl) URL.revokeObjectURL(p.previewUrl); });
+  uploadedPhotos = [];
+  renderFotoGrid();
+  updateFotoCount();
+  var zone = document.getElementById('uploadZone');
+  if (zone) zone.style.display = '';
+  ['kVorname','kNachname','kStrasse','kPLZ','kOrt','kTel','kEmail','kFahrzeug','kKennzeichen','kFIN','kAnmerkungen'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  const stEl = document.getElementById('kStatus'); if(stEl) stEl.value='entwurf';
+  document.getElementById('btnAnalyse').style.display = 'none';
+  document.getElementById('aiResult').style.display = 'none';
+  const aiTa = document.getElementById('aiText');
+  if (aiTa) aiTa.value = '';
+  const kiCb = document.getElementById('kiInKV');
+  if (kiCb) kiCb.checked = true;
+  const d = new Date(); d.setDate(d.getDate() + CFG.gueltig);
+  document.getElementById('kGueltig').value = d.toISOString().slice(0,10);
+  renderBauteilGrid(); renderSelectedBauteile(); renderSonder(); updateKV();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BILD & KI-ANALYSE (Multi-Foto, max. 5)
+// ═══════════════════════════════════════════════════════════
+
+var uploadedPhotos = []; // Array of { base64, mediaType, previewUrl }
+
+// Canvas-Komprimierung: max 1200px, JPEG 0.82
+function compressImage(file, maxPx, quality) {
+  maxPx = maxPx || 1200;
+  quality = quality || 0.82;
+  return new Promise(function(resolve) {
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function() {
+      URL.revokeObjectURL(url);
+      var w = img.width, h = img.height;
+      if (w > maxPx || h > maxPx) {
+        if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+        else       { w = Math.round(w * maxPx / h); h = maxPx; }
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality).split(',')[1]);
+    };
+    img.onerror = function() {
+      var reader = new FileReader();
+      reader.onload = function(ev) { resolve(ev.target.result.split(',')[1]); };
+      reader.readAsDataURL(file);
+    };
+    img.src = url;
+  });
+}
+
+function handleFiles(e) {
+  var files = Array.prototype.slice.call(e.target.files);
+  if (!files.length) return;
+  var remaining = 5 - uploadedPhotos.length;
+  if (remaining <= 0) { toast('Maximum 5 Fotos erreicht'); return; }
+  files = files.slice(0, remaining);
+  var pending = files.length;
+  files.forEach(function(file) {
+    var previewUrl = URL.createObjectURL(file);
+    var idx = uploadedPhotos.length;
+    uploadedPhotos.push({ base64: null, mediaType: 'image/jpeg', previewUrl: previewUrl });
+    renderFotoGrid();
+    compressImage(file).then(function(b64) {
+      uploadedPhotos[idx].base64 = b64;
+      pending--;
+      if (pending === 0) {
+        // alle fertig komprimiert
+        document.getElementById('btnAnalyse').style.display = 'block';
+      }
+    });
+  });
+  // Reset input so same files can be added again if needed
+  e.target.value = '';
+  document.getElementById('aiResult').style.display = 'none';
+}
+
+function removePhoto(idx) {
+  URL.revokeObjectURL(uploadedPhotos[idx].previewUrl);
+  uploadedPhotos.splice(idx, 1);
+  renderFotoGrid();
+  if (!uploadedPhotos.length) {
+    document.getElementById('btnAnalyse').style.display = 'none';
+    document.getElementById('fotoGrid').style.display = 'none';
+  }
+  updateFotoCount();
+}
+
+function renderFotoGrid() {
+  var grid = document.getElementById('fotoGrid');
+  if (!uploadedPhotos.length) { grid.style.display = 'none'; updateFotoCount(); return; }
+  grid.style.display = 'flex';
+  grid.innerHTML = uploadedPhotos.map(function(p, i) {
+    return '<div style="position:relative;flex:0 0 auto">'
+      + '<img src="' + p.previewUrl + '" style="width:74px;height:56px;object-fit:cover;border-radius:3px;border:1px solid var(--border);display:block">'
+      + '<button onclick="removePhoto(' + i + ')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);border:none;color:#fff;font-size:12px;line-height:1;padding:1px 4px;border-radius:2px;cursor:pointer">×</button>'
+      + (p.base64 ? '' : '<div style="position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center"><span class="spinner"></span></div>')
+      + '</div>';
+  }).join('');
+  updateFotoCount();
+}
+
+function updateFotoCount() {
+  var el = document.getElementById('fotoCount');
+  if (el) el.textContent = uploadedPhotos.length + ' / 5';
+  // Show/hide upload zone based on count
+  var zone = document.getElementById('uploadZone');
+  if (zone) zone.style.display = uploadedPhotos.length >= 5 ? 'none' : '';
+}
+
+// Legacy compat für Demo
+function handleFile(e) { handleFiles(e); }
+
+async function analyseImages() {
+  var ready = uploadedPhotos.filter(function(p) { return p.base64; });
+  if (!ready.length) { toast('Bitte warten — Bild wird noch komprimiert…'); return; }
+  if (!getAnthropicKey()) { toast('Bitte zuerst den Anthropic API Key in der Konfiguration hinterlegen'); showView('config', document.querySelectorAll('.nav-tab')[2]); return; }
+
+  var btn = document.getElementById('btnAnalyse');
+  var res = document.getElementById('aiResult');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Analysiere ' + ready.length + ' Foto' + (ready.length > 1 ? 's' : '') + '…';
+  res.style.display = 'none';
+
+  // Build content array: all images + prompt text
+  var systemPrompt = 'Du bist KFZ-Sachverständiger, spezialisiert auf Karosserieschäden. Du erhältst ' + ready.length + ' Foto' + (ready.length > 1 ? 's' : '') + ' desselben Fahrzeugs aus verschiedenen Perspektiven. Analysiere den Schaden über ALLE Fotos hinweg umfassend und präzise.\n\n'
+    + 'WICHTIG — Links/Rechts-Konvention:\n'
+    + 'Verwende IMMER die Fahrzeugperspektive (nicht die Kameraperspektive):\n'
+    + '- LINKS = Fahrerseite (in Deutschland: linke Seite wenn man im Fahrzeug sitzt und nach vorne schaut)\n'
+    + '- RECHTS = Beifahrerseite\n'
+    + '- Wenn du das Fahrzeug von hinten siehst: links im Bild = RECHTS am Fahrzeug, rechts im Bild = LINKS am Fahrzeug\n'
+    + '- Wenn du das Fahrzeug von vorne siehst: links im Bild = LINKS am Fahrzeug, rechts im Bild = RECHTS am Fahrzeug\n'
+    + '- Bei Unsicherheit über die Seite: nenne BEIDE möglichen Bauteile und weise in den Hinweisen darauf hin\n\n'
+    + 'Antworte genau in diesem Format:\n'
+    + 'SCHADENSBESCHREIBUNG: [2-3 Sätze: Fahrzeugtyp, Schadensart, betroffene Zone, Schwere — basierend auf allen Fotos]\n'
+    + 'BAUTEILE:\n'
+    + '- [Bauteilname aus Liste]: [klein|mittel|groß|total]\n'
+    + 'HINWEISE: [Restaurationshinweise inkl. Hinweis falls Links/Rechts nicht eindeutig erkennbar]\n\n'
+    + 'Bauteilliste (nur diese verwenden): Motorhaube, Kotflügel VL, Kotflügel VR, Kotflügel HL, Kotflügel HR, Tür vorne links, Tür vorne rechts, Tür hinten links, Tür hinten rechts, Schweller links, Schweller rechts, Stoßfänger vorne, Stoßfänger hinten, Seitenwand links, Seitenwand rechts, Dach, Heckklappe/Kofferraum, Außenspiegel li, Außenspiegel re, Windschutzscheibe';
+
+  var contentBlocks = ready.map(function(p, i) {
+    return { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: p.base64 } };
+  });
+  contentBlocks.push({ type: 'text', text: systemPrompt });
+
+  try {
+    var r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': getAnthropicKey(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5', max_tokens: 1200,
+        messages: [{ role: 'user', content: contentBlocks }]
+      })
+    });
+    var data = await r.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    var text = (data.content || []).map(function(c) { return c.text || ''; }).join('') || 'Keine Antwort.';
+    res.style.display = 'block';
+    document.getElementById('aiText').value = text;
+    autoselectFromAnalysis(text);
+    updateKV();
+  } catch(e) {
+    res.style.display = 'block';
+    document.getElementById('aiText').value = 'FEHLER: ' + e.message;
+  }
+  btn.disabled = false;
+  btn.innerHTML = 'KI-Analyse starten';
+}
+
+// Legacy alias
+function analyseImage() { analyseImages(); }
+
+
+
+// ─── LIEFERANTEN STAMMDATEN ─────────────────────────────────
+// Preise in €/Einheit — werden in Konfiguration gepflegt
+let LIEFERANTEN = [
+  {
+    id: 'l1', name: 'Lieferant 1',
+    wb:   { preis: 18.50, einheit: '€/L' },
+    acryl:{ preis: 14.80, einheit: '€/L' },
+    '2k': { preis: 24.00, einheit: '€/L' },
+    orig: { preis: 32.00, einheit: '€/L' },
+    klar: { preis: 22.00, einheit: '€/L' },
+    fueller:   8.50,
+    spachtel:  6.20,
+    polyester: 11.80,
+  },
+  {
+    id: 'l2', name: 'Lieferant 2',
+    wb:   { preis: 17.20, einheit: '€/L' },
+    acryl:{ preis: 13.50, einheit: '€/L' },
+    '2k': { preis: 22.50, einheit: '€/L' },
+    orig: { preis: 30.00, einheit: '€/L' },
+    klar: { preis: 20.50, einheit: '€/L' },
+    fueller:   7.90,
+    spachtel:  5.80,
+    polyester: 10.50,
+  },
+  {
+    id: 'l3', name: 'Lieferant 3',
+    wb:   { preis: 19.80, einheit: '€/L' },
+    acryl:{ preis: 15.90, einheit: '€/L' },
+    '2k': { preis: 25.50, einheit: '€/L' },
+    orig: { preis: 34.00, einheit: '€/L' },
+    klar: { preis: 23.50, einheit: '€/L' },
+    fueller:   9.20,
+    spachtel:  6.80,
+    polyester: 12.50,
+  },
+  {
+    id: 'sonstig', name: 'Sonstiger',
+    wb:   { preis: 0, einheit: '€/L' },
+    acryl:{ preis: 0, einheit: '€/L' },
+    '2k': { preis: 0, einheit: '€/L' },
+    orig: { preis: 0, einheit: '€/L' },
+    klar: { preis: 0, einheit: '€/L' },
+    fueller:   0,
+    spachtel:  0,
+    polyester: 0,
+  },
+];
+
+function getLieferant(id) {
+  return LIEFERANTEN.find(l => l.id === id) || LIEFERANTEN[0];
+}
+
+// Berechnet Materialkosten aus Lieferanten-Stammdaten
+// lackMenge: Liter Lack (Schätzwert aus Bauteil-Basiswert)
+function matFromLieferant(b, lacktyp, vorbereitung, lieferantId) {
+  const lief = getLieferant(lieferantId);
+  const aufschlag = 1 + CFG.matAufschlag / 100;
+  // Lackanteil: Basismenge aus b.mat / 15 (normalisiert auf Literpreise)
+  const lackMenge = b.mat / 15;
+  // Klarlack kommt immer zusätzlich auf Basislack (außer bei Acryl 1K)
+  const klarAnteil = (lacktyp !== 'acryl') ? (lief.klar?.preis || 0) * lackMenge * 0.6 : 0;
+  const lackPreis = (lief[lacktyp]?.preis || 0) * lackMenge + klarAnteil;
+  // Vorbereitungsanteil
+  let vorbPreis = 0;
+  if (vorbereitung === 'fueller')   vorbPreis = (lief.fueller   || 0) * lackMenge * 0.8;
+  if (vorbereitung === 'spachtel')  vorbPreis = (lief.fueller   || 0) * lackMenge * 0.8 + (lief.spachtel   || 0) * lackMenge * 0.5;
+  if (vorbereitung === 'polyester') vorbPreis = (lief.fueller   || 0) * lackMenge * 0.8 + (lief.polyester  || 0) * lackMenge * 0.6;
+  return (lackPreis + vorbPreis) * aufschlag;
+}
+
+// ─── SEITE TAUSCHEN ──────────────────────────────────────
+const MIRROR_MAP = {
+  'kotfluegelVL':'kotfluegelVR','kotfluegelVR':'kotfluegelVL',
+  'kotfluegelHL':'kotfluegelHR','kotfluegelHR':'kotfluegelHL',
+  'tuerVL':'tuerVR','tuerVR':'tuerVL',
+  'tuerHL':'tuerHR','tuerHR':'tuerHL',
+  'schwellerL':'schwellerR','schwellerR':'schwellerL',
+  'seitenwandL':'seitenwandR','seitenwandR':'seitenwandL',
+  'aussenspiL':'aussenspiR','aussenspiR':'aussenspiL',
+};
+
+function getMirrorId(id) {
+  return MIRROR_MAP[id] || null;
+}
+
+function swapSide(id) {
+  const mirrorId = getMirrorId(id);
+  if (!mirrorId) return;
+  const current = selectedBauteile[id];
+  if (!current) return;
+  const mirrorBauteil = BAUTEILE.find(x => x.id === mirrorId);
+  if (!mirrorBauteil) return;
+  // Remove current, add mirror with same stufe
+  delete selectedBauteile[id];
+  selectedBauteile[mirrorId] = { bauteil: mirrorBauteil, stufe: current.stufe };
+  renderBauteilGrid();
+  renderSelectedBauteile();
+  updateKV();
+  toast(`Seite getauscht → ${mirrorBauteil.name}`, true);
+}
+
+function autoselectFromAnalysis(text) {
+  const lower = text.toLowerCase();
+  const MAPPING = {
+    'motorhaube':'motorhaube','kotflügel vl':'kotfluegelVL','kotflügel vr':'kotfluegelVR',
+    'kotflügel hl':'kotfluegelHL','kotflügel hr':'kotfluegelHR',
+    'tür vorne links':'tuerVL','tür vorne rechts':'tuerVR','tür hinten links':'tuerHL','tür hinten rechts':'tuerHR',
+    'schweller links':'schwellerL','schweller rechts':'schwellerR',
+    'stoßfänger vorne':'stossfVorn','stoßfänger hinten':'stossfHint',
+    'seitenwand links':'seitenwandL','seitenwand rechts':'seitenwandR',
+    'dach':'dach','heckklappe':'heckklapp',
+    'außenspiegel li':'aussenspiL','außenspiegel re':'aussenspiR','windschutzscheibe':'scheibeVor',
+  };
+  const STUFEN = { 'klein':'klein','mittel':'mittel','groß':'gross','total':'total' };
+  for (const [kw, id] of Object.entries(MAPPING)) {
+    if (!lower.includes(kw)) continue;
+    const b = BAUTEILE.find(x => x.id === id);
+    let stufe = 'mittel';
+    const m = lower.match(new RegExp(kw + '[^\\n]*(klein|mittel|groß|total)'));
+    if (m && STUFEN[m[1]]) stufe = STUFEN[m[1]];
+    if (!selectedBauteile[id]) selectedBauteile[id] = { bauteil: b, stufe };
+  }
+  renderBauteilGrid(); renderSelectedBauteile(); updateKV();
+}
+
+
+function getKiText() {
+  const cb = document.getElementById('kiInKV');
+  const ta = document.getElementById('aiText');
+  if (!cb || !ta) return null;
+  if (!cb.checked) return null;
+  const val = ta.value.trim();
+  return val || null;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  KV BUILD
+// ═══════════════════════════════════════════════════════════
+function calcPositionen() {
+  let totalMat = 0, totalLohn = 0;
+  const rows = [];
+  const ids = Object.keys(selectedBauteile);
+  ids.forEach(id => {
+    const { bauteil:b, stufe } = selectedBauteile[id];
+    const f = SCHADENSTUFEN.find(s => s.value === stufe).faktor;
+    const { lacktyp='wb', vorbereitung='fueller', lieferantId=LIEFERANTEN[0].id, matManuell=null } = selectedBauteile[id];
+    // Immer aus Bauteil-Stammdaten lesen (live-aktuell)
+    const lacklohnPct = b.lacklohnPct ?? selectedBauteile[id].lacklohnPct ?? 40;
+    const ktPct = b.ktPct ?? selectedBauteile[id].ktPct ?? CFG.ktPauschale ?? 2;
+    const lohnBase = lohnForBauteil(b) * f;
+    const ktVal = lohnBase * (ktPct / 100);
+    const mat = matForBauteil(b, lacktyp, vorbereitung, lieferantId, matManuell, lacklohnPct) * f;
+    const lohn = lohnBase;
+    const lackLabel = LACKTYPEN.find(x=>x.value===lacktyp)?.label || '';
+    const vorbLabel = VORBEREITUNGEN.find(x=>x.value===vorbereitung)?.label || '';
+    const lief = getLieferant(lieferantId);
+    const liefLabel = lief?.name || '';
+    const isManual = matManuell !== null && matManuell !== '';
+    totalMat += mat + ktVal; totalLohn += lohn;
+    rows.push({ name: b.name, stufe, lackLabel, vorbLabel, liefLabel, isManual, lacklohnPct, ktPct, ktVal, mat, lohn, pos: mat+lohn+ktVal });
+  });
+  sonderPositionen.filter(s => s.desc).forEach(s => {
+    const p = parseFloat(s.preis||0);
+    totalLohn += p;
+    rows.push({ name: s.desc, stufe: null, mat: 0, lohn: p, pos: p, isSonder: true });
+  });
+  const netto = totalMat + totalLohn;
+  const mwst = netto * (CFG.mwst / 100);
+  const brutto = netto + mwst;
+  const db = netto - totalMat;
+  const dbPct = netto > 0 ? (db / netto * 100) : 0;
+  return { rows, totalMat, totalLohn, netto, mwst, brutto, db, dbPct };
+}
+
+function updateKV() {
+  const ids = Object.keys(selectedBauteile);
+  const hasSonder = sonderPositionen.length > 0;
+  if (!ids.length && !hasSonder) {
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('kvDoc').style.display = 'none';
+    return;
+  }
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('kvDoc').style.display = 'block';
+  document.getElementById('kvDoc').innerHTML = buildKVHtml();
+}
+
+function buildKVHtml(forPrint = false) {
+  const vorname = document.getElementById('kVorname').value || '—';
+  const nachname = document.getElementById('kNachname').value || '—';
+  const strasse  = document.getElementById('kStrasse')?.value || '';
+  const plz      = document.getElementById('kPLZ')?.value || '';
+  const ort      = document.getElementById('kOrt')?.value || '';
+  const tel      = document.getElementById('kTel')?.value || '';
+  const email    = document.getElementById('kEmail')?.value || '';
+  const fin      = document.getElementById('kFIN')?.value || '';
+  const status   = document.getElementById('kStatus')?.value || 'entwurf';
+  const fahrzeug = document.getElementById('kFahrzeug').value || '—';
+  const kz       = document.getElementById('kKennzeichen').value || '—';
+  const gueltig  = document.getElementById('kGueltig').value;
+  const anmerk   = document.getElementById('kAnmerkungen').value;
+  const heute    = new Date().toLocaleDateString('de-DE');
+  const gueltigF = gueltig ? new Date(gueltig).toLocaleDateString('de-DE') : '—';
+  const kvNr     = 'RC-' + new Date().getFullYear() + '-' + String(kvCounter).padStart(4,'0');
+  const STATUS_LABELS = { entwurf:'ENTWURF', gesendet:'GESENDET', angenommen:'ANGENOMMEN', abgelehnt:'ABGELEHNT' };
+  const STATUS_COLORS = { entwurf:'#aaa', gesendet:'#2980b9', angenommen:'#27ae60', abgelehnt:'#c0392b' };
+  const { rows, totalMat, totalLohn, netto, mwst, brutto, db, dbPct } = calcPositionen();
+
+  let tableRows = '';
+  let inKarosserie = false, inSonder = false;
+  let posNr = 0;
+  rows.forEach(r => {
+    if (!r.isSonder && !inKarosserie) {
+      tableRows += `<tr class="cat-row"><td colspan="5">Karosserie &amp; Lackierung</td></tr>`;
+      inKarosserie = true;
+    }
+    if (r.isSonder && !inSonder) {
+      tableRows += `<tr class="cat-row"><td colspan="5">Sonderarbeiten</td></tr>`;
+      inSonder = true;
+    }
+    posNr++;
+    if (r.isSonder) {
+      tableRows += `<tr><td style="color:#bbb;font-size:10px;width:24px">${posNr}</td><td colspan="2">${r.name}</td><td></td><td>€${r.pos.toFixed(2)}</td></tr>`;
+    } else {
+      const stufenLabel = SCHADENSTUFEN.find(s => s.value === r.stufe)?.label || '';
+      const matDetail = [r.lackLabel, r.vorbLabel, r.liefLabel].filter(Boolean).join(' · ');
+      const manualMark = r.isManual ? ' ✎' : '';
+      const ktInfo = r.ktVal > 0 ? ` · KT ${r.ktPct}%: €${r.ktVal.toFixed(2)}` : '';
+      const llInfo = r.lacklohnPct > 0 ? ` · LL ${r.lacklohnPct}%` : '';
+      tableRows += `<tr>
+        <td style="color:#bbb;font-size:10px;width:24px">${posNr}</td>
+        <td>${r.name}<br><span class="sub">${stufenLabel}${llInfo}${ktInfo}${manualMark}</span></td>
+        <td>€${r.mat.toFixed(2)}</td>
+        <td>€${r.lohn.toFixed(2)}</td>
+        <td>€${r.pos.toFixed(2)}</td>
+      </tr>`;
+    }
+  });
+
+  const dbColor = dbPct >= CFG.zielDB ? '#27ae60' : dbPct >= CFG.zielDB*0.7 ? '#e67e22' : '#c0392b';
+
+  return `
+  <div class="kv-doc-header">
+    <div class="kv-logo">Riedel<span>classics</span></div>
+    <div class="kv-slogan">...mit Liebe zum Detail</div>
+  </div>
+  <div class="kv-doc-body">
+    <div class="kv-meta">
+      <div class="kv-meta-block">
+        <h4>Auftraggeber</h4>
+        <p>
+          <strong>${vorname} ${nachname}</strong><br>
+          ${strasse ? strasse+'<br>' : ''}
+          ${(plz||ort) ? (plz+' '+ort).trim()+'<br>' : ''}
+          ${tel ? 'Tel: '+tel+'<br>' : ''}
+          ${email ? email : ''}
+        </p>
+      </div>
+      <div class="kv-meta-block">
+        <h4>Fahrzeug</h4>
+        <p>${fahrzeug}<br>Kennzeichen: ${kz}${fin?'<br>FIN: '+fin:''}</p>
+      </div>
+      <div class="kv-meta-block" style="text-align:right">
+        <h4>Kostenvoranschlag</h4>
+        <div class="kv-number">${kvNr}</div>
+        <p style="font-size:10.5px;color:#999">Erstellt: ${heute}<br>Gültig bis: ${gueltigF}</p>
+        <div style="margin-top:6px;display:inline-block;padding:2px 10px;border-radius:2px;font-size:9px;letter-spacing:2px;font-weight:600;border:1.5px solid ${STATUS_COLORS[status]};color:${STATUS_COLORS[status]}">${STATUS_LABELS[status]}</div>
+      </div>
+    </div>
+    ${(()=>{
+      const ki = getKiText();
+      if (!ki) return '';
+      // Clean markdown bold (**text**) and headings (#) for print
+      const clean = ki.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^#+\s*/gm,'').trim();
+      return `<div style="margin-bottom:16px;padding:12px 14px;background:#f9f7f5;border-left:3px solid #888;border-radius:2px">
+        <div style="font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:6px">Schadensbeschreibung</div>
+        <p style="font-size:11.5px;color:#555;line-height:1.7;white-space:pre-wrap">${clean}</p>
+      </div>`;
+    })()}
+    ${anmerk ? `<p style="font-size:11.5px;color:#666;margin-bottom:14px;padding:9px 11px;background:#f9f7f5;border-left:3px solid #c0392b;border-radius:2px">${anmerk}</p>` : ''}
+    <table class="kv-table">
+      <thead><tr>
+        <th style="width:5%">Pos.</th>
+        <th style="width:43%">Bezeichnung</th>
+        <th>Material</th>
+        <th>Lohn</th>
+        <th>Gesamt</th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+    <div class="kv-totals">
+      <div class="kv-total-row"><span class="tlabel">Material gesamt</span><span class="tval">€${totalMat.toFixed(2)}</span></div>
+      <div class="kv-total-row"><span class="tlabel">Lohn gesamt</span><span class="tval">€${totalLohn.toFixed(2)}</span></div>
+      <div class="kv-total-row"><span class="tlabel">Netto</span><span class="tval">€${netto.toFixed(2)}</span></div>
+      <div class="kv-total-row"><span class="tlabel">MwSt. ${CFG.mwst}%</span><span class="tval">€${mwst.toFixed(2)}</span></div>
+      <div class="kv-total-row grand"><span class="tlabel">GESAMT BRUTTO</span><span class="tval">€${brutto.toFixed(2)}</span></div>
+
+    </div>
+    <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:32px">
+      <div>
+        <div style="font-size:9px;letter-spacing:1.5px;color:#aaa;text-transform:uppercase;margin-bottom:6px">Auftraggeber — Datum &amp; Unterschrift</div>
+        <div style="border-bottom:1px solid #ccc;height:36px;margin-bottom:4px"></div>
+        <div style="font-size:9px;color:#ccc">${vorname} ${nachname}${strasse?', '+strasse:''}</div>
+      </div>
+      <div>
+        <div style="font-size:9px;letter-spacing:1.5px;color:#aaa;text-transform:uppercase;margin-bottom:6px">${CFG.firmenname} — Datum &amp; Unterschrift</div>
+        <div style="border-bottom:1px solid #ccc;height:36px;margin-bottom:4px"></div>
+        <div style="font-size:9px;color:#ccc">${CFG.firmenname}</div>
+      </div>
+    </div>
+    <div class="kv-footer" style="margin-top:16px">
+      <div class="validity">
+        Mit Unterzeichnung beauftragt der Auftraggeber die aufgeführten Arbeiten.<br>
+        Unverbindlicher Kostenvoranschlag · Gültig bis ${gueltigF} · Alle Preise inkl. ${CFG.mwst}% MwSt.<br>
+        ${CFG.firmenname}${email?' · '+email:''}${tel?' · '+tel:''}
+      </div>
+      <div class="stamp" style="color:${STATUS_COLORS[status]};border-color:${STATUS_COLORS[status]}">${STATUS_LABELS[status]}</div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PDF EXPORT (jsPDF)
+// ═══════════════════════════════════════════════════════════
+async function exportPDF() {
+  const ids = Object.keys(selectedBauteile);
+  const hasSonder = sonderPositionen.filter(s => s.desc).length > 0;
+  if (!ids.length && !hasSonder) { toast('Bitte zuerst Positionen auswählen'); return; }
+
+  const kvNr = 'RC-' + new Date().getFullYear() + '-' + String(kvCounter).padStart(4,'0');
+  const kvHtml = buildKVHtml(true);
+
+  const css = [
+    '*{box-sizing:border-box;margin:0;padding:0}',
+    'body{background:#fff;font-family:"DM Sans",sans-serif;font-weight:300}',
+    '.kv-doc{max-width:780px;margin:0 auto}',
+    '.kv-doc-header{background:linear-gradient(135deg,#888,#555);padding:24px 30px 16px;position:relative}',
+    '.kv-doc-header::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:#c0392b}',
+    '.kv-logo{font-family:"Bebas Neue",sans-serif;font-size:32px;color:#fff;letter-spacing:2px}',
+    '.kv-logo span{font-size:20px;color:rgba(255,255,255,.55);letter-spacing:5px}',
+    '.kv-slogan{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:2px;font-style:italic;margin-top:1px}',
+    '.kv-doc-body{padding:24px 30px;color:#222}',
+    '.kv-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid #eee}',
+    '.kv-meta-block h4{font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:#999;margin-bottom:5px}',
+    '.kv-meta-block p{font-size:12.5px;color:#333;line-height:1.6}',
+    '.kv-number{font-family:"Bebas Neue",sans-serif;font-size:18px;color:#c0392b;letter-spacing:2px}',
+    '.kv-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:16px}',
+    '.kv-table thead tr{background:#f5f3f0}',
+    '.kv-table th{text-align:left;padding:8px 11px;font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:#888;font-weight:400;border-bottom:2px solid #e0dbd4}',
+    '.kv-table th:last-child{text-align:right}',
+    '.kv-table td{padding:8px 11px;border-bottom:1px solid #f0ece6;color:#333;vertical-align:top}',
+    '.kv-table td:last-child{text-align:right;white-space:nowrap}',
+    '.kv-table .cat-row td{background:#f9f7f5;font-weight:500;color:#555;font-size:10px;letter-spacing:1px;text-transform:uppercase}',
+    '.sub{font-size:10.5px;color:#999}',
+    '.kv-totals{margin-top:14px;border-top:2px solid #e0dbd4;padding-top:12px;display:flex;flex-direction:column;align-items:flex-end;gap:5px}',
+    '.kv-total-row{display:flex;gap:36px;align-items:center}',
+    '.kv-total-row .tlabel{font-size:11.5px;color:#888}',
+    '.kv-total-row .tval{font-size:12.5px;color:#333;min-width:80px;text-align:right}',
+    '.kv-total-row.grand .tlabel{font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:2px;color:#222}',
+    '.kv-total-row.grand .tval{font-family:"Bebas Neue",sans-serif;font-size:20px;color:#c0392b}',
+    '.kv-footer{margin-top:20px;padding-top:14px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:flex-end}',
+    '.kv-footer .validity{font-size:10.5px;color:#aaa;line-height:1.6}',
+    '.stamp{font-family:"Bebas Neue",sans-serif;font-size:10px;letter-spacing:2px;color:#c0392b;opacity:.3;border:2px solid #c0392b;padding:3px 8px;border-radius:2px;transform:rotate(-8deg)}',
+    '.print-btn{position:fixed;top:16px;right:16px;background:#c0392b;color:#fff;border:none;padding:10px 22px;font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;border-radius:3px;z-index:999}',
+    '@media print{' +
+      '@page{margin:28mm 15mm 15mm 15mm}' +
+      '.print-btn{display:none}' +
+      'body{-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+      '.kv-doc-header{' +
+        'position:running(header);' +
+        'display:block;' +
+      '}' +
+    '}',
+    '@page{@top-center{content:element(header)}}',
+  ].join('');
+
+  const printHtml = '<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8">'
+    + '<meta name="viewport" content="width=device-width,initial-scale=1">'
+    + '<title>Riedel KV ' + kvNr + '</title>'
+    + '<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">'
+    + '<style>' + css + '</style></head><body>'
+    + '<button class="print-btn" onclick="window.print()">⎊ Drucken / Als PDF speichern</button>'
+    + '<div class="kv-doc">' + kvHtml + '</div>'
+    + '</body></html>';
+
+  const blob = new Blob([printHtml], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+  if (!win) {
+    toast('Popup geblockt — Popups für uri2503.github.io erlauben');
+  } else {
+    toast('KV geöffnet — Drucken → Als PDF sichern ✓', true);
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SUPABASE
+// ═══════════════════════════════════════════════════════════
+async function sbFetch(method, path, body) {
+  const s = getSession();
+  const token = s?.access_token || CFG.supaKey;
+  const url = `${CFG.supaUrl}/rest/v1/${CFG.supaTable}${path}`;
+  const r = await fetch(url, {
+    method,
+    headers: {
+      'apikey': CFG.supaKey,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Prefer': method==='POST' ? 'return=representation' : method==='PATCH' ? 'return=minimal' : method==='DELETE' ? 'return=minimal' : '',
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  return r;
+}
+
+async function saveKV() {
+  const ids = Object.keys(selectedBauteile);
+  const hasSonder = sonderPositionen.filter(s => s.desc).length > 0;
+  if (!ids.length && !hasSonder) { toast('Keine Positionen zum Speichern'); return; }
+
+  const { rows, totalMat, totalLohn, netto, mwst, brutto, db, dbPct } = calcPositionen();
+  const kvNr = 'RC-' + new Date().getFullYear() + '-' + String(kvCounter).padStart(4,'0');
+
+  const payload = {
+    kv_nr: kvNr,
+    kunde: `${document.getElementById('kVorname').value} ${document.getElementById('kNachname').value}`.trim(),
+    adresse: [document.getElementById('kStrasse')?.value, (document.getElementById('kPLZ')?.value+' '+document.getElementById('kOrt')?.value).trim()].filter(Boolean).join(', '),
+    telefon: document.getElementById('kTel')?.value || '',
+    email: document.getElementById('kEmail')?.value || '',
+    status: document.getElementById('kStatus')?.value || 'entwurf',
+    fahrzeug: document.getElementById('kFahrzeug').value,
+    kennzeichen: document.getElementById('kKennzeichen').value,
+    fin: document.getElementById('kFIN')?.value || '',
+    positionen: rows,
+    mat_gesamt: +totalMat.toFixed(2),
+    lohn_gesamt: +totalLohn.toFixed(2),
+    netto: +netto.toFixed(2),
+    brutto: +brutto.toFixed(2),
+    db_betrag: +db.toFixed(2),
+    db_prozent: +dbPct.toFixed(1),
+    anmerkungen: document.getElementById('kAnmerkungen').value,
+    ki_analyse: document.getElementById('aiText')?.value || '',
+    ...(currentUser ? { user_id: currentUser.id } : {}),
+  };
+
+  if (!CFG.supaUrl || !CFG.supaKey) {
+    // Fallback: local storage only
+    savedKVs.push({ ...payload, id: Date.now(), created_at: new Date().toISOString() });
+    localStorage.setItem('riedel_kvs_local', JSON.stringify(savedKVs));
+    kvCounter++;
+    toast('Lokal gespeichert (kein Supabase)', true);
+    return;
+  }
+
+  try {
+    const r = await sbFetch('POST', '', payload);
+    if (r.ok) {
+      kvCounter++;
+      loadKVsFromSupabase();
+      toast('KV in Supabase gespeichert ✓', true);
+    } else {
+      const err = await r.json();
+      toast('Fehler: ' + (err.message || r.status));
+    }
+  } catch(e) { toast('Verbindungsfehler: ' + e.message); }
+}
+
+async function loadKVsFromSupabase() {
+  // Try local first
+  try {
+    const local = JSON.parse(localStorage.getItem('riedel_kvs_local') || '[]');
+    if (local.length) savedKVs = [...local];
+  } catch(e) {}
+
+  if (!CFG.supaUrl || !CFG.supaKey) {
+    updateInfoKVs();
+    return;
+  }
+  try {
+    const r = await sbFetch('GET', '?order=created_at.desc&limit=200');
+    if (r.ok) {
+      const data = await r.json();
+      savedKVs = data;
+      updateSbStatus(true);
+    }
+  } catch(e) {}
+  updateInfoKVs();
+}
+
+function updateInfoKVs() {
+  const el = document.getElementById('infoKVText');
+  if (el) el.textContent = `${savedKVs.length} gespeicherte Kostenvoranschläge`;
+  const dot = document.querySelector('#infoKVs .status-dot');
+  if (dot) { dot.classList.remove('pending'); dot.classList.add(savedKVs.length?'ok':'err'); }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  KENNZAHLEN
+// ═══════════════════════════════════════════════════════════
+function filterKVs() {
+  const days = parseInt(document.getElementById('kzFilter').value);
+  if (!days || isNaN(days)) return savedKVs;
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+  return savedKVs.filter(k => new Date(k.created_at) >= cutoff);
+}
+
+
+// ─── BETRIEBSKOSTEN SUMMARY ─────────────────────────────
+function renderBkSummary() {
+  const el = document.getElementById('bkSummary');
+  if (!el) return;
+  const bkTotal = (CFG.bkPersonal||0) + (CFG.bkMiete||0) + (CFG.bkStrom||0) + (CFG.bkAllg||0);
+  const ertrag = CFG.stundensatz - bkTotal;
+  const marge = CFG.stundensatz > 0 ? (ertrag / CFG.stundensatz * 100) : 0;
+  const col = ertrag >= 0 ? 'var(--green)' : 'var(--red)';
+  el.innerHTML = `
+    <span style="color:var(--grey)">▲ Stundensatz: </span><strong style="color:var(--white)">€${CFG.stundensatz}/h</strong> &nbsp;
+    <span style="color:var(--grey)">▼ BK gesamt: </span><strong style="color:var(--red)">€${bkTotal}/h</strong> &nbsp;
+    <span style="color:var(--grey)">= Ertrag/h: </span><strong style="color:${col}">€${ertrag.toFixed(2)}/h (${marge.toFixed(0)}%)</strong>
+  `;
+}
+
+// ─── KOSTENRECHNUNG PRO KV ───────────────────────────────
+function calcKostenrechnung(kv) {
+  // Einnahmen
+  const lohnEinnahmen = (kv.lohn_gesamt || 0);
+  const matVK = (kv.mat_gesamt || 0);
+  const einnahmen = (kv.netto || 0);
+
+  // Betriebskosten aus Stunden ableiten
+  // Stunden = Lohneinnahmen / Stundensatz
+  const std = CFG.stundensatz > 0 ? lohnEinnahmen / CFG.stundensatz : 0;
+  const bkPersonal = std * (CFG.bkPersonal || 0);
+  const bkMiete    = std * (CFG.bkMiete    || 0);
+  const bkStrom    = std * (CFG.bkStrom    || 0);
+  const bkAllg     = std * (CFG.bkAllg     || 0);
+  const bkTotal    = bkPersonal + bkMiete + bkStrom + bkAllg;
+
+  const ertrag = einnahmen - bkTotal;
+  const marge  = einnahmen > 0 ? (ertrag / einnahmen * 100) : 0;
+
+  return { std, lohnEinnahmen, matVK, einnahmen, bkPersonal, bkMiete, bkStrom, bkAllg, bkTotal, ertrag, marge };
+}
+
+function renderKostenrechnung(kvs) {
+  const el = document.getElementById('krList');
+  if (!el || !kvs.length) {
+    if (el) el.innerHTML = '<div class="no-data">Noch keine gespeicherten KVs</div>';
+    return;
+  }
+
+  const bkStd = (CFG.bkPersonal||0) + (CFG.bkMiete||0) + (CFG.bkStrom||0) + (CFG.bkAllg||0);
+  const ertragStd = CFG.stundensatz - bkStd;
+
+  // Aggregiert
+  let totStd=0, totEin=0, totBK=0, totErtrag=0;
+  const rows = kvs.slice(0,10).map(kv => {
+    const kr = calcKostenrechnung(kv);
+    totStd += kr.std; totEin += kr.einnahmen; totBK += kr.bkTotal; totErtrag += kr.ertrag;
+    const mc = kr.marge >= CFG.zielDB ? 'var(--green)' : kr.marge >= CFG.zielDB*0.7 ? 'var(--amber)' : 'var(--red)';
+    return `<tr>
+      <td>${kv.kv_nr||'—'}</td>
+      <td style="font-size:10.5px">${kv.kunde||'—'}</td>
+      <td style="text-align:right">${kr.std.toFixed(1)}h</td>
+      <td style="text-align:right">€${kr.einnahmen.toFixed(0)}</td>
+      <td style="text-align:right;color:var(--red)">€${kr.bkTotal.toFixed(0)}</td>
+      <td style="text-align:right;color:${mc};font-weight:500">€${kr.ertrag.toFixed(0)}</td>
+      <td style="text-align:right;color:${mc}">${kr.marge.toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
+
+  const totMarge = totEin > 0 ? (totErtrag/totEin*100) : 0;
+  const totC = totMarge >= CFG.zielDB ? 'var(--green)' : 'var(--amber)';
+
+  el.innerHTML = `
+    <div style="font-size:10.5px;color:var(--grey);margin-bottom:10px">
+      BK/h: <strong style="color:var(--white)">€${bkStd}/h</strong> &nbsp;|&nbsp;
+      Stundensatz: <strong style="color:var(--white)">€${CFG.stundensatz}/h</strong> &nbsp;|&nbsp;
+      Ertrag/h: <strong style="color:${ertragStd>=0?'var(--green)':'var(--red)'}">€${ertragStd.toFixed(2)}/h</strong>
+    </div>
+    <table class="kv-list-table">
+      <thead><tr>
+        <th>KV-Nr.</th><th>Kunde</th><th>Std</th>
+        <th style="text-align:right">Einnahmen</th>
+        <th style="text-align:right">Betriebskosten</th>
+        <th style="text-align:right">Zeitertrag</th>
+        <th style="text-align:right">Marge</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr style="border-top:1px solid var(--border);font-weight:500">
+        <td colspan="2" style="color:var(--grey-light)">GESAMT</td>
+        <td style="text-align:right;color:var(--white)">${totStd.toFixed(1)}h</td>
+        <td style="text-align:right;color:var(--white)">€${totEin.toFixed(0)}</td>
+        <td style="text-align:right;color:var(--red)">€${totBK.toFixed(0)}</td>
+        <td style="text-align:right;color:${totC}">€${totErtrag.toFixed(0)}</td>
+        <td style="text-align:right;color:${totC}">${totMarge.toFixed(1)}%</td>
+      </tr></tfoot>
+    </table>`;
+}
+
+function renderKennzahlen() {
+  const kvs = filterKVs();
+  renderKPIs(kvs);
+  renderKostenrechnung(kvs);
+  renderChart(kvs);
+  renderKVList();
+}
+
+function renderKPIs(kvs) {
+  const totalBrutto  = kvs.reduce((a,k) => a + (k.brutto||0), 0);
+  const totalNetto   = kvs.reduce((a,k) => a + (k.netto||0), 0);
+  const totalDB      = kvs.reduce((a,k) => a + (k.db_betrag||0), 0);
+  const totalMat     = kvs.reduce((a,k) => a + (k.mat_gesamt||0), 0);
+  const avgDB        = kvs.length ? kvs.reduce((a,k) => a + (k.db_prozent||0), 0) / kvs.length : 0;
+  const aboveTarget  = kvs.filter(k => (k.db_prozent||0) >= CFG.zielDB).length;
+
+  // Kostenrechnung aggregiert
+  const krAgg = kvs.reduce((a,k) => {
+    const kr = calcKostenrechnung(k);
+    a.std       += kr.std;
+    a.bkTotal   += kr.bkTotal;
+    a.ertrag    += kr.ertrag;
+    a.einnahmen += kr.einnahmen;
+    return a;
+  }, { std:0, bkTotal:0, ertrag:0, einnahmen:0 });
+  const avgMarge = krAgg.einnahmen > 0 ? (krAgg.ertrag / krAgg.einnahmen * 100) : 0;
+
+  const kpis = [
+    { label:'Umsatz Gesamt (Brutto)', value:`€${totalBrutto.toFixed(0)}`, sub:`${kvs.length} Kostenvoranschläge`, cls:'red' },
+    { label:'Zeitertrag gesamt', value:`€${krAgg.ertrag.toFixed(0)}`, sub:`Ø Marge ${avgMarge.toFixed(1)}%`, cls: avgMarge >= CFG.zielDB ? 'green' : 'amber' },
+    { label:'Betriebskosten gesamt', value:`€${krAgg.bkTotal.toFixed(0)}`, sub:`Ø ${krAgg.std.toFixed(1)} Std verrechnet`, cls:'blue' },
+    { label:'Produktivstunden', value:`${krAgg.std.toFixed(1)}h`, sub:`Ø €${krAgg.std>0?(krAgg.ertrag/krAgg.std).toFixed(2):0}/h Ertrag`, cls: (krAgg.std>0&&(krAgg.ertrag/krAgg.std)>=(CFG.stundensatz-CFG.bkPersonal-(CFG.bkMiete||0)-(CFG.bkStrom||0)-(CFG.bkAllg||0)))?'green':'amber' },
+  ];
+
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
+    <div class="kpi-card ${k.cls}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value ${k.cls}">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+}
+
+function renderChart(kvs) {
+  const wrap = document.getElementById('chartBauteil');
+  if (!kvs.length) { wrap.innerHTML = '<div class="no-data" style="width:100%">Noch keine Daten</div>'; return; }
+
+  // Aggregate by bauteil
+  const agg = {};
+  kvs.forEach(kv => {
+    (kv.positionen||[]).forEach(p => {
+      if (p.isSonder) return;
+      if (!agg[p.name]) agg[p.name] = { mat:0, lohn:0 };
+      agg[p.name].mat += p.mat||0;
+      agg[p.name].lohn += p.lohn||0;
+    });
+  });
+
+  const sorted = Object.entries(agg).sort((a,b) => (b[1].mat+b[1].lohn)-(a[1].mat+a[1].lohn)).slice(0,8);
+  if (!sorted.length) { wrap.innerHTML = '<div class="no-data" style="width:100%">Keine Positionsdaten</div>'; return; }
+
+  const maxVal = Math.max(...sorted.map(([,v]) => v.mat+v.lohn)) || 1;
+  const H = 140;
+
+  wrap.innerHTML = sorted.map(([name, v]) => {
+    const total = v.mat + v.lohn;
+    const db = v.lohn; // vereinfacht: lohn = DB approximation
+    const hMat = Math.round((v.mat/maxVal)*H);
+    const hLohn = Math.round((v.lohn/maxVal)*H);
+    const hDB = Math.round((db/maxVal)*H*0.3);
+    return `<div class="chart-bar-group" title="${name}: €${total.toFixed(0)}">
+      <div style="display:flex;align-items:flex-end;gap:2px;height:${H}px">
+        <div class="chart-bar mat" style="height:${hMat}px;flex:1" title="Material €${v.mat.toFixed(0)}"></div>
+        <div class="chart-bar lohn" style="height:${hLohn}px;flex:1" title="Lohn €${v.lohn.toFixed(0)}"></div>
+      </div>
+      <div class="chart-x-label" title="${name}">${name.length>9?name.slice(0,8)+'…':name}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderKVList() {
+  const search = (document.getElementById('kvSearch')?.value||'').toLowerCase();
+  const kvs = filterKVs().filter(k =>
+    !search ||
+    (k.kv_nr||'').toLowerCase().includes(search) ||
+    (k.kunde||'').toLowerCase().includes(search) ||
+    (k.fahrzeug||'').toLowerCase().includes(search)
+  );
+
+  const wrap = document.getElementById('kvListWrap');
+  if (!kvs.length) { wrap.innerHTML = '<div class="no-data">Keine Einträge</div>'; return; }
+
+  wrap.innerHTML = `<table class="kv-list-table">
+    <thead><tr>
+      <th>KV-Nr.</th><th>Kunde</th><th>Fahrzeug</th><th>Brutto</th><th>DB%</th><th>Status</th><th>Datum</th>
+    </tr></thead>
+    <tbody>${kvs.slice(0,30).map(k => {
+      const dbCol = (k.db_prozent||0) >= CFG.zielDB ? 'var(--green)' : (k.db_prozent||0) >= CFG.zielDB*0.7 ? 'var(--amber)' : 'var(--red)';
+      const stColors = {entwurf:'var(--grey)',gesendet:'#2980b9',auftrag:'#8e44ad',inarbeit:'#e67e22',abgeschlossen:'var(--green)',rechnung:'#16a085',bezahlt:'var(--green)',abgelehnt:'var(--red)'};
+      const stCol = stColors[k.status||'entwurf'] || 'var(--grey)';
+      return `<tr>
+        <td><span class="badge saved">${k.kv_nr||'—'}</span></td>
+        <td>${k.kunde||'—'}<br><span style="font-size:9.5px;color:var(--grey)">${k.adresse||''}</span></td>
+        <td style="font-size:10.5px">${k.fahrzeug||'—'}${k.kennzeichen?'<br><span style="font-size:9.5px;color:var(--grey)">'+k.kennzeichen+'</span>':''}</td>
+        <td>€${(k.brutto||0).toFixed(0)}</td>
+        <td style="color:${dbCol};font-weight:500">${(k.db_prozent||0).toFixed(1)}%</td>
+        <td style="color:${stCol};font-size:10px;font-weight:500;letter-spacing:.5px">${(k.status||'entwurf').toUpperCase()}</td>
+        <td style="font-size:10px">${k.created_at ? new Date(k.created_at).toLocaleDateString('de-DE') : '—'}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════
+function toast(msg, success=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (success?' success':'');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  AUTH — Supabase Email+Password (Invite-only)
+// ═══════════════════════════════════════════════════════════
+let currentUser = null;
+
+async function sbAuthFetch(path, body) {
+  const r = await fetch(`${CFG.supaUrl}/auth/v1${path}`, {
+    method: 'POST',
+    headers: {
+      'apikey': CFG.supaKey,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  return r;
+}
+
+async function sbGetUser(accessToken) {
+  const r = await fetch(`${CFG.supaUrl}/auth/v1/user`, {
+    headers: { 'apikey': CFG.supaKey, 'Authorization': `Bearer ${accessToken}` }
+  });
+  return r.ok ? await r.json() : null;
+}
+
+function getSession() {
+  try { return JSON.parse(localStorage.getItem('rc_session') || 'null'); } catch { return null; }
+}
+function saveSession(s) { localStorage.setItem('rc_session', JSON.stringify(s)); }
+function clearSession() { localStorage.removeItem('rc_session'); }
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pwd   = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const btn   = document.getElementById('loginBtn');
+  errEl.style.display = 'none';
+  if (!email || !pwd) { showLoginError('Bitte E-Mail und Passwort eingeben.'); return; }
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await sbAuthFetch('/token?grant_type=password', { email, password: pwd });
+    const data = await r.json();
+    if (!r.ok) { showLoginError(data.error_description || data.msg || 'Anmeldung fehlgeschlagen.'); return; }
+    saveSession(data);
+    currentUser = data.user;
+    onLoginSuccess();
+  } catch(e) { showLoginError('Verbindungsfehler — bitte erneut versuchen.'); }
+  finally { btn.disabled = false; btn.textContent = 'ANMELDEN'; }
+}
+
+function showForgotForm(e) {
+  e.preventDefault();
+  // Pre-fill with login email if available
+  const loginEmail = document.getElementById('loginEmail').value.trim();
+  if (loginEmail) document.getElementById('forgotEmail').value = loginEmail;
+  document.getElementById('forgotForm').style.display = 'block';
+  document.getElementById('forgotLink').style.display = 'none';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('forgotEmail').focus();
+}
+
+function hideForgotForm(e) {
+  if (e) e.preventDefault();
+  document.getElementById('forgotForm').style.display = 'none';
+  document.getElementById('forgotLink').style.display = '';
+}
+
+async function doForgotPassword(e) {
+  if (e) e.preventDefault();
+  const email = document.getElementById('forgotEmail').value.trim();
+  const btn = document.getElementById('forgotBtn');
+  if (!email) { showLoginError('Bitte E-Mail-Adresse eingeben.'); return; }
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await sbAuthFetch('/recover', { email });
+    if (r.ok) {
+      document.getElementById('forgotForm').style.display = 'none';
+      document.getElementById('forgotLink').style.display = '';
+      const errEl = document.getElementById('loginError');
+      errEl.textContent = '✓ Reset-Link gesendet an ' + email + ' — E-Mail prüfen.';
+      errEl.style.display = 'block';
+      errEl.style.borderLeftColor = 'var(--green)';
+      errEl.style.background = 'rgba(39,174,96,.1)';
+      errEl.style.color = 'var(--green)';
+    } else {
+      showLoginError('Fehler beim Senden — E-Mail-Adresse korrekt?');
+    }
+  } catch(e) {
+    showLoginError('Verbindungsfehler — bitte erneut versuchen.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'RESET-LINK SENDEN';
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('loginError');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+async function doLogout() {
+  const s = getSession();
+  if (s?.access_token) {
+    await fetch(`${CFG.supaUrl}/auth/v1/logout`, {
+      method: 'POST',
+      headers: { 'apikey': CFG.supaKey, 'Authorization': `Bearer ${s.access_token}` }
+    }).catch(() => {});
+  }
+  clearSession();
+  currentUser = null;
+  document.getElementById('appHeader').style.display = 'none';
+  document.querySelectorAll('.view, .toast').forEach(el => el.style.display = 'none');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+
+function onLoginSuccess() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appHeader').style.display = '';
+  init();
+}
+
+// ─── BOOTSTRAP ───
+(async function bootstrap() {
+  // Prüfen ob Reset-Token in der URL ist (#access_token=...&type=recovery)
+  const hash = window.location.hash.substring(1);
+  const params = Object.fromEntries(hash.split('&').map(p => p.split('=')));
+  if (params.type === 'recovery' && params.access_token) {
+    // Reset-Token speichern und Reset-Screen zeigen
+    window._resetToken = params.access_token;
+    window.history.replaceState(null, '', window.location.pathname);
+    document.getElementById('resetScreen').style.display = 'flex';
+    return;
+  }
+
+  // Normal: Login-Screen zeigen
+  document.getElementById('loginScreen').style.display = 'flex';
+
+  const s = getSession();
+  if (!s?.access_token) return;
+
+  const user = await sbGetUser(s.access_token);
+  if (!user) { clearSession(); return; }
+
+  currentUser = user;
+  onLoginSuccess();
+})();
+
+async function doSetPassword() {
+  const pw1 = document.getElementById('resetPassword').value;
+  const pw2 = document.getElementById('resetPassword2').value;
+  const errEl = document.getElementById('resetError');
+  const btn = document.getElementById('resetBtn');
+  errEl.style.display = 'none';
+  if (pw1.length < 8) { errEl.textContent = 'Mindestens 8 Zeichen erforderlich.'; errEl.style.display = 'block'; return; }
+  if (pw1 !== pw2) { errEl.textContent = 'Passwörter stimmen nicht überein.'; errEl.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await fetch(`${CFG.supaUrl}/auth/v1/user`, {
+      method: 'PUT',
+      headers: {
+        'apikey': CFG.supaKey,
+        'Authorization': `Bearer ${window._resetToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password: pw1 })
+    });
+    if (r.ok) {
+      // Auto-Login mit Reset-Token
+      try {
+        const userResp = await sbGetUser(window._resetToken);
+        if (userResp) {
+          // Session speichern und direkt einloggen
+          saveSession({ access_token: window._resetToken, user: userResp });
+          currentUser = userResp;
+          window._resetToken = null;
+          document.getElementById('resetScreen').style.display = 'none';
+          document.getElementById('resetPassword').value = '';
+          document.getElementById('resetPassword2').value = '';
+          onLoginSuccess();
+          setTimeout(() => toast('✓ Neues Passwort gesetzt — willkommen!', true), 600);
+          return;
+        }
+      } catch(_) {}
+      // Fallback: zum Login mit Erfolgsmeldung
+      document.getElementById('resetScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      const errEl2 = document.getElementById('loginError');
+      errEl2.textContent = '✓ Passwort gesetzt — bitte jetzt anmelden.';
+      errEl2.style.display = 'block';
+      errEl2.style.borderLeftColor = 'var(--green)';
+      errEl2.style.background = 'rgba(39,174,96,.1)';
+      errEl2.style.color = 'var(--green)';
+    } else {
+      const d = await r.json();
+      errEl.textContent = d.msg || 'Fehler beim Setzen des Passworts.';
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Verbindungsfehler.'; errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'PASSWORT SETZEN & ANMELDEN';
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════
+//  DEMO MODUS
+// ═══════════════════════════════════════════════════════════
+function showDemoModal() {
+  document.getElementById('demoOverlay').style.display = 'flex';
+}
+function hideDemoModal() {
+  document.getElementById('demoOverlay').style.display = 'none';
+}
+
+async function startDemo() {
+  hideDemoModal();
+  // Zur Kalkulation wechseln
+  showView('kalkulation', document.querySelectorAll('.nav-tab')[0]);
+
+  // Reset
+  resetKalkulation();
+  await sleep(400);
+
+  // Step 1: Kundendaten
+  toast('Demo: Kundendaten werden eingegeben…');
+  await typeInto('kVorname',   'Hans');           await sleep(120);
+  await typeInto('kNachname',  'Berger');         await sleep(120);
+  await typeInto('kStrasse',   'Hauptstraße 14'); await sleep(120);
+  await typeInto('kPLZ',       '70173');          await sleep(120);
+  await typeInto('kOrt',       'Stuttgart');      await sleep(120);
+  await typeInto('kTel',       '+49 711 4521890');await sleep(120);
+  await typeInto('kEmail',     'h.berger@email.de'); await sleep(120);
+  await typeInto('kFahrzeug',  'BMW X3 (F25), BJ 2018, Schwarz-Metallic'); await sleep(120);
+  await typeInto('kKennzeichen','S-BG 2018');     await sleep(300);
+
+  // Step 2: Demo-Schadensfoto laden (SVG als Platzhalter)
+  toast('Demo: Schadensfoto wird geladen…');
+  await sleep(500);
+  loadDemoImage();
+  await sleep(800);
+
+  // Step 3: KI-Analyse simulieren
+  toast('Demo: KI analysiert den Schaden…');
+  const btn = document.getElementById('btnAnalyse');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Analysiere…';
+  }
+  await sleep(2200);
+
+  // Demo-Analyseergebnis einfügen
+  const demoAnalyse = `SCHADENSBESCHREIBUNG: BMW X3 (F25) mit schwarzer Metallic-Lackierung. Deutlich sichtbare Delle und Lackschaden im hinteren linken Bereich, Kotflügel HL und Tür hinten links betroffen. Schaden deutet auf seitliche Kollision hin, mittlerer Schadensumfang.
+
+BAUTEILE:
+- Kotflügel HL: mittel
+- Tür hinten links: klein
+- Schweller links: klein
+
+HINWEISE: Farbabgleich bei Schwarz-Metallic erforderlich. Kotflügel HL Ausbeultechnik oder teilweise Erneuerung. Tür hinten links Kratzer im Griffbereich, Lackierung ausreichend.`;
+
+  const aiResult = document.getElementById('aiResult');
+  const aiText   = document.getElementById('aiText');
+  if (aiResult && aiText) {
+    aiResult.style.display = 'block';
+    aiText.value = demoAnalyse;
+  }
+  if (btn) { btn.disabled = false; btn.innerHTML = 'KI-Analyse starten'; }
+
+  autoselectFromAnalysis(demoAnalyse);
+  await sleep(600);
+
+  // Step 4: Sonderarbeit hinzufügen
+  toast('Demo: Sonderposition wird ergänzt…');
+  addSonder('Farbabgleich Nachbarpanele', 85);
+  await sleep(400);
+
+  updateKV();
+  toast('✓ Demo abgeschlossen — KV ist druckbereit!', true);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function typeInto(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = '';
+  el.focus();
+  for (let i = 0; i <= value.length; i++) {
+    el.value = value.slice(0, i);
+    updateKV();
+    await sleep(18);
+  }
+  el.blur();
+}
+
+function loadDemoImage() {
+  var imgUrl = 'https://raw.githubusercontent.com/uri2503/RC_Unfallkalkulation/main/demo-car.jpg';
+  var img = new Image();
+  img.crossOrigin = 'anonymous';
+  function pushDemoPhoto(dataUrl) {
+    uploadedPhotos = [{ base64: dataUrl.split(',')[1], mediaType: 'image/jpeg', previewUrl: dataUrl }];
+    renderFotoGrid();
+    updateFotoCount();
+    document.getElementById('btnAnalyse').style.display = 'block';
+  }
+  img.onload = function() {
+    var canvas = document.createElement('canvas');
+    var max = 900;
+    var w = img.width, h = img.height;
+    if (w > max || h > max) {
+      if (w > h) { h = Math.round(h * max / w); w = max; }
+      else       { w = Math.round(w * max / h); h = max; }
+    }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    pushDemoPhoto(canvas.toDataURL('image/jpeg', 0.82));
+  };
+  img.onerror = function() {
+    var canvas = document.createElement('canvas');
+    canvas.width = 800; canvas.height = 500;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#1a1a1a'; ctx.fillRect(0, 0, 800, 500);
+    ctx.fillStyle = '#333';    ctx.fillRect(60, 150, 680, 250);
+    var g = ctx.createRadialGradient(200, 320, 5, 200, 320, 80);
+    g.addColorStop(0, 'rgba(0,0,0,.9)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.ellipse(200, 320, 80, 60, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#555'; ctx.font = '16px monospace';
+    ctx.fillText('DEMO — BMW X3 Schaden hinten links', 60, 460);
+    pushDemoPhoto(canvas.toDataURL('image/jpeg', 0.85));
+  };
+  img.src = imgUrl;
+}
+
+
+</script>
+
+<!-- DEMO MODE -->
+<button class="demo-btn" onclick="showDemoModal()" id="demoBtn">
+  <span class="demo-dot"></span> DEMO STARTEN
+</button>
+
+<div class="demo-overlay" id="demoOverlay" style="display:none">
+  <div class="demo-modal">
+    <h2>DEMO MODUS</h2>
+    <p>Zeigt den kompletten Workflow in unter 90 Sekunden —<br>vom Schadensfoto zum fertigen Kostenvoranschlag.</p>
+    <div class="demo-steps">
+      <div class="demo-step"><div class="demo-step-nr">1</div><div class="demo-step-text">Kundendaten &amp; Fahrzeug werden automatisch vorausgefüllt</div></div>
+      <div class="demo-step"><div class="demo-step-nr">2</div><div class="demo-step-text">Schadensfoto eines BMW X3 wird geladen</div></div>
+      <div class="demo-step"><div class="demo-step-nr">3</div><div class="demo-step-text">KI-Analyse erkennt Bauteile &amp; Schadensgrad automatisch</div></div>
+      <div class="demo-step"><div class="demo-step-nr">4</div><div class="demo-step-text">Kostenvoranschlag RC-2026-DEMO erscheint live</div></div>
+    </div>
+    <button class="demo-start-btn" onclick="startDemo()">▶ Demo starten</button>
+    <button class="demo-cancel" onclick="hideDemoModal()">Abbrechen</button>
+  </div>
+</div>
+
+</body>
+</html>
