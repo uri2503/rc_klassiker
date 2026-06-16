@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klassiker Analyse · Riedel Classics</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap');
+
+  :root {
+    --bg:        #0d0d0d;
+    --surface:   #161616;
+    --surface2:  #1e1e1e;
+    --border:    #2a2a2a;
+    --red:       #c0392b;
+    --red-dim:   #8b1a10;
+    --gold:      #b8960c;
+    --gold-light:#d4af37;
+    --text:      #e8e4dc;
+    --muted:     #888;
+    --subtle:    #555;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-mark span { color: var(--red); font-weight: 700; font-size: 14px; }
+  .header-text h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .header-text p { color: var(--muted); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-actions { margin-left: auto; }
+  .btn-pdf {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 4px;
+    padding: 7px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: none;
+    transition: all 0.2s;
+  }
+  .btn-pdf:hover { border-color: var(--gold); color: var(--gold-light); }
+  .btn-pdf.visible { display: inline-block; }
+
+  /* ── MAIN ── */
+  .container { max-width: 860px; margin: 0 auto; padding: 28px 20px; }
+
+  /* ── INPUT PANEL ── */
+  .input-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+  .panel-label {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--red); font-weight: 600; margin-bottom: 16px;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 600px) {
+    .form-row, .form-row-2 { grid-template-columns: 1fr; }
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .field input, .field select, .field textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    padding: 9px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--red); }
+  .field select option { background: var(--surface2); }
+  .field textarea { resize: vertical; min-height: 70px; }
+
+  /* Multi-Foto */
+  .foto-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .foto-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+  @media (max-width: 500px) { .foto-grid { grid-template-columns: 1fr 1fr; } }
+  .foto-slot {
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+    min-height: 90px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .foto-slot:hover { border-color: var(--red); }
+  .foto-slot.has-foto { border-color: var(--subtle); border-style: solid; }
+  .foto-slot input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .foto-slot-icon { font-size: 20px; margin-bottom: 4px; }
+  .foto-slot-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .foto-slot-preview { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; display: none; }
+  .foto-slot-check { position: absolute; top: 5px; right: 7px; color: #4caf50; font-size: 13px; display: none; }
+
+  /* Button */
+  .btn-analyse {
+    width: 100%;
+    background: var(--red); color: #fff;
+    border: none; border-radius: 5px;
+    padding: 13px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.2s; margin-top: 4px;
+  }
+  .btn-analyse:hover { background: #a93226; }
+  .btn-analyse:disabled { background: var(--subtle); cursor: not-allowed; }
+
+  /* Status */
+  .status-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--gold-light);
+  }
+  .status-bar.active { display: flex; }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold-light);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Fehlerbox */
+  .error-box {
+    background: #1a0505;
+    border: 1px solid #5a1010;
+    border-left: 3px solid var(--red);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: #ff7a6e;
+    display: none;
+  }
+  .error-box.visible { display: block; }
+
+  /* ── DATENBLATT ── */
+  .datenblatt { display: none; }
+  .datenblatt.visible { display: block; }
+
+  .db-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--red);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .db-header-photo {
+    width: 120px; height: 80px;
+    object-fit: cover; border-radius: 4px;
+    flex-shrink: 0; display: none;
+    border: 1px solid var(--border);
+  }
+  .db-header-info { flex: 1; }
+  .db-fahrzeug-titel {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700;
+    line-height: 1.2; margin-bottom: 4px;
+  }
+  .db-baureihe { color: var(--muted); font-size: 12px; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .db-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; font-weight: 600; }
+  .badge-red { background: var(--red-dim); color: #ff7a6e; }
+  .badge-gold { background: #2a2200; color: var(--gold-light); }
+  .badge-gray { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+  /* Sektionen */
+  .db-section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+  .db-section-header {
+    background: var(--surface2);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .db-section-icon { font-size: 15px; }
+  .db-section-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); font-weight: 600; }
+  .db-section-body { padding: 16px 20px; }
+
+  /* Tabellen */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table tr { border-bottom: 1px solid var(--border); }
+  .data-table tr:last-child { border-bottom: none; }
+  .data-table td { padding: 8px 0; vertical-align: top; }
+  .data-table td:first-child { color: var(--muted); font-size: 11px; letter-spacing: 0.04em; width: 42%; padding-right: 12px; white-space: nowrap; }
+  .data-table td:last-child { font-size: 13px; font-weight: 500; }
+
+  /* Quartett */
+  .quartett-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 500px) { .quartett-grid { grid-template-columns: repeat(2, 1fr); } }
+  .q-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 10px 12px; }
+  .q-label { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .q-value { font-family: 'Courier Prime', monospace; font-size: 18px; font-weight: 700; color: var(--gold-light); line-height: 1.1; }
+  .q-unit { font-size: 10px; color: var(--muted); }
+
+  /* Marktpreise */
+  .markt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 500px) { .markt-grid { grid-template-columns: 1fr; } }
+  .markt-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 14px; }
+  .markt-card.highlight { border-color: var(--gold); }
+  .markt-label { font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .markt-value { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold-light); }
+  .markt-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* DACH Live Badge */
+  .live-badge {
+    display: inline-block;
+    background: #002200; color: #4caf50;
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 3px; font-weight: 700;
+    margin-left: 8px; vertical-align: middle;
+  }
+
+  .price-table { width: 100%; border-collapse: collapse; }
+  .price-table tr { border-bottom: 1px solid var(--border); }
+  .price-table tr:last-child { border-bottom: none; }
+  .price-table td { padding: 7px 0; font-size: 12px; vertical-align: middle; }
+  .price-table td:first-child { color: var(--muted); width: 30%; }
+  .price-table td:last-child { text-align: right; }
+  .note-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+  /* Motorvarianten */
+  .motor-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .motor-table th { text-align: left; padding: 6px 8px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 500; }
+  .motor-table td { padding: 8px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .motor-table tr:last-child td { border-bottom: none; }
+  .motor-table tr.current-model td { color: var(--gold-light); }
+  .motor-table tr.current-model td:first-child::before { content: "▶ "; color: var(--red); }
+
+  /* Verschleiß */
+  .wear-list { list-style: none; }
+  .wear-list li { display: flex; align-items: flex-start; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+  .wear-list li:last-child { border-bottom: none; }
+  .wear-rank { font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--red); font-weight: 700; flex-shrink: 0; width: 18px; }
+  .wear-name { flex: 1; font-size: 12px; }
+  .wear-cost { font-size: 11px; color: var(--gold-light); white-space: nowrap; text-align: right; }
+
+  /* Prognose */
+  .trend-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .trend-row:last-child { border-bottom: none; }
+  .trend-label { color: var(--muted); width: 140px; flex-shrink: 0; }
+  .trend-arrow { font-size: 14px; }
+  .up { color: #4caf50; }
+  .down { color: var(--red); }
+  .neutral { color: var(--muted); }
+
+  /* DACH Angebote */
+  .dach-angebote { margin-top: 16px; }
+  .dach-angebote-title { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .dach-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px; font-size: 12px; }
+  .dach-item:last-child { border-bottom: none; }
+  .dach-item-info { flex: 1; }
+  .dach-item-title { font-weight: 500; margin-bottom: 2px; }
+  .dach-item-sub { color: var(--muted); font-size: 11px; }
+  .dach-item-price { color: var(--gold-light); font-weight: 600; white-space: nowrap; }
+
+  /* Features */
+  .feature-list { list-style: none; }
+  .feature-list li { padding: 6px 0; font-size: 12px; display: flex; gap: 8px; align-items: flex-start; border-bottom: 1px solid var(--border); }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-icon { flex-shrink: 0; }
+
+  /* Fazit */
+  .fazit-box { background: #0f0700; border: 1px solid var(--gold); border-left: 3px solid var(--gold-light); border-radius: 5px; padding: 16px 18px; }
+  .fazit-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .fazit-text { font-family: 'Playfair Display', serif; font-size: 15px; line-height: 1.6; }
+
+  /* ── FREEMIUM ── */
+  .free-badge {
+    display: inline-block;
+    background: #002200; color: #4caf50;
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 3px; font-weight: 700; margin-left: 8px;
+  }
+  .premium-badge {
+    display: inline-block;
+    background: #2a2200; color: var(--gold-light);
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 3px; font-weight: 700; margin-left: 8px;
+  }
+  .paywall-section { position: relative; }
+  .paywall-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(13,13,13,0) 0%, rgba(13,13,13,0.92) 40%, rgba(13,13,13,0.98) 100%);
+    border-radius: 8px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    padding: 20px; text-align: center; z-index: 10;
+  }
+  .paywall-icon { font-size: 28px; margin-bottom: 8px; }
+  .paywall-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; margin-bottom: 4px;
+  }
+  .paywall-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  .btn-unlock {
+    background: var(--gold);
+    color: #000;
+    border: none; border-radius: 5px;
+    padding: 10px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .btn-unlock:hover { background: var(--gold-light); }
+  .paywall-hint { font-size: 10px; color: var(--subtle); margin-top: 8px; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 24px; color: var(--subtle); font-size: 11px; letter-spacing: 0.05em; border-top: 1px solid var(--border); margin-top: 32px; }
+  .footer span { color: var(--red); }
+
+  /* ── PDF PRINT ── */
+  @media print {
+    body { background: #fff; color: #111; font-size: 12px; }
+    .header { position: static; background: #fff; border-bottom: 2px solid #c0392b; }
+    .logo-mark { border-color: #c0392b; }
+    .logo-mark span { color: #c0392b; }
+    .input-panel, .status-bar, .error-box, .btn-pdf, .btn-analyse, .header-actions { display: none !important; }
+    .datenblatt { display: block !important; }
+    .db-section { background: #fff; border: 1px solid #ddd; break-inside: avoid; margin-bottom: 10px; }
+    .db-section-header { background: #f5f5f5; }
+    .db-section-title { color: #c0392b; }
+    .db-header { background: #fff; border: 1px solid #ddd; border-top: 3px solid #c0392b; }
+    .q-card { background: #f9f9f9; border: 1px solid #ddd; }
+    .q-value { color: #8a6d00; }
+    .markt-card { background: #f9f9f9; border: 1px solid #ddd; }
+    .markt-card.highlight { border-color: #b8960c; }
+    .markt-value { color: #8a6d00; font-size: 16px; }
+    .markt-label { color: #666; font-size: 9px; }
+    .markt-sub { color: #888; font-size: 10px; }
+    .markt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .wear-cost { color: #8a6d00; }
+    .fazit-box { background: #fffdf0; border-color: #b8960c; }
+    .fazit-label { color: #b8960c; }
+    .up { color: #2e7d32; }
+    .down { color: #c0392b; }
+    .data-table td:first-child, .trend-label, .dach-item-sub, .markt-sub { color: #666; }
+    .badge-red { background: #fde; color: #c0392b; }
+    .badge-gold { background: #fef9e7; color: #8a6d00; }
+    .badge-gray { background: #f5f5f5; color: #666; border-color: #ddd; }
+    .live-badge { background: #e8f5e9; color: #2e7d32; }
+    .footer { color: #999; }
+    .footer span { color: #c0392b; }
+    .db-header-photo { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo-mark"><span>RC</span></div>
+  <div class="header-text">
+    <h1>Klassiker Analyse</h1>
+    <p>Riedel Classics · Old- &amp; Youngtimer Bewertung</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn-pdf" id="btnPdf" onclick="exportPDF()" style="display:none;">⬇ PDF</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- INPUT -->
+  <div class="input-panel">
+    <div class="panel-label">Fahrzeug eingeben</div>
+    <div class="form-row">
+      <div class="field"><label>Hersteller *</label><input type="text" id="marke" placeholder="z.B. Mercedes-Benz" /></div>
+      <div class="field"><label>Modell *</label><input type="text" id="modell" placeholder="z.B. 250 SE Cabriolet" /></div>
+      <div class="field"><label>Baureihe</label><input type="text" id="baureihe" placeholder="z.B. W111" /></div>
+    </div>
+    <div class="form-row-2">
+      <div class="field"><label>Baujahr *</label><input type="text" id="baujahr" placeholder="z.B. 1966" /></div>
+      <div class="field">
+        <label>Zustandsnote</label>
+        <select id="zustand">
+          <option value="">— wählen —</option>
+          <option value="1">Note 1 — Concours / Makellos</option>
+          <option value="1-">Note 1– — Vollrestauriert</option>
+          <option value="2">Note 2 — Sehr gut</option>
+          <option value="3">Note 3 — Guter Gebrauchszustand</option>
+          <option value="4">Note 4 — Restaurierungsbedürftig</option>
+          <option value="5">Note 5 — Schlechtester Zustand</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row-2">
+      <div class="field"><label>Farbe</label><input type="text" id="farbe" placeholder="z.B. Weiß" /></div>
+      <div class="field"><label>Kilometerstand</label><input type="text" id="km" placeholder="z.B. 85.000 km" /></div>
+    </div>
+    <div class="field" style="margin-bottom:12px;">
+      <label>Besonderheiten / Anmerkungen</label>
+      <textarea id="anmerkung" placeholder="z.B. Vollrestauriert 2023, orig. Ausstattung, H-Kennzeichen, Serviceheft…"></textarea>
+    </div>
+    <div class="foto-label">Fotos · optional · unterstützen die KI-Analyse</div>
+    <div class="foto-grid">
+      <div class="foto-slot" id="slot0">
+        <input type="file" accept="image/*" onchange="fotoLoad(this,0)" />
+        <span class="foto-slot-check" id="check0">✓</span>
+        <img class="foto-slot-preview" id="prev0" />
+        <div class="foto-slot-icon">🚗</div>
+        <div class="foto-slot-label">Außenansicht</div>
+      </div>
+      <div class="foto-slot" id="slot1">
+        <input type="file" accept="image/*" onchange="fotoLoad(this,1)" />
+        <span class="foto-slot-check" id="check1">✓</span>
+        <img class="foto-slot-preview" id="prev1" />
+        <div class="foto-slot-icon">🪑</div>
+        <div class="foto-slot-label">Innenraum</div>
+      </div>
+      <div class="foto-slot" id="slot2">
+        <input type="file" accept="image/*" onchange="fotoLoad(this,2)" />
+        <span class="foto-slot-check" id="check2">✓</span>
+        <img class="foto-slot-preview" id="prev2" />
+        <div class="foto-slot-icon">🔩</div>
+        <div class="foto-slot-label">Motorraum</div>
+      </div>
+      <div class="foto-slot" id="slot3">
+        <input type="file" accept="image/*" onchange="fotoLoad(this,3)" />
+        <span class="foto-slot-check" id="check3">✓</span>
+        <img class="foto-slot-preview" id="prev3" />
+        <div class="foto-slot-icon">⬇</div>
+        <div class="foto-slot-label">Unterboden</div>
+      </div>
+    </div>
+    <button class="btn-analyse" id="analyseBtn" onclick="startAnalyse()">Klassiker analysieren →</button>
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-bar" id="statusBar">
+    <div class="spinner"></div>
+    <span id="statusText">KI analysiert Fahrzeugdaten…</span>
+  </div>
+
+  <!-- FEHLER -->
+  <div class="error-box" id="errorBox"></div>
+
+  <!-- DATENBLATT -->
+  <div class="datenblatt" id="datenblatt">
+
+    <div class="db-header" id="dbHeader">
+      <div id="dbFotoGalerie" style="display:none;flex-shrink:0;">
+        <div id="dbFotoGrid" style="display:grid;grid-template-columns:repeat(2,80px);gap:6px;"></div>
+      </div>
+      <div class="db-header-info">
+        <div class="db-fahrzeug-titel" id="dbTitel">—</div>
+        <div class="db-baureihe" id="dbBaureihe">—</div>
+        <div class="db-badges" id="dbBadges"></div>
+      </div>
+    </div>
+
+    <!-- Quartett – KOSTENLOS -->
+    <div class="db-section">
+      <div class="db-section-header"><span class="db-section-icon">🃏</span><span class="db-section-title">Technische Daten</span><span class="free-badge">Kostenlos</span></div>
+      <div class="db-section-body"><div class="quartett-grid" id="quartettGrid"></div></div>
+    </div>
+
+    <!-- Identifikation – KOSTENLOS -->
+    <div class="db-section">
+      <div class="db-section-header"><span class="db-section-icon">📋</span><span class="db-section-title">Identifikation &amp; Produktion</span><span class="free-badge">Kostenlos</span></div>
+      <div class="db-section-body"><table class="data-table" id="identTable"></table></div>
+    </div>
+
+    <!-- Motorvarianten – KOSTENLOS -->
+    <div class="db-section">
+      <div class="db-section-header"><span class="db-section-icon">⚙️</span><span class="db-section-title">Motorvarianten der Baureihe</span><span class="free-badge">Kostenlos</span></div>
+      <div class="db-section-body" style="overflow-x:auto;">
+        <table class="motor-table" id="motorTable">
+          <thead><tr><th>Modell</th><th>Motor</th><th>PS</th><th>Baujahre</th><th>Stück</th></tr></thead>
+          <tbody id="motorBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Marktwert – PREMIUM mit Paywall -->
+    <div class="db-section paywall-section" id="sectionMarkt">
+      <div class="db-section-header">
+        <span class="db-section-icon">💶</span>
+        <span class="db-section-title">Marktwert &amp; aktuelle Preise</span>
+        <span class="live-badge" id="liveBadge" style="display:none;">Live DACH</span>
+        <span class="premium-badge">Wertdossier</span>
+      </div>
+      <div class="db-section-body">
+        <div class="markt-grid" id="marktGrid"></div>
+        <div style="margin-top:14px;">
+          <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Preisspanne nach Zustandsnote</div>
+          <table class="price-table" id="priceTable"></table>
+        </div>
+        <div class="dach-angebote" id="dachAngebote" style="display:none;">
+          <div class="dach-angebote-title">Aktuelle Angebote DACH <span class="live-badge">Live</span></div>
+          <div id="dachListe"></div>
+        </div>
+      </div>
+      <div class="paywall-overlay" id="overlayMarkt">
+        <div class="paywall-icon">🔒</div>
+        <div class="paywall-title">Wertdossier freischalten</div>
+        <div class="paywall-sub">Marktwert, Live DACH-Preise, Prognose,<br>Schwachstellen &amp; Experteneinschätzung</div>
+        <button class="btn-unlock" onclick="unlockPremium()">Für € 4,99 freischalten</button>
+        <div class="paywall-hint">Einmalzahlung · PDF inklusive · sofort verfügbar</div>
+      </div>
+    </div>
+
+    <!-- Prognose – PREMIUM (nach Unlock sichtbar) -->
+    <div class="db-section premium-content" id="sectionPrognose" style="display:none;">
+      <div class="db-section-header"><span class="db-section-icon">📈</span><span class="db-section-title">Marktprognose &amp; Wertentwicklung</span><span class="premium-badge">Wertdossier</span></div>
+      <div class="db-section-body" id="prognoseBody"></div>
+    </div>
+
+    <!-- Verschleiß – PREMIUM -->
+    <div class="db-section premium-content" id="sectionVerschleiss" style="display:none;">
+      <div class="db-section-header"><span class="db-section-icon">🔧</span><span class="db-section-title">Top 10 Schwachstellen &amp; Kosten</span><span class="premium-badge">Wertdossier</span></div>
+      <div class="db-section-body"><ul class="wear-list" id="wearList"></ul></div>
+    </div>
+
+    <!-- Features – PREMIUM -->
+    <div class="db-section premium-content" id="sectionFeatures" style="display:none;">
+      <div class="db-section-header"><span class="db-section-icon">⭐</span><span class="db-section-title">Wertfaktoren &amp; Besonderheiten</span><span class="premium-badge">Wertdossier</span></div>
+      <div class="db-section-body"><ul class="feature-list" id="featureList"></ul></div>
+    </div>
+
+    <!-- Fazit – PREMIUM -->
+    <div class="db-section premium-content" id="sectionFazit" style="display:none;">
+      <div class="db-section-header"><span class="db-section-icon">🎯</span><span class="db-section-title">Experteneinschätzung</span><span class="premium-badge">Wertdossier</span></div>
+      <div class="db-section-body">
+        <div class="fazit-box">
+          <div class="fazit-label">Riedel Classics · Bewertungsfazit</div>
+          <div class="fazit-text" id="fazitText">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PDF-Teaser nach Fazit -->
+    <div class="db-section premium-content" id="sectionPdfTeaser" style="display:none;">
+      <div class="db-section-body" style="text-align:center;padding:20px;">
+        <div style="font-size:22px;margin-bottom:8px;">📄</div>
+        <div style="font-family:'Playfair Display',serif;font-size:15px;margin-bottom:6px;">Wertdossier als PDF</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Professionelles Gutachten-Format · ideal für Versicherung &amp; Verkauf</div>
+        <button class="btn-unlock" onclick="exportPDF()" style="background:var(--red);color:#fff;">⬇ PDF herunterladen</button>
+      </div>
+    </div>
+
+  </div><!-- /datenblatt -->
+</div><!-- /container -->
+
+<footer class="footer">
+  Riedel Classics · <span>...mit Liebe zum Detail</span> · Klassiker Analyse V5
+</footer>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────
+var SUPABASE_URL      = 'https://ysqzdqazcgyuzdorauiq.supabase.co';
+var SUPABASE_ANON_KEY = 'DEIN_SUPABASE_ANON_KEY'; // <── Publishable Key eintragen
+var PROXY_URL         = SUPABASE_URL + '/functions/v1/claude-proxy';
+// ────────────────────────────────────────────────────────
+
+// Fotos: Array mit {base64, mime, label} für bis zu 4 Slots
+var fotos = [null, null, null, null];
+var fotoLabels = ['Außenansicht', 'Innenraum', 'Motorraum', 'Unterboden'];
+
+function fotoLoad(input, idx) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    // Bild auf max. 800px verkleinern und als JPEG komprimieren
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var MAX = 800;
+      var w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
+      else       { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      fotos[idx] = { base64: dataUrl.split(',')[1], mime: 'image/jpeg' };
+      // UI aktualisieren
+      var prev  = document.getElementById('prev' + idx);
+      var check = document.getElementById('check' + idx);
+      var slot  = document.getElementById('slot' + idx);
+      prev.src = dataUrl;
+      prev.style.display = 'block';
+      check.style.display = 'block';
+      slot.classList.add('has-foto');
+      var icon = slot.querySelector('.foto-slot-icon');
+      var lbl  = slot.querySelector('.foto-slot-label');
+      if (icon) icon.style.display = 'none';
+      if (lbl)  lbl.style.display  = 'none';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function setStatus(text) {
+  document.getElementById('statusText').textContent = text;
+  document.getElementById('statusBar').classList.add('active');
+}
+function hideStatus() { document.getElementById('statusBar').classList.remove('active'); }
+function showError(msg) {
+  var el = document.getElementById('errorBox');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+function hideError() { document.getElementById('errorBox').classList.remove('visible'); }
+
+function callProxy(payload) {
+  return fetch(PROXY_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+    },
+    body: JSON.stringify(payload)
+  }).then(function(r) {
+    if (!r.ok) return r.text().then(function(t) { throw new Error('Proxy ' + r.status + ': ' + t); });
+    return r.json();
+  });
+}
+
+// Robuster JSON-Extraktor mit Auto-Repair bei truncated responses
+function extractJSON(raw) {
+  var start = raw.indexOf('{');
+  if (start === -1) throw new Error('Kein JSON im Ergebnis gefunden');
+
+  // Versuch 1: sauberes JSON
+  var end = raw.lastIndexOf('}');
+  if (end > start) {
+    try { return JSON.parse(raw.substring(start, end + 1)); } catch(e1) {}
+  }
+
+  // Versuch 2: JSON wurde abgeschnitten — fehlende Klammern ergänzen
+  var partial = raw.substring(start);
+  var opens   = (partial.match(/\{/g) || []).length;
+  var closes  = (partial.match(/\}/g) || []).length;
+  var missing = opens - closes;
+  partial = partial.replace(/,\s*$/, '').replace(/:\s*"[^"]*$/, ':"—"');
+  for (var i = 0; i < missing; i++) partial += '}';
+  try { return JSON.parse(partial); } catch(e2) {
+    throw new Error('JSON Parse error: ' + e2.message);
+  }
+}
+
+function startAnalyse() {
+  var marke   = document.getElementById('marke').value.trim();
+  var modell  = document.getElementById('modell').value.trim();
+  var baujahr = document.getElementById('baujahr').value.trim();
+  if (!marke || !modell || !baujahr) { alert('Bitte Hersteller, Modell und Baujahr eingeben.'); return; }
+
+  var btn = document.getElementById('analyseBtn');
+  btn.disabled = true;
+  hideError();
+  document.getElementById('datenblatt').classList.remove('visible');
+  document.getElementById('btnPdf').style.display = 'none';
+  // Paywall zurücksetzen
+  document.getElementById('overlayMarkt').style.display = 'flex';
+  var premiumSections = document.querySelectorAll('.premium-content');
+  for (var i = 0; i < premiumSections.length; i++) { premiumSections[i].style.display = 'none'; }
+
+  var baureihe  = document.getElementById('baureihe').value.trim();
+  var zustand   = document.getElementById('zustand').value;
+  var farbe     = document.getElementById('farbe').value.trim();
+  var km        = document.getElementById('km').value.trim();
+  var anmerkung = document.getElementById('anmerkung').value.trim();
+
+  var fahrzeugInfo = marke + ' ' + modell
+    + (baureihe  ? ' (' + baureihe + ')'       : '')
+    + ', Baujahr ' + baujahr
+    + (zustand   ? ', Zustand Note ' + zustand  : '')
+    + (farbe     ? ', Farbe: ' + farbe          : '')
+    + (km        ? ', KM-Stand: ' + km          : '')
+    + (anmerkung ? ', Besonderheiten: ' + anmerkung : '');
+
+  // Zähle hochgeladene Fotos
+  var aktiveFotos = fotos.filter(function(f) { return f !== null; });
+
+  setStatus('KI erstellt Fahrzeugdaten' + (aktiveFotos.length > 0 ? ' (' + aktiveFotos.length + ' Foto(s))' : '') + '…');
+
+  var systemPrompt = 'Du bist ein präziser Oldtimer- und Youngtimer-Experte mit tiefem Wissen über den DACH-Markt. '
+    + 'Du erstellst strukturierte Fahrzeug-Datenblätter im JSON-Format für Restaurierungsbetriebe und Händler. '
+    + 'Antworte NUR mit validem JSON, kein Markdown, keine Erklärungen davor oder danach. '
+    + 'Alle Texte auf Deutsch. Zahlen immer mit deutschem Tausenderpunkt (z.B. 1.500).';
+
+  // ── CALL 1: Stammdaten, Technik, Markt, Prognose ─────
+  var prompt1 = 'Fahrzeugdaten für: ' + fahrzeugInfo + '\n\n'
+    + 'NUR dieses JSON, kein Markdown:\n'
+    + '{"titel":"...","baureihe_label":"...",'
+    + '"badges":["..."],'
+    + '"quartett":['
+    +   '{"label":"Hubraum","value":"...","unit":"cm³"},'
+    +   '{"label":"Leistung","value":"...","unit":"PS"},'
+    +   '{"label":"Drehmoment","value":"...","unit":"Nm"},'
+    +   '{"label":"Vmax","value":"...","unit":"km/h"},'
+    +   '{"label":"0–100","value":"...","unit":"sec"},'
+    +   '{"label":"Verbrauch","value":"...","unit":"L/100km"}'
+    + '],'
+    + '"identifikation":['
+    +   '{"label":"Karosserieform","value":"..."},'
+    +   '{"label":"Produktionszeitraum","value":"..."},'
+    +   '{"label":"Gesamtstückzahl Baureihe","value":"..."},'
+    +   '{"label":"Stückzahl dieses Modells","value":"..."},'
+    +   '{"label":"Seltenheitsgrad","value":"..."},'
+    +   '{"label":"Motor","value":"..."},'
+    +   '{"label":"Getriebe","value":"..."},'
+    +   '{"label":"Antrieb","value":"..."},'
+    +   '{"label":"Leergewicht","value":"..."},'
+    +   '{"label":"Maße L/B/H","value":"..."}'
+    + '],'
+    + '"motorvarianten":[{"modell":"...","motor":"...","ps":"...","baujahre":"...","stueck":"...","aktuell":false}],'
+    + '"markt":{"bewertungswert":"...","marktdurchschnitt":"...","angebote_dach":"...","hinweis":"..."},'
+    + '"preise":['
+    +   '{"note":"Note 1","beschreibung":"Concours","range":"...","farbe":"#d4af37"},'
+    +   '{"note":"Note 1–","beschreibung":"Vollrestauriert","range":"...","farbe":"#b8960c"},'
+    +   '{"note":"Note 2","beschreibung":"Sehr gut","range":"...","farbe":"#888"},'
+    +   '{"note":"Note 3","beschreibung":"Gebrauchszustand","range":"...","farbe":"#666"},'
+    +   '{"note":"Note 4–5","beschreibung":"Restaurierungsobjekt","range":"...","farbe":"#444"}'
+    + '],'
+    + '"prognose":['
+    +   '{"label":"Trend 3 Jahre","wert":"...","richtung":"up"},'
+    +   '{"label":"Nachfrage DACH","wert":"...","richtung":"up"},'
+    +   '{"label":"Ersatzteile","wert":"...","richtung":"neutral"},'
+    +   '{"label":"H-Kennzeichen","wert":"...","richtung":"up"},'
+    +   '{"label":"Langfristprognose","wert":"...","richtung":"up"}'
+    + '],'
+    + '"prognose_text":"2–3 Sätze."'
+    + '}';
+
+  // ── CALL 2: Verschleiß, Features, Fazit ───────────────
+  var prompt2 = 'Fahrzeugdaten für: ' + fahrzeugInfo + '\n\n'
+    + 'NUR dieses JSON, kein Markdown:\n'
+    + '{"verschleiss":['
+    +   '{"nr":1,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":2,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":3,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":4,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":5,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":6,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":7,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":8,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":9,"name":"...","kosten":"€ X.000 – Y.000"},'
+    +   '{"nr":10,"name":"...","kosten":"€ X.000 – Y.000"}'
+    + '],'
+    + '"features":['
+    +   '{"icon":"✅","text":"..."},'
+    +   '{"icon":"✅","text":"..."},'
+    +   '{"icon":"✅","text":"..."},'
+    +   '{"icon":"⚠️","text":"..."},'
+    +   '{"icon":"⚠️","text":"..."}'
+    + '],'
+    + '"fazit":"2–3 Sätze Experteneinschätzung zu Marktwert, Zustand und Kaufempfehlung."'
+    + '}';
+
+  // Fotos nur in Call 1
+  var messages1 = [];
+  fotos.forEach(function(f, idx) {
+    if (!f) return;
+    messages1.push({
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: f.mime, data: f.base64 } },
+        { type: 'text', text: 'Foto ' + (idx+1) + ': ' + fotoLabels[idx] + ' — Zustand, Besonderheiten, sichtbare Mängel.' }
+      ]
+    });
+    messages1.push({ role: 'assistant', content: 'Foto ' + (idx+1) + ' analysiert.' });
+  });
+  messages1.push({ role: 'user', content: prompt1 });
+
+  // Beide Calls parallel + DACH-Suche
+  Promise.all([
+    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2500, system: systemPrompt, messages: messages1 }),
+    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2000, system: systemPrompt, messages: [{ role: 'user', content: prompt2 }] })
+  ])
+  .then(function(results) {
+    var raw1 = results[0].content ? results[0].content.map(function(i){return i.text||'';}).join('') : '';
+    var raw2 = results[1].content ? results[1].content.map(function(i){return i.text||'';}).join('') : '';
+    if (!raw1) throw new Error('Leere Antwort Call 1: ' + JSON.stringify(results[0]).substring(0,200));
+    var d1 = extractJSON(raw1);
+    var d2 = raw2 ? extractJSON(raw2) : {};
+    // Zusammenführen
+    var d = Object.assign({}, d1, d2);
+
+    setStatus('Aktuelle DACH-Marktpreise werden abgerufen…');
+    return searchDACH(marke, modell, baureihe, baujahr).then(function(dachData) {
+      return { ki: d, dach: dachData };
+    });
+  })
+  .then(function(result) {
+    renderDatenblatt(result.ki, result.dach, marke, modell, baureihe, baujahr, zustand);
+    hideStatus();
+    btn.disabled = false;
+    // PDF-Button nur wenn bereits freigeschaltet
+    if (premiumFreigeschaltet) document.getElementById('btnPdf').style.display = 'inline-block';
+    window.scrollTo({ top: document.getElementById('datenblatt').offsetTop - 80, behavior: 'smooth' });
+  })
+  .catch(function(err) {
+    console.error(err);
+    hideStatus();
+    showError('Fehler: ' + err.message + ' — Supabase Key oder Proxy prüfen.');
+    btn.disabled = false;
+  });
+}
+
+function searchDACH(marke, modell, baureihe, baujahr) {
+  var suchbegriff = marke + ' ' + modell + (baureihe ? ' ' + baureihe : '') + ' ' + baujahr + ' kaufen Oldtimer Preis DACH';
+  return callProxy({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 1500,
+    system: 'Du bist Oldtimer-Marktexperte. Suche aktuelle Angebote und Preise im DACH-Raum. Antworte NUR mit validem JSON ohne Markdown.',
+    messages: [{ role: 'user', content:
+      'Aktuelle Marktpreise und Angebote für: ' + suchbegriff + '\n\n'
+      + 'JSON-Schema:\n'
+      + '{"gefunden":true,"anzahl_angebote":"ca. X","preisrange":"€ X – Y","durchschnitt":"€ X",'
+      + '"angebote":[{"titel":"...","preis":"€ X.000","km":"X.000 km","jahr":"YYYY","quelle":"mobile.de"}],'
+      + '"markt_kommentar":"1 Satz Marktlage"}'
+    }],
+    tools: [{ type: 'web_search_20250305', name: 'web_search' }]
+  })
+  .then(function(data) {
+    var raw = data.content.map(function(i) { return i.type === 'text' ? i.text : ''; }).join('');
+    if (!raw.trim()) return null;
+    return extractJSON(raw);
+  })
+  .catch(function() { return null; });
+}
+
+function renderDatenblatt(d, dach, marke, modell, baureihe, baujahr, zustand) {
+  document.getElementById('dbTitel').textContent    = d.titel || (marke + ' ' + modell);
+  document.getElementById('dbBaureihe').textContent = d.baureihe_label || (baureihe + ' · Baujahr ' + baujahr);
+
+  // Foto-Galerie im Header
+  var aktiveFotos = fotos.filter(function(f) { return f !== null; });
+  if (aktiveFotos.length > 0) {
+    var grid = document.getElementById('dbFotoGrid');
+    grid.innerHTML = '';
+    fotos.forEach(function(f, idx) {
+      if (!f) return;
+      grid.innerHTML += '<div style="position:relative;">'
+        + '<img src="data:' + f.mime + ';base64,' + f.base64 + '" '
+        + 'style="width:80px;height:54px;object-fit:cover;border-radius:4px;border:1px solid var(--border);" />'
+        + '<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);font-size:8px;'
+        + 'text-align:center;padding:1px;letter-spacing:0.04em;color:#aaa;border-radius:0 0 4px 4px;">'
+        + fotoLabels[idx] + '</div></div>';
+    });
+    document.getElementById('dbFotoGalerie').style.display = 'block';
+  }
+
+  // Badges
+  var badgeEl = document.getElementById('dbBadges');
+  badgeEl.innerHTML = '';
+  (d.badges || []).forEach(function(b, i) {
+    var cls = i === 0 ? 'badge badge-red' : i === 1 ? 'badge badge-gold' : 'badge badge-gray';
+    badgeEl.innerHTML += '<span class="' + cls + '">' + b + '</span>';
+  });
+  if (zustand) badgeEl.innerHTML += '<span class="badge badge-gray">Note ' + zustand + '</span>';
+  if (aktiveFotos.length > 0) badgeEl.innerHTML += '<span class="badge badge-gray">' + aktiveFotos.length + ' Foto(s)</span>';
+
+  // Quartett
+  var qg = document.getElementById('quartettGrid');
+  qg.innerHTML = '';
+  (d.quartett || []).forEach(function(q) {
+    qg.innerHTML += '<div class="q-card"><div class="q-label">' + q.label + '</div>'
+      + '<div class="q-value">' + q.value + ' <span class="q-unit">' + q.unit + '</span></div></div>';
+  });
+
+  // Identifikation
+  var it = document.getElementById('identTable');
+  it.innerHTML = '';
+  (d.identifikation || []).forEach(function(row) {
+    it.innerHTML += '<tr><td>' + row.label + '</td><td>' + row.value + '</td></tr>';
+  });
+
+  // Motorvarianten
+  var mb = document.getElementById('motorBody');
+  mb.innerHTML = '';
+  (d.motorvarianten || []).forEach(function(m) {
+    var cls = m.aktuell ? 'current-model' : '';
+    mb.innerHTML += '<tr class="' + cls + '"><td>' + m.modell + '</td><td>' + m.motor + '</td>'
+      + '<td>' + m.ps + '</td><td>' + m.baujahre + '</td><td>' + m.stueck + '</td></tr>';
+  });
+
+  // Markt
+  var mg = document.getElementById('marktGrid');
+  var bewertung = d.markt ? d.markt.bewertungswert   : '—';
+  var hinweis   = d.markt ? d.markt.hinweis           : '';
+  var schnitt   = (dach && dach.durchschnitt)     ? dach.durchschnitt     : (d.markt ? d.markt.marktdurchschnitt : '—');
+  var anzahl    = (dach && dach.anzahl_angebote)  ? dach.anzahl_angebote  : (d.markt ? d.markt.angebote_dach     : '—');
+  mg.innerHTML = '<div class="markt-card highlight"><div class="markt-label">Bewertung dieses Fahrzeugs</div>'
+    + '<div class="markt-value">' + bewertung + '</div><div class="markt-sub">' + hinweis + '</div></div>'
+    + '<div class="markt-card"><div class="markt-label">Marktdurchschnitt DACH</div>'
+    + '<div class="markt-value">' + schnitt + '</div><div class="markt-sub">Aktuelle Angebote: ' + anzahl + '</div></div>';
+  if (dach && dach.gefunden) document.getElementById('liveBadge').style.display = 'inline-block';
+
+  // Preistabelle
+  var pt = document.getElementById('priceTable');
+  pt.innerHTML = '';
+  (d.preise || []).forEach(function(p) {
+    pt.innerHTML += '<tr><td><span class="note-dot" style="background:' + p.farbe + '"></span>' + p.note + '</td>'
+      + '<td>' + p.beschreibung + '</td><td>' + p.range + '</td></tr>';
+  });
+
+  // DACH Angebote
+  if (dach && dach.angebote && dach.angebote.length > 0) {
+    var dl = document.getElementById('dachListe');
+    dl.innerHTML = '';
+    dach.angebote.forEach(function(a) {
+      dl.innerHTML += '<div class="dach-item"><div class="dach-item-info">'
+        + '<div class="dach-item-title">' + a.titel + '</div>'
+        + '<div class="dach-item-sub">' + (a.jahr||'') + (a.km?' · '+a.km:'') + (a.quelle?' · '+a.quelle:'') + '</div>'
+        + '</div><div class="dach-item-price">' + a.preis + '</div></div>';
+    });
+    if (dach.markt_kommentar) dl.innerHTML += '<p style="margin-top:10px;font-size:11px;color:var(--muted);">' + dach.markt_kommentar + '</p>';
+    document.getElementById('dachAngebote').style.display = 'block';
+  }
+
+  // Prognose
+  var pb = document.getElementById('prognoseBody');
+  var html = '';
+  (d.prognose || []).forEach(function(t) {
+    var arrow = t.richtung === 'up' ? '↗' : t.richtung === 'down' ? '↘' : '→';
+    var cls   = t.richtung === 'up' ? 'up' : t.richtung === 'down' ? 'down' : 'neutral';
+    html += '<div class="trend-row"><span class="trend-label">' + t.label + '</span>'
+      + '<span class="trend-arrow ' + cls + '">' + arrow + '</span><span>' + t.wert + '</span></div>';
+  });
+  pb.innerHTML = html;
+  if (d.prognose_text) pb.innerHTML += '<p style="margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6;">' + d.prognose_text + '</p>';
+
+  // Verschleiß
+  var wl = document.getElementById('wearList');
+  wl.innerHTML = '';
+  (d.verschleiss || []).forEach(function(v) {
+    wl.innerHTML += '<li><span class="wear-rank">' + String(v.nr).padStart(2,'0') + '</span>'
+      + '<span class="wear-name">' + v.name + '</span>'
+      + '<span class="wear-cost">' + v.kosten + '</span></li>';
+  });
+
+  // Features
+  var fl = document.getElementById('featureList');
+  fl.innerHTML = '';
+  (d.features || []).forEach(function(f) {
+    fl.innerHTML += '<li><span class="feature-icon">' + f.icon + '</span><span>' + f.text + '</span></li>';
+  });
+
+  document.getElementById('fazitText').textContent = d.fazit || '—';
+  document.getElementById('datenblatt').classList.add('visible');
+}
+
+var premiumFreigeschaltet = false;
+
+function unlockPremium() {
+  // Später: Stripe/PayPal Checkout hier
+  // Jetzt: direkt freischalten (Demo-Modus)
+  premiumFreigeschaltet = true;
+  document.getElementById('overlayMarkt').style.display = 'none';
+  var premiumSections = document.querySelectorAll('.premium-content');
+  for (var i = 0; i < premiumSections.length; i++) {
+    premiumSections[i].style.display = 'block';
+  }
+  document.getElementById('btnPdf').style.display = 'inline-block';
+  window.scrollTo({ top: document.getElementById('sectionPrognose').offsetTop - 80, behavior: 'smooth' });
+}
+
+function exportPDF() { window.print(); }
+</script>
+</body>
+</html>
