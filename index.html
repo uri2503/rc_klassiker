@@ -1,1122 +1,1142 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Klassiker Analyse · Riedel Classics</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>AutoGuide AI</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap');
-
-  :root {
-    --bg:        #0d0d0d;
-    --surface:   #161616;
-    --surface2:  #1e1e1e;
-    --border:    #2a2a2a;
-    --red:       #c0392b;
-    --red-dim:   #8b1a10;
-    --gold:      #b8960c;
-    --gold-light:#d4af37;
-    --text:      #e8e4dc;
-    --muted:     #888;
-    --subtle:    #555;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  /* ── HEADER ── */
-  .header {
-    border-bottom: 1px solid var(--border);
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: var(--surface);
-    position: sticky; top: 0; z-index: 100;
-  }
-  .logo-mark {
-    width: 36px; height: 36px;
-    border: 2px solid var(--red);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .logo-mark span { color: var(--red); font-weight: 700; font-size: 14px; }
-  .header-text h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px; font-weight: 600; letter-spacing: 0.02em;
-  }
-  .header-text p { color: var(--muted); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
-  .header-actions { margin-left: auto; }
-  .btn-pdf {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    border-radius: 4px;
-    padding: 7px 14px;
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    cursor: pointer;
-    display: none;
-    transition: all 0.2s;
-  }
-  .btn-pdf:hover { border-color: var(--gold); color: var(--gold-light); }
-  .btn-pdf.visible { display: inline-block; }
-
-  /* ── MAIN ── */
-  .container { max-width: 860px; margin: 0 auto; padding: 28px 20px; }
-
-  /* ── INPUT PANEL ── */
-  .input-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 28px;
-  }
-  .panel-label {
-    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--red); font-weight: 600; margin-bottom: 16px;
-  }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-  @media (max-width: 600px) {
-    .form-row, .form-row-2 { grid-template-columns: 1fr; }
-  }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-  .field input, .field select, .field textarea {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text);
-    padding: 9px 12px;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--red); }
-  .field select option { background: var(--surface2); }
-  .field textarea { resize: vertical; min-height: 70px; }
-
-  /* Multi-Foto */
-  .foto-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .foto-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
-  @media (max-width: 500px) { .foto-grid { grid-template-columns: 1fr 1fr; } }
-  .foto-slot {
-    border: 1px dashed var(--border);
-    border-radius: 6px;
-    padding: 12px 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    position: relative;
-    min-height: 90px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-  }
-  .foto-slot:hover { border-color: var(--red); }
-  .foto-slot.has-foto { border-color: var(--subtle); border-style: solid; }
-  .foto-slot input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  .foto-slot-icon { font-size: 20px; margin-bottom: 4px; }
-  .foto-slot-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-  .foto-slot-preview { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; display: none; }
-  .foto-carousel { position: relative; width: 100%; }
-  .foto-nav {
-    position: absolute; bottom: 4px; left: 0; right: 0;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    background: rgba(0,0,0,0.55); border-radius: 0 0 4px 4px; padding: 2px 0;
-  }
-  .foto-nav button {
-    background: none; border: none; color: #fff;
-    font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1;
-  }
-  .foto-nav span { font-size: 10px; color: #ddd; min-width: 28px; text-align: center; }
-
-  /* Button */
-  .btn-analyse {
-    width: 100%;
-    background: var(--red); color: #fff;
-    border: none; border-radius: 5px;
-    padding: 13px 24px;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px; font-weight: 600;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    cursor: pointer; transition: background 0.2s; margin-top: 4px;
-  }
-  .btn-analyse:hover { background: #a93226; }
-  .btn-analyse:disabled { background: var(--subtle); cursor: not-allowed; }
-
-  /* Status */
-  .status-bar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--gold);
-    border-radius: 4px;
-    padding: 12px 16px;
-    margin-bottom: 24px;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    color: var(--gold-light);
-  }
-  .status-bar.active { display: flex; }
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid var(--border);
-    border-top-color: var(--gold-light);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    flex-shrink: 0;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Fehlerbox */
-  .error-box {
-    background: #1a0505;
-    border: 1px solid #5a1010;
-    border-left: 3px solid var(--red);
-    border-radius: 4px;
-    padding: 12px 16px;
-    margin-bottom: 24px;
-    font-size: 12px;
-    color: #ff7a6e;
-    display: none;
-  }
-  .error-box.visible { display: block; }
-
-  /* ── DATENBLATT ── */
-  .datenblatt { display: none; }
-  .datenblatt.visible { display: block; }
-
-  .db-header {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--red);
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-  }
-  .db-header-photo {
-    width: 120px; height: 80px;
-    object-fit: cover; border-radius: 4px;
-    flex-shrink: 0; display: none;
-    border: 1px solid var(--border);
-  }
-  .db-header-info { flex: 1; }
-  .db-fahrzeug-titel {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px; font-weight: 700;
-    line-height: 1.2; margin-bottom: 4px;
-  }
-  .db-baureihe { color: var(--muted); font-size: 12px; letter-spacing: 0.06em; margin-bottom: 10px; }
-  .db-badges { display: flex; gap: 8px; flex-wrap: wrap; }
-  .badge { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; font-weight: 600; }
-  .badge-red { background: var(--red-dim); color: #ff7a6e; }
-  .badge-gold { background: #2a2200; color: var(--gold-light); }
-  .badge-gray { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
-
-  /* Sektionen */
-  .db-section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
-  .db-section-header {
-    background: var(--surface2);
-    padding: 12px 20px;
-    display: flex; align-items: center; gap: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-  .db-section-icon { font-size: 15px; }
-  .db-section-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); font-weight: 600; }
-  .db-section-body { padding: 16px 20px; }
-
-  /* Tabellen */
-  .data-table { width: 100%; border-collapse: collapse; }
-  .data-table tr { border-bottom: 1px solid var(--border); }
-  .data-table tr:last-child { border-bottom: none; }
-  .data-table td { padding: 8px 0; vertical-align: top; }
-  .data-table td:first-child { color: var(--muted); font-size: 11px; letter-spacing: 0.04em; width: 42%; padding-right: 12px; white-space: nowrap; }
-  .data-table td:last-child { font-size: 13px; font-weight: 500; }
-
-  /* Quartett */
-  .quartett-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  @media (max-width: 500px) { .quartett-grid { grid-template-columns: repeat(2, 1fr); } }
-  .q-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 10px 12px; }
-  .q-label { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
-  .q-value { font-family: 'Courier Prime', monospace; font-size: 18px; font-weight: 700; color: var(--gold-light); line-height: 1.1; }
-  .q-unit { font-size: 10px; color: var(--muted); }
-
-  /* Marktpreise */
-  .markt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-  @media (max-width: 500px) { .markt-grid { grid-template-columns: 1fr; } }
-  .markt-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 14px; }
-  .markt-card.highlight { border-color: var(--gold); }
-  .markt-label { font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-  .markt-value { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold-light); }
-  .markt-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  /* DACH Live Badge */
-  .live-badge {
-    display: inline-block;
-    background: #002200; color: #4caf50;
-    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 2px 6px; border-radius: 3px; font-weight: 700;
-    margin-left: 8px; vertical-align: middle;
-  }
-
-  .price-table { width: 100%; border-collapse: collapse; }
-  .price-table tr { border-bottom: 1px solid var(--border); }
-  .price-table tr:last-child { border-bottom: none; }
-  .price-table td { padding: 7px 0; font-size: 12px; vertical-align: middle; }
-  .price-table td:first-child { color: var(--muted); width: 30%; }
-  .price-table td:last-child { text-align: right; }
-  .note-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-
-  /* Motorvarianten */
-  .motor-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .motor-table th { text-align: left; padding: 6px 8px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 500; }
-  .motor-table td { padding: 8px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  .motor-table tr:last-child td { border-bottom: none; }
-  .motor-table tr.current-model td { color: var(--gold-light); }
-  .motor-table tr.current-model td:first-child::before { content: "▶ "; color: var(--red); }
-
-  /* Verschleiß */
-  .wear-list { list-style: none; }
-  .wear-list li { display: flex; align-items: flex-start; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px; }
-  .wear-list li:last-child { border-bottom: none; }
-  .wear-rank { font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--red); font-weight: 700; flex-shrink: 0; width: 18px; }
-  .wear-name { flex: 1; font-size: 12px; }
-  .wear-cost { font-size: 11px; color: var(--gold-light); white-space: nowrap; text-align: right; }
-
-  /* Prognose */
-  .trend-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
-  .trend-row:last-child { border-bottom: none; }
-  .trend-label { color: var(--muted); width: 140px; flex-shrink: 0; }
-  .trend-arrow { font-size: 14px; }
-  .up { color: #4caf50; }
-  .down { color: var(--red); }
-  .neutral { color: var(--muted); }
-
-  /* DACH Angebote */
-  .dach-angebote { margin-top: 16px; }
-  .dach-angebote-title { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .dach-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px; font-size: 12px; }
-  .dach-item:last-child { border-bottom: none; }
-  .dach-item-info { flex: 1; }
-  .dach-item-title { font-weight: 500; margin-bottom: 2px; }
-  .dach-item-sub { color: var(--muted); font-size: 11px; }
-  .dach-item-price { color: var(--gold-light); font-weight: 600; white-space: nowrap; }
-
-  /* Features */
-  .feature-list { list-style: none; }
-  .feature-list li { padding: 6px 0; font-size: 12px; display: flex; gap: 8px; align-items: flex-start; border-bottom: 1px solid var(--border); }
-  .feature-list li:last-child { border-bottom: none; }
-  .feature-icon { flex-shrink: 0; }
-
-  /* Fazit */
-  .fazit-box { background: #0f0700; border: 1px solid var(--gold); border-left: 3px solid var(--gold-light); border-radius: 5px; padding: 16px 18px; }
-  .fazit-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-  .fazit-text { font-family: 'Playfair Display', serif; font-size: 15px; line-height: 1.6; }
-
-  /* ── FREEMIUM ── */
-  .free-badge {
-    display: inline-block;
-    background: #002200; color: #4caf50;
-    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 2px 7px; border-radius: 3px; font-weight: 700; margin-left: 8px;
-  }
-  .premium-badge {
-    display: inline-block;
-    background: #2a2200; color: var(--gold-light);
-    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 2px 7px; border-radius: 3px; font-weight: 700; margin-left: 8px;
-  }
-  .paywall-section { position: relative; }
-  .paywall-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(13,13,13,0) 0%, rgba(13,13,13,0.92) 40%, rgba(13,13,13,0.98) 100%);
-    border-radius: 8px;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: flex-end;
-    padding: 20px; text-align: center; z-index: 10;
-  }
-  .paywall-icon { font-size: 28px; margin-bottom: 8px; }
-  .paywall-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 16px; font-weight: 700; margin-bottom: 4px;
-  }
-  .paywall-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
-  .btn-unlock {
-    background: var(--gold);
-    color: #000;
-    border: none; border-radius: 5px;
-    padding: 10px 24px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px; font-weight: 700;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    cursor: pointer; transition: background 0.2s;
-  }
-  .btn-unlock:hover { background: var(--gold-light); }
-  .paywall-hint { font-size: 10px; color: var(--subtle); margin-top: 8px; }
-
-  /* Footer */
-  .footer { text-align: center; padding: 24px; color: var(--subtle); font-size: 11px; letter-spacing: 0.05em; border-top: 1px solid var(--border); margin-top: 32px; }
-  .footer span { color: var(--red); }
-
-  /* ── PDF PRINT ── */
-  @media print {
-    body { background: #fff; color: #111; font-size: 12px; }
-    .header { position: static; background: #fff; border-bottom: 2px solid #c0392b; }
-    .logo-mark { border-color: #c0392b; }
-    .logo-mark span { color: #c0392b; }
-    .input-panel, .status-bar, .error-box, .btn-pdf, .btn-analyse, .header-actions { display: none !important; }
-    .datenblatt { display: block !important; }
-    .db-section { background: #fff; border: 1px solid #ddd; break-inside: avoid; margin-bottom: 10px; }
-    .db-section-header { background: #f5f5f5; }
-    .db-section-title { color: #c0392b; }
-    .db-header { background: #fff; border: 1px solid #ddd; border-top: 3px solid #c0392b; }
-    .q-card { background: #f9f9f9; border: 1px solid #ddd; }
-    .q-value { color: #8a6d00; }
-    .markt-card { background: #f9f9f9; border: 1px solid #ddd; }
-    .markt-card.highlight { border-color: #b8960c; }
-    .markt-value { color: #8a6d00; font-size: 16px; }
-    .markt-label { color: #666; font-size: 9px; }
-    .markt-sub { color: #888; font-size: 10px; }
-    .markt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    .wear-cost { color: #8a6d00; }
-    .fazit-box { background: #fffdf0; border-color: #b8960c; }
-    .fazit-label { color: #b8960c; }
-    .up { color: #2e7d32; }
-    .down { color: #c0392b; }
-    .data-table td:first-child, .trend-label, .dach-item-sub, .markt-sub { color: #666; }
-    .badge-red { background: #fde; color: #c0392b; }
-    .badge-gold { background: #fef9e7; color: #8a6d00; }
-    .badge-gray { background: #f5f5f5; color: #666; border-color: #ddd; }
-    .live-badge { background: #e8f5e9; color: #2e7d32; }
-    .footer { color: #999; }
-    .footer span { color: #c0392b; }
-    .db-header-photo { display: block !important; }
-    /* Foto-Sektion im Print */
-    #sectionFotos { display: block !important; }
-    #fotoGalerieGrid img {
-      width: 100%; height: 160px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-      display: block !important;
-    }
-    .foto-grid-label { font-size: 10px; color: #666; text-align: center; margin-top: 4px; letter-spacing: 0.05em; }
-    /* Header-Galerie im Print ausblenden — Fotos kommen in eigener Sektion */
-    #dbFotoGalerie { display: none !important; }
-  }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0d0d14;color:#e0e0e0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;font-size:14px}
+:root{--r:#c0392b;--r2:#e74c3c;--g:#27ae60;--bd:rgba(255,255,255,.08);--card:rgba(255,255,255,.03)}
+a{color:inherit;text-decoration:none}
+input,textarea,select{font-family:inherit;font-size:14px;color:#e0e0e0;background:rgba(255,255,255,.06);border:1px solid var(--bd);border-radius:9px;padding:10px 12px;outline:none;width:100%;box-sizing:border-box}
+select{background:rgba(20,20,35,.95);cursor:pointer}
+select option{background:#1a1a2e}
+textarea{resize:none}
+button{font-family:inherit;cursor:pointer;border-radius:8px;font-weight:600;border:none;transition:background .15s;font-size:13px}
+.rb{background:var(--r);color:#fff;padding:10px 18px}
+.rb:active,.rb:hover{background:var(--r2)}
+.rb:disabled{opacity:.35;cursor:not-allowed}
+.gb{background:rgba(39,174,96,.13);border:1px solid var(--g)!important;color:#2ecc71;padding:8px 12px}
+.yb{background:rgba(255,200,0,.12);border:1px solid rgba(255,200,0,.4)!important;color:#f0c040;padding:8px 12px}
+.xb{background:rgba(255,255,255,.06);border:1px solid var(--bd)!important;color:#888;padding:8px 12px}
+.sb{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)!important;color:#888;padding:5px 12px;border-radius:16px;font-size:12px;cursor:pointer;display:inline-block}
+.sb:active{background:rgba(192,57,43,.2);color:#fff}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:13px;overflow:hidden}
+.lbl{color:#555;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px}
+.step-h{font-size:14px;font-weight:700;color:#e8e8e8;margin:14px 0 5px;padding-left:10px;border-left:3px solid var(--r)}
+.step-n{display:flex;gap:10px;margin:4px 0;font-size:13px;color:#ccc;line-height:1.5}
+.step-n b{color:var(--r);font-weight:700;min-width:20px;flex-shrink:0}
+.step-d{display:flex;gap:9px;margin:3px 0;font-size:13px;color:#ccc}
+.step-d b{color:var(--r);flex-shrink:0}
+.vtag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px}
+.vcat{background:rgba(192,57,43,.2);color:var(--r2)}
+.vfree{background:rgba(255,255,255,.06);color:#888}
+#hdr{padding:11px 15px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd);background:rgba(255,255,255,.02);flex-shrink:0}
+#tabs{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto}
+#tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:11px 14px;background:none;border:none;border-bottom:2px solid transparent;color:#555;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:all .2s;display:block}
+.tab.on{border-bottom-color:var(--r);color:#e0e0e0}
+#main{flex:1;max-width:960px;width:100%;margin:0 auto;padding:15px 13px;display:flex;flex-direction:column;gap:12px}
+.overlay{position:fixed;inset:0;background:#fff;z-index:9999;display:none;flex-direction:column}
+.overlay.on{display:flex}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fu .25s ease}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .8s linear infinite}
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="logo-mark"><span>RC</span></div>
-  <div class="header-text">
-    <h1>Klassiker Analyse</h1>
-    <p>Riedel Classics · Old- &amp; Youngtimer Bewertung</p>
+<div id="hdr">
+  <div style="background:linear-gradient(135deg,#c0392b,#8e1a0e);border-radius:9px;padding:7px 9px;color:#fff;flex-shrink:0">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M5 17H3a2 2 0 0 1-2-2v-4l2.5-6h13l2.5 6V15a2 2 0 0 1-2 2h-2"/>
+      <circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/>
+      <path d="M5 9h14"/>
+    </svg>
   </div>
-  <div class="header-actions">
-    <span style="font-size:10px;color:var(--subtle);letter-spacing:0.06em;margin-right:10px;">V5.1</span>
-    <button class="btn-pdf" id="btnPdf" onclick="exportPDF()" style="display:none;">⬇ PDF</button>
+  <div style="flex:1">
+    <div style="font-size:17px;font-weight:800;color:#fff">AutoGuide <span style="color:var(--r)">AI</span></div>
+    <div style="color:#444;font-size:9px;letter-spacing:.5px">KFZ REPARATURASSISTENT</div>
   </div>
-</header>
-
-<div class="container">
-
-  <!-- INPUT -->
-  <div class="input-panel">
-    <div class="panel-label">Fahrzeug eingeben</div>
-    <div class="form-row">
-      <div class="field"><label>Hersteller *</label><input type="text" id="marke" placeholder="z.B. Mercedes-Benz" /></div>
-      <div class="field"><label>Modell *</label><input type="text" id="modell" placeholder="z.B. 250 SE Cabriolet" /></div>
-      <div class="field"><label>Baureihe</label><input type="text" id="baureihe" placeholder="z.B. W111" /></div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+    <button class="xb" style="padding:6px 11px;font-size:12px" onclick="exportData()">&#128190; Sichern</button>
+    <button class="xb" style="padding:6px 11px;font-size:12px" onclick="document.getElementById('imp').click()">&#128228; Laden</button>
+    <input type="file" id="imp" accept=".json" style="display:none" onchange="importData(this)"/>
+    <div style="display:flex;align-items:center;gap:5px">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 6px var(--g)"></div>
+      <span style="color:#444;font-size:10px">Offline</span>
     </div>
-    <div class="form-row-2">
-      <div class="field"><label>Baujahr *</label><input type="text" id="baujahr" placeholder="z.B. 1966" /></div>
-      <div class="field">
-        <label>Zustandsnote</label>
-        <select id="zustand">
-          <option value="">— wählen —</option>
-          <option value="1">Note 1 — Concours / Makellos</option>
-          <option value="1-">Note 1– — Vollrestauriert</option>
-          <option value="2">Note 2 — Sehr gut</option>
-          <option value="3">Note 3 — Guter Gebrauchszustand</option>
-          <option value="4">Note 4 — Restaurierungsbedürftig</option>
-          <option value="5">Note 5 — Schlechtester Zustand</option>
+  </div>
+</div>
+
+<div id="tabs">
+  <a href="#" class="tab on" id="t-anleitungen" onclick="showTab('anleitungen');return false;">Anleitungen</a>
+  <a href="#" class="tab" id="t-videos" onclick="showTab('videos');return false;">Videos</a>
+  <a href="#" class="tab" id="t-gespeichert" onclick="showTab('gespeichert');return false;">Gespeichert</a>
+  <a href="#" class="tab" id="t-fehler" onclick="showTab('fehler');return false;">Fehlercodes</a>
+  <a href="#" class="tab" id="t-teile" onclick="showTab('teile');return false;">Teilesuche</a>
+  <a href="#" class="tab" id="t-kosten" onclick="showTab('kosten');return false;">Kalkulation</a>
+</div>
+
+<div id="main">
+
+<!-- ═══ ANLEITUNGEN ═══ -->
+<div id="p-anleitungen">
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div class="lbl">Reparaturanfrage</div>
+    <textarea id="qi" rows="2" placeholder="z.B. Kupplungswechsel Mercedes W107 300 SL..." style="margin-bottom:10px" onkeydown="if(event.key==='Enter'){event.preventDefault();doSearch()}"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="color:#333;font-size:11px">Enter oder Button</span>
+      <button class="rb" onclick="doSearch()">Anleitung suchen</button>
+    </div>
+  </div>
+  <div id="a-suggs">
+    <div class="lbl">Verfuegbare Themen</div>
+    <div id="a-sugglist" style="display:flex;flex-wrap:wrap;gap:7px"></div>
+  </div>
+  <div id="a-nf" style="display:none;background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.3);border-radius:10px;padding:13px 15px;color:#f0a500">
+    <div style="font-weight:700;margin-bottom:4px">Keine Anleitung gefunden</div>
+    <div style="font-size:12px">Themen: Kupplung, Zahnriemen, Bremsen, Oel, Stossdaempfer, Beleuchtung, Batterie, Luftfilter, Zuendkerzen</div>
+  </div>
+  <div id="a-result" style="display:none" class="card fu">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0">
+        <div style="width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 5px var(--g);flex-shrink:0"></div>
+        <span id="a-rtitle" style="color:#ccc;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="gb" onclick="doPrint()">PDF</button>
+        <button class="yb" onclick="doSave()">Speichern</button>
+        <button class="xb" onclick="clearResult()">&times;</button>
+      </div>
+    </div>
+    <div id="a-rbody" style="padding:15px 18px;max-height:440px;overflow-y:auto;line-height:1.7"></div>
+    <div style="padding:8px 14px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
+      <span id="a-smsg" style="font-size:12px;color:#444"></span>
+      <button class="rb" style="padding:7px 13px;font-size:12px" onclick="clearResult()">+ Neue Anfrage</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIDEOS ═══ -->
+<div id="p-videos" style="display:none">
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div class="lbl" id="vf-lbl">Video hinzufuegen</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <input id="v-url" placeholder="Video-URL: YouTube, Instagram, Facebook, TikTok..."/>
+      <input id="v-title" placeholder="Titel / Beschreibung *"/>
+      <div style="display:flex;gap:8px">
+        <select id="v-cat" style="flex:1"></select>
+        <input id="v-tags" placeholder="Tags: MIG, Anfaenger..." style="flex:2"/>
+      </div>
+      <textarea id="v-notes" rows="2" placeholder="Notizen (z.B. ab Minute 4:30 interessant...)"></textarea>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="rb" style="flex:1" id="v-savebtn" onclick="saveVideo()">+ Video speichern</button>
+        <button class="xb" id="v-cancelbtn" style="display:none" onclick="cancelVEdit()">Abbrechen</button>
+        <span id="v-msg" style="font-size:12px;font-weight:600"></span>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="padding:14px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="lbl" style="margin:0">Eigene Kategorien</div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <input id="new-cat" placeholder="Neue Kategorie..." style="width:140px;padding:7px 10px;font-size:12px" onkeydown="if(event.key==='Enter'){addCat(this.value);this.value=''}"/>
+        <button class="rb" style="padding:7px 12px;font-size:12px" onclick="addCat(document.getElementById('new-cat').value);document.getElementById('new-cat').value=''">+ Add</button>
+      </div>
+    </div>
+    <div id="cat-list"></div>
+  </div>
+  <div id="v-srow" style="display:none;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <input id="v-search" placeholder="Videos durchsuchen..." style="flex:2;min-width:130px" oninput="renderVids()"/>
+    <select id="v-catf" style="flex:1;min-width:110px" onchange="renderVids()"><option value="Alle">Alle Kategorien</option></select>
+  </div>
+  <div id="v-empty" style="text-align:center;padding:36px 16px;color:#444">
+    <div style="font-size:36px;margin-bottom:8px">&#128249;</div>
+    <div style="font-weight:600;color:#666;margin-bottom:4px">Noch keine Videos gespeichert</div>
+    <div style="font-size:12px">Video-URL oben einfuegen und speichern</div>
+  </div>
+  <div id="v-list" style="display:flex;flex-direction:column;gap:11px"></div>
+</div>
+
+<!-- ═══ GESPEICHERT ═══ -->
+<div id="p-gespeichert" style="display:none">
+  <div class="card">
+    <div style="padding:11px 14px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
+      <span style="color:#ccc;font-weight:700;font-size:14px">Gespeicherte Anleitungen</span>
+      <span id="g-cnt" style="color:#666;font-size:11px">0 Eintraege</span>
+    </div>
+    <div id="g-list"><div style="padding:28px;text-align:center;color:#444;font-size:13px">Noch keine Anleitungen gespeichert</div></div>
+  </div>
+</div>
+
+<!-- ═══ FEHLERCODES ═══ -->
+<div id="p-fehler" style="display:none">
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div class="lbl">OBD2 Fehlercode suchen</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <input id="f-code" placeholder="Fehlercode z.B. P0300" style="flex:1;min-width:120px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')searchCode()"/>
+      <select id="f-her" style="flex:1;min-width:130px">
+        <option value="Allgemein">Allgemein (alle Marken)</option>
+        <option value="Mercedes">Mercedes-Benz</option>
+        <option value="BMW">BMW</option>
+        <option value="VW">Volkswagen</option>
+        <option value="Audi">Audi</option>
+        <option value="Opel">Opel</option>
+        <option value="Ford">Ford</option>
+        <option value="Toyota">Toyota</option>
+        <option value="Porsche">Porsche</option>
+      </select>
+    </div>
+    <button class="rb" style="width:100%" onclick="searchCode()">&#128269; Fehlercode suchen</button>
+  </div>
+  <div id="f-nf" style="display:none;background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.3);border-radius:10px;padding:13px 15px;color:#f0a500;margin-bottom:12px">
+    <div style="font-weight:700;margin-bottom:4px">Fehlercode nicht gefunden</div>
+    <div style="font-size:12px">Bekannte Codes: P0xxx (Motor), B0xxx (Karosserie), C0xxx (Fahrwerk), U0xxx (Netzwerk)</div>
+  </div>
+  <div id="f-result" style="display:none" class="card fu">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:var(--r);box-shadow:0 0 5px var(--r);flex-shrink:0"></div>
+        <span id="f-title" style="color:#ccc;font-size:13px;font-weight:700"></span>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="gb" onclick="printCode()">PDF</button>
+        <button class="xb" onclick="clearCode()">&times;</button>
+      </div>
+    </div>
+    <div id="f-body" style="padding:15px 18px;max-height:500px;overflow-y:auto;line-height:1.7"></div>
+  </div>
+  <div style="margin-top:14px">
+    <div class="lbl">Schnellauswahl haeufige Codes</div>
+    <div id="f-suggs" style="display:flex;flex-wrap:wrap;gap:7px"></div>
+  </div>
+</div>
+
+<!-- ═══ TEILESUCHE ═══ -->
+<div id="p-teile" style="display:none">
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div class="lbl">&#128269; Teilenummer suchen</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <input id="t-nr" placeholder="Originalnummer z.B. A0012953506..." style="flex:2;min-width:150px;font-size:15px;font-weight:600" onkeydown="if(event.key==='Enter')startTeilesuche()"/>
+      <select id="t-her" style="flex:1;min-width:130px">
+        <option value="">Hersteller (optional)</option>
+        <option value="Mercedes">Mercedes-Benz</option>
+        <option value="BMW">BMW</option>
+        <option value="VW">Volkswagen</option>
+        <option value="Audi">Audi</option>
+        <option value="Porsche">Porsche</option>
+        <option value="Opel">Opel</option>
+        <option value="Ford">Ford</option>
+        <option value="Bosch">Bosch</option>
+        <option value="Febi">Febi Bilstein</option>
+        <option value="NGK">NGK</option>
+      </select>
+    </div>
+    <button class="rb" style="width:100%;padding:12px;font-size:14px" onclick="startTeilesuche()">&#128269; Suche starten</button>
+  </div>
+  <div id="t-ki" style="display:none" class="card fu" style="margin-bottom:12px">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#a855f7;box-shadow:0 0 6px #a855f7"></div>
+        <span style="color:#ccc;font-size:12px;font-weight:700">KI-Analyse der Teilenummer</span>
+      </div>
+      <span id="t-ki-nr" style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);color:#c084fc;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600"></span>
+    </div>
+    <div id="t-ki-body" style="padding:14px 18px;font-size:13px;color:#ccc;line-height:1.7"></div>
+  </div>
+  <div id="t-links" style="display:none" class="fu">
+    <div class="lbl" style="margin-bottom:10px">&#128722; Direkt bei Lieferanten suchen</div>
+    <div id="t-linklist" style="margin-bottom:12px"></div>
+    <button class="rb" style="width:100%;padding:11px" onclick="openAll()">&#128279; Alle Lieferanten gleichzeitig oeffnen</button>
+    <div style="color:#555;font-size:11px;text-align:center;margin-top:6px">Tipp: Safari erlaubt evtl. nur 1 Popup pro Klick</div>
+  </div>
+  <div style="margin-top:14px">
+    <div class="lbl">Letzte Suchen</div>
+    <div id="t-hist" style="display:flex;flex-wrap:wrap;gap:7px"></div>
+  </div>
+</div>
+
+<!-- ═══ KALKULATION ═══ -->
+<div id="p-kosten" style="display:none">
+
+  <!-- Firmendaten -->
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+      <div class="lbl" style="margin:0">&#9881; Firmeneinstellungen</div>
+      <a href="#" class="sb" onclick="toggleFirma();return false;" id="f-toggle">&#9660; Einklappen</a>
+    </div>
+    <div id="f-box">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <input id="k-firma" placeholder="Firmenname"/>
+        <input id="k-str" placeholder="Strasse + Nr."/>
+        <input id="k-ort" placeholder="PLZ + Ort"/>
+        <input id="k-tel" placeholder="Telefon"/>
+        <input id="k-mail" placeholder="E-Mail"/>
+        <input id="k-steuernr" placeholder="Steuernr. / USt-IdNr."/>
+      </div>
+      <div class="lbl">Stundensaetze (netto)</div>
+      <div id="ss-list" style="display:flex;flex-direction:column;gap:7px;margin-bottom:8px"></div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input id="ss-name" placeholder="Kategorie z.B. Motor" style="flex:2;font-size:12px"/>
+        <input id="ss-preis" placeholder="EUR/Std." type="number" style="flex:1;font-size:12px"/>
+        <button class="rb" style="padding:8px 12px;font-size:12px;flex-shrink:0" onclick="addSS()">+ Add</button>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:7px;color:#ccc;font-size:13px;cursor:pointer">
+          <input type="checkbox" id="k-mwst" onchange="saveFirma()" style="width:16px;height:16px"/> MwSt. ausweisen
+        </label>
+        <select id="k-mwst-satz" style="width:110px" onchange="saveFirma()">
+          <option value="19">19% MwSt.</option>
+          <option value="7">7% MwSt.</option>
+          <option value="0">0% (Kleinunternehmer)</option>
         </select>
+        <button class="gb" style="margin-left:auto;padding:8px 16px;font-size:12px" onclick="saveFirma()">&#128190; Speichern</button>
       </div>
     </div>
-    <div class="form-row-2">
-      <div class="field"><label>Farbe</label><input type="text" id="farbe" placeholder="z.B. Weiß" /></div>
-      <div class="field"><label>Kilometerstand</label><input type="text" id="km" placeholder="z.B. 85.000 km" /></div>
-    </div>
-    <div class="field" style="margin-bottom:12px;">
-      <label>Besonderheiten / Anmerkungen</label>
-      <textarea id="anmerkung" placeholder="z.B. Vollrestauriert 2023, orig. Ausstattung, H-Kennzeichen, Serviceheft…"></textarea>
-    </div>
-    <div class="foto-label">Fotos · optional · bis zu 5 pro Bereich · unterstützen die KI-Analyse</div>
-    <div class="foto-grid">
-      <div class="foto-slot" id="slot0">
-        <input type="file" accept="image/*" multiple onchange="fotoLoad(this,0)" />
-        <span class="foto-slot-check" id="check0">✓</span>
-        <div class="foto-carousel" id="carousel0">
-          <img class="foto-slot-preview" id="prev0" />
-          <div class="foto-nav" id="nav0" style="display:none;">
-            <button onclick="fotoNav(event,0,-1)">‹</button>
-            <span id="navLabel0">1/1</span>
-            <button onclick="fotoNav(event,0,1)">›</button>
-          </div>
-        </div>
-        <div class="foto-slot-icon" id="icon0">🚗</div>
-        <div class="foto-slot-label" id="lbl0">Außenansicht</div>
-      </div>
-      <div class="foto-slot" id="slot1">
-        <input type="file" accept="image/*" multiple onchange="fotoLoad(this,1)" />
-        <span class="foto-slot-check" id="check1">✓</span>
-        <div class="foto-carousel" id="carousel1">
-          <img class="foto-slot-preview" id="prev1" />
-          <div class="foto-nav" id="nav1" style="display:none;">
-            <button onclick="fotoNav(event,1,-1)">‹</button>
-            <span id="navLabel1">1/1</span>
-            <button onclick="fotoNav(event,1,1)">›</button>
-          </div>
-        </div>
-        <div class="foto-slot-icon" id="icon1">🪑</div>
-        <div class="foto-slot-label" id="lbl1">Innenraum</div>
-      </div>
-      <div class="foto-slot" id="slot2">
-        <input type="file" accept="image/*" multiple onchange="fotoLoad(this,2)" />
-        <span class="foto-slot-check" id="check2">✓</span>
-        <div class="foto-carousel" id="carousel2">
-          <img class="foto-slot-preview" id="prev2" />
-          <div class="foto-nav" id="nav2" style="display:none;">
-            <button onclick="fotoNav(event,2,-1)">‹</button>
-            <span id="navLabel2">1/1</span>
-            <button onclick="fotoNav(event,2,1)">›</button>
-          </div>
-        </div>
-        <div class="foto-slot-icon" id="icon2">🔩</div>
-        <div class="foto-slot-label" id="lbl2">Motorraum</div>
-      </div>
-      <div class="foto-slot" id="slot3">
-        <input type="file" accept="image/*" multiple onchange="fotoLoad(this,3)" />
-        <span class="foto-slot-check" id="check3">✓</span>
-        <div class="foto-carousel" id="carousel3">
-          <img class="foto-slot-preview" id="prev3" />
-          <div class="foto-nav" id="nav3" style="display:none;">
-            <button onclick="fotoNav(event,3,-1)">‹</button>
-            <span id="navLabel3">1/1</span>
-            <button onclick="fotoNav(event,3,1)">›</button>
-          </div>
-        </div>
-        <div class="foto-slot-icon" id="icon3">⬇</div>
-        <div class="foto-slot-label" id="lbl3">Unterboden</div>
-      </div>
-    </div>
-    <button class="btn-analyse" id="analyseBtn" onclick="startAnalyse()">Klassiker analysieren →</button>
   </div>
 
-  <!-- STATUS -->
-  <div class="status-bar" id="statusBar">
-    <div class="spinner"></div>
-    <span id="statusText">KI analysiert Fahrzeugdaten…</span>
+  <!-- Kundendaten -->
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div class="lbl">&#128101; Kundendaten</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <input id="k-kunde" placeholder="Kundenname / Firma"/>
+      <input id="k-kfz" placeholder="Kennzeichen"/>
+      <input id="k-fzg" placeholder="Fahrzeug z.B. Mercedes W107"/>
+      <input id="k-datum" type="date"/>
+      <input id="k-gueltig" type="date" placeholder="Angebot gueltig bis"/>
+      <input id="k-angnr" placeholder="Angebots-Nr. z.B. 2024-001"/>
+    </div>
   </div>
 
-  <!-- FEHLER -->
-  <div class="error-box" id="errorBox"></div>
-
-  <!-- DATENBLATT -->
-  <div class="datenblatt" id="datenblatt">
-
-    <div class="db-header" id="dbHeader">
-      <div id="dbFotoGalerie" style="display:none;flex-shrink:0;">
-        <div id="dbFotoGrid" style="display:grid;grid-template-columns:repeat(2,80px);gap:6px;"></div>
-      </div>
-      <div class="db-header-info">
-        <div class="db-fahrzeug-titel" id="dbTitel">—</div>
-        <div class="db-baureihe" id="dbBaureihe">—</div>
-        <div class="db-badges" id="dbBadges"></div>
-      </div>
+  <!-- Arbeitspositionen -->
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+      <div class="lbl" style="margin:0">&#128296; Arbeitspositionen</div>
+      <button class="rb" style="padding:7px 13px;font-size:12px" onclick="addArbeit()">+ Position</button>
     </div>
+    <div id="arb-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div id="arb-empty" style="color:#555;font-size:12px;text-align:center;padding:12px">Noch keine Arbeitspositionen</div>
+  </div>
 
-    <!-- Fotos – eigene Sektion, druckbar -->
-    <div class="db-section" id="sectionFotos" style="display:none;">
-      <div class="db-section-header"><span class="db-section-icon">📷</span><span class="db-section-title">Fahrzeugfotos</span><span class="free-badge">Kostenlos</span></div>
-      <div class="db-section-body">
-        <div id="fotoGalerieGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;"></div>
-      </div>
+  <!-- Materialpositionen -->
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+      <div class="lbl" style="margin:0">&#128230; Ersatzteile / Material</div>
+      <button class="rb" style="padding:7px 13px;font-size:12px" onclick="addMaterial()">+ Teil</button>
     </div>
+    <div id="mat-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div id="mat-empty" style="color:#555;font-size:12px;text-align:center;padding:12px">Noch keine Teile</div>
+  </div>
 
-    <!-- Quartett – KOSTENLOS -->
-    <div class="db-section">
-      <div class="db-section-header"><span class="db-section-icon">🃏</span><span class="db-section-title">Technische Daten</span><span class="free-badge">Kostenlos</span></div>
-      <div class="db-section-body"><div class="quartett-grid" id="quartettGrid"></div></div>
-    </div>
-
-    <!-- Identifikation – KOSTENLOS -->
-    <div class="db-section">
-      <div class="db-section-header"><span class="db-section-icon">📋</span><span class="db-section-title">Identifikation &amp; Produktion</span><span class="free-badge">Kostenlos</span></div>
-      <div class="db-section-body"><table class="data-table" id="identTable"></table></div>
-    </div>
-
-    <!-- Motorvarianten – KOSTENLOS -->
-    <div class="db-section">
-      <div class="db-section-header"><span class="db-section-icon">⚙️</span><span class="db-section-title">Motorvarianten der Baureihe</span><span class="free-badge">Kostenlos</span></div>
-      <div class="db-section-body" style="overflow-x:auto;">
-        <table class="motor-table" id="motorTable">
-          <thead><tr><th>Modell</th><th>Motor</th><th>PS</th><th>Baujahre</th><th>Stück</th></tr></thead>
-          <tbody id="motorBody"></tbody>
-        </table>
+  <!-- Zusammenfassung -->
+  <div class="card" style="padding:15px;margin-bottom:12px">
+    <div class="lbl">&#128200; Kalkulation</div>
+    <div style="display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)">
+        <span style="color:#aaa;font-size:13px">Arbeitskosten netto</span>
+        <span id="s-arb" style="color:#e0e0e0;font-weight:700">0,00 &#8364;</span>
       </div>
-    </div>
-
-    <!-- Marktwert – PREMIUM mit Paywall -->
-    <div class="db-section paywall-section" id="sectionMarkt">
-      <div class="db-section-header">
-        <span class="db-section-icon">💶</span>
-        <span class="db-section-title">Marktwert &amp; aktuelle Preise</span>
-        <span class="live-badge" id="liveBadge" style="display:none;">Live DACH</span>
-        <span class="premium-badge">Wertdossier</span>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)">
+        <span style="color:#aaa;font-size:13px">Teile Einkauf</span>
+        <span id="s-ek" style="color:#888">0,00 &#8364;</span>
       </div>
-      <div class="db-section-body">
-        <div class="markt-grid" id="marktGrid"></div>
-        <div style="margin-top:14px;">
-          <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Preisspanne nach Zustandsnote</div>
-          <table class="price-table" id="priceTable"></table>
-        </div>
-        <div class="dach-angebote" id="dachAngebote" style="display:none;">
-          <div class="dach-angebote-title">Aktuelle Angebote DACH <span class="live-badge">Live</span></div>
-          <div id="dachListe"></div>
-        </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)">
+        <span style="color:#aaa;font-size:13px">Teile Verkauf netto</span>
+        <span id="s-mat" style="color:#e0e0e0;font-weight:700">0,00 &#8364;</span>
       </div>
-      <div class="paywall-overlay" id="overlayMarkt">
-        <div class="paywall-icon">🔒</div>
-        <div class="paywall-title">Wertdossier freischalten</div>
-        <div class="paywall-sub">Marktwert, Live DACH-Preise, Prognose,<br>Schwachstellen &amp; Experteneinschätzung</div>
-        <button class="btn-unlock" onclick="unlockPremium()">Für € 4,99 freischalten</button>
-        <div class="paywall-hint">Einmalzahlung · PDF inklusive · sofort verfügbar</div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)">
+        <span style="color:#aaa;font-size:13px">Gesamt netto</span>
+        <span id="s-netto" style="color:#e0e0e0;font-weight:700;font-size:14px">0,00 &#8364;</span>
+      </div>
+      <div id="s-mwst-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)">
+        <span id="s-mwst-lbl" style="color:#aaa;font-size:13px">MwSt. 19%</span>
+        <span id="s-mwst" style="color:#aaa">0,00 &#8364;</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0">
+        <span style="color:#fff;font-size:15px;font-weight:700">Gesamtbetrag brutto</span>
+        <span id="s-brutto" style="color:var(--r);font-size:17px;font-weight:800">0,00 &#8364;</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--bd)">
+        <span style="color:var(--g);font-size:12px">Deckungsbeitrag (Marge)</span>
+        <span id="s-db" style="color:var(--g);font-size:12px;font-weight:700">0,00 &#8364;</span>
       </div>
     </div>
+  </div>
 
-    <!-- Prognose – PREMIUM (nach Unlock sichtbar) -->
-    <div class="db-section premium-content" id="sectionPrognose" style="display:none;">
-      <div class="db-section-header"><span class="db-section-icon">📈</span><span class="db-section-title">Marktprognose &amp; Wertentwicklung</span><span class="premium-badge">Wertdossier</span></div>
-      <div class="db-section-body" id="prognoseBody"></div>
+  <!-- Aktionen -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <button class="rb" style="flex:2;padding:13px;font-size:14px" onclick="printAngebot()">&#128424; PDF Angebot erstellen</button>
+    <button class="gb" style="flex:1;padding:13px" onclick="saveKalk()">&#128190; Speichern</button>
+    <button class="xb" style="flex:1;padding:13px" onclick="clearKalk()">&#128465; Leeren</button>
+  </div>
+
+  <!-- Gespeicherte Kalkulationen -->
+  <div class="card" id="kalk-saved-box" style="display:none">
+    <div style="padding:11px 14px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
+      <span style="color:#ccc;font-weight:700;font-size:13px">Gespeicherte Kalkulationen</span>
+      <span id="kalk-cnt" style="color:#666;font-size:11px"></span>
     </div>
+    <div id="kalk-list"></div>
+  </div>
 
-    <!-- Verschleiß – PREMIUM -->
-    <div class="db-section premium-content" id="sectionVerschleiss" style="display:none;">
-      <div class="db-section-header"><span class="db-section-icon">🔧</span><span class="db-section-title">Top 10 Schwachstellen &amp; Kosten</span><span class="premium-badge">Wertdossier</span></div>
-      <div class="db-section-body"><ul class="wear-list" id="wearList"></ul></div>
+</div>
+
+</div><!-- end #main -->
+
+<div style="padding:7px;text-align:center;color:#222;font-size:10px;flex-shrink:0">
+  AutoGuide AI &middot; 9 Anleitungen &middot; Video-Bibliothek &middot; Fehlercodes &middot; Teilesuche &middot; Kalkulation
+</div>
+
+<!-- Print overlay -->
+<div id="printoverlay" class="overlay">
+  <div style="background:#1a1a2e;padding:10px 15px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <span style="color:#fff;font-weight:700;font-size:14px">Druckvorschau</span>
+    <div style="display:flex;gap:8px">
+      <button class="rb" onclick="window.print()">&#128424; Drucken / PDF</button>
+      <button class="xb" onclick="document.getElementById('printoverlay').classList.remove('on')">&#10005; Schliessen</button>
     </div>
-
-    <!-- Features – PREMIUM -->
-    <div class="db-section premium-content" id="sectionFeatures" style="display:none;">
-      <div class="db-section-header"><span class="db-section-icon">⭐</span><span class="db-section-title">Wertfaktoren &amp; Besonderheiten</span><span class="premium-badge">Wertdossier</span></div>
-      <div class="db-section-body"><ul class="feature-list" id="featureList"></ul></div>
-    </div>
-
-    <!-- Fazit – PREMIUM -->
-    <div class="db-section premium-content" id="sectionFazit" style="display:none;">
-      <div class="db-section-header"><span class="db-section-icon">🎯</span><span class="db-section-title">Experteneinschätzung</span><span class="premium-badge">Wertdossier</span></div>
-      <div class="db-section-body">
-        <div class="fazit-box">
-          <div class="fazit-label">Riedel Classics · Bewertungsfazit</div>
-          <div class="fazit-text" id="fazitText">—</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PDF-Teaser nach Fazit -->
-    <div class="db-section premium-content" id="sectionPdfTeaser" style="display:none;">
-      <div class="db-section-body" style="text-align:center;padding:20px;">
-        <div style="font-size:22px;margin-bottom:8px;">📄</div>
-        <div style="font-family:'Playfair Display',serif;font-size:15px;margin-bottom:6px;">Wertdossier als PDF</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Professionelles Gutachten-Format · ideal für Versicherung &amp; Verkauf</div>
-        <button class="btn-unlock" onclick="exportPDF()" style="background:var(--red);color:#fff;">⬇ PDF herunterladen</button>
-      </div>
-    </div>
-
-  </div><!-- /datenblatt -->
-</div><!-- /container -->
-
-<footer class="footer">
-  Riedel Classics · <span>...mit Liebe zum Detail</span> · Klassiker Analyse V5
-</footer>
+  </div>
+  <iframe id="pframe" style="flex:1;border:none;width:100%;background:#fff"></iframe>
+</div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────
-var SUPABASE_URL      = 'https://ysqzdqazcgyuzdorauiq.supabase.co';
-var SUPABASE_ANON_KEY = 'DEIN_SUPABASE_ANON_KEY'; // <── Publishable Key eintragen
-var PROXY_URL         = SUPABASE_URL + '/functions/v1/claude-proxy';
-// ────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════════
+function LS(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function SS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-// Fotos: Array mit {base64, mime, label} für bis zu 4 Slots
-var fotos = [null, null, null, null];
-var fotoLabels = ['Außenansicht', 'Innenraum', 'Motorraum', 'Unterboden'];
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+var ST = {
+  saved:    LS('ag_saved',[]),
+  videos:   LS('ag_vids',[]),
+  userCats: LS('ag_cats',[]),
+  tsearch:  LS('ag_tsearch',[]),
+  firma:    LS('ag_firma',{name:'',str:'',ort:'',tel:'',mail:'',steuernr:'',mwst:false,mwstSatz:19}),
+  ss:       LS('ag_ss',[{name:'Motor',preis:110},{name:'Karosserie',preis:95},{name:'Elektrik',preis:105},{name:'Allgemein',preis:90}]),
+  arbeit:   [],
+  material: [],
+  kalks:    LS('ag_kalk',[]),
+  curResult: null,
+  curCode:   null,
+  tLinks:    [],
+  vEditId:   null
+};
 
-// fotos[idx] = Array von {base64, mime} — bis zu 5 pro Slot
-var fotos = [[], [], [], []];
-var fotoIdx = [0, 0, 0, 0]; // aktuell angezeigte Fotos pro Slot
-
-function komprimiere(file, cb) {
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var img = new Image();
-    img.onload = function() {
-      var canvas = document.createElement('canvas');
-      var MAX = 600; // kleiner für weniger Payload
-      var w = img.width, h = img.height;
-      if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
-      else       { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      var dataUrl = canvas.toDataURL('image/jpeg', 0.65); // 65% Qualität
-      cb({ base64: dataUrl.split(',')[1], mime: 'image/jpeg', dataUrl: dataUrl });
-    };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function fotoLoad(input, idx) {
-  var files = Array.prototype.slice.call(input.files, 0, 5); // max 5
-  if (!files.length) return;
-  fotos[idx] = [];
-  fotoIdx[idx] = 0;
-  var loaded = 0;
-  files.forEach(function(file) {
-    komprimiere(file, function(foto) {
-      fotos[idx].push(foto);
-      loaded++;
-      if (loaded === files.length) updateSlotUI(idx);
-    });
+// ═══════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════
+var TABS = ['anleitungen','videos','gespeichert','fehler','teile','kosten'];
+function showTab(t){
+  TABS.forEach(function(id){
+    var p = document.getElementById('p-'+id);
+    var tb = document.getElementById('t-'+id);
+    if(p) p.style.display = id===t ? '' : 'none';
+    if(tb) tb.className = id===t ? 'tab on' : 'tab';
   });
+  if(t==='videos') renderVids();
+  if(t==='gespeichert') renderSaved();
+  if(t==='kosten') initKalk();
+  updateTabLabels();
+}
+function updateTabLabels(){
+  document.getElementById('t-videos').textContent = 'Videos'+(ST.videos.length>0?' ('+ST.videos.length+')':'');
+  document.getElementById('t-gespeichert').textContent = 'Gespeichert'+(ST.saved.length>0?' ('+ST.saved.length+')':'');
 }
 
-function updateSlotUI(idx) {
-  var arr = fotos[idx];
-  if (!arr.length) return;
-  var cur = fotoIdx[idx];
-  var prev  = document.getElementById('prev' + idx);
-  var check = document.getElementById('check' + idx);
-  var slot  = document.getElementById('slot' + idx);
-  var nav   = document.getElementById('nav' + idx);
-  var lbl   = document.getElementById('navLabel' + idx);
-  prev.src = arr[cur].dataUrl;
-  prev.style.display = 'block';
-  check.style.display = 'block';
-  slot.classList.add('has-foto');
-  document.getElementById('icon' + idx).style.display = 'none';
-  document.getElementById('lbl' + idx).style.display  = 'none';
-  if (arr.length > 1) {
-    nav.style.display = 'flex';
-    lbl.textContent = (cur + 1) + '/' + arr.length;
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function fmt(n){return n.toFixed(2).replace('.',',') + ' \u20ac';}
+function num(s){return parseFloat((s+'').replace(',','.')) || 0;}
+function norm(s){return s.toLowerCase().replace(/\u00fc/g,'u').replace(/\u00f6/g,'o').replace(/\u00e4/g,'a').replace(/\u00df/g,'ss').replace(/[^a-z0-9 ]/g,' ');}
+
+function renderSteps(steps){
+  return steps.map(function(line){
+    if(!line) return '<div style="height:6px"></div>';
+    if(line.indexOf('## ')===0) return '<div class="step-h">'+line.slice(3)+'</div>';
+    var nm=line.match(/^(\d+)\. (.+)/);
+    if(nm) return '<div class="step-n"><b>'+nm[1]+'.</b><span>'+nm[2]+'</span></div>';
+    if(line.indexOf('- ')===0) return '<div class="step-d"><b>&#9658;</b><span>'+line.slice(2)+'</span></div>';
+    return '<div style="font-size:12px;color:#888;margin:2px 0">'+line+'</div>';
+  }).join('');
+}
+
+function buildPrint(steps, query){
+  var date=new Date().toLocaleDateString('de-DE');
+  var body=steps.map(function(line){
+    if(!line) return '<div style="height:4px"></div>';
+    if(line.indexOf('## ')===0) return '<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin:12px 0 3px;border-left:3px solid #c0392b;padding-left:7px">'+line.slice(3)+'</div>';
+    var nm=line.match(/^(\d+)\. (.+)/);
+    if(nm) return '<div style="display:flex;gap:7px;margin:3px 0;font-size:11px"><b style="color:#c0392b;min-width:16px">'+nm[1]+'.</b><span>'+nm[2]+'</span></div>';
+    if(line.indexOf('- ')===0) return '<div style="margin:2px 0;font-size:11px;padding-left:12px">&#9658; '+line.slice(2)+'</div>';
+    return '<div style="font-size:11px;color:#555;margin:2px 0">'+line+'</div>';
+  }).join('');
+  return '<!DOCTYPE html><html><head><meta charset="utf-8"/><title>KFZ Anleitung</title>'
+    +'<style>body{font-family:sans-serif;color:#222;padding:28px 36px;max-width:660px;margin:0 auto}.pb{display:block;margin:18px auto;padding:10px 26px;background:#c0392b;color:#fff;border:none;border-radius:5px;font-size:13px;cursor:pointer}@media print{.pb{display:none}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>'
+    +'<div style="border-bottom:3px solid #1a1a2e;padding-bottom:11px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-size:19px;font-weight:800;color:#1a1a2e">KFZ Reparaturanleitung</div><div style="font-size:11px;color:#666">'+query+'</div></div><div style="text-align:right"><div style="font-size:9px;color:#999">Erstellt '+date+'</div><div style="background:#c0392b;color:#fff;font-size:8px;padding:2px 6px;border-radius:2px;display:inline-block">AutoGuide AI</div></div></div>'
+    +body+'<button class="pb" onclick="window.print()">Drucken / Als PDF speichern</button>'
+    +'<div style="margin-top:14px;padding-top:8px;border-top:1px solid #eee;font-size:8px;color:#aaa">AutoGuide AI - Alle Angaben ohne Gewaehr</div></body></html>';
+}
+
+function openPrint(html){
+  document.getElementById('pframe').srcdoc = html;
+  document.getElementById('printoverlay').classList.add('on');
+}
+
+// ═══════════════════════════════════════════════════════════
+// REPAIR GUIDE DATABASE
+// ═══════════════════════════════════════════════════════════
+var DB = {
+  kupplung:{tags:['kupplung','clutch','kupplungsscheibe','ausrucklager'],models:['mercedes','w107','bmw','vw','golf','audi','ford','opel','porsche'],title:'Kupplungswechsel',steps:['## Benotigste Teile und Werkzeuge','- Kupplungssatz komplett (Druckplatte, Scheibe, Ausrucklager)','- Zentrierdorn, Getriebestaender, Drehmomentschlussel','','## Sicherheitshinweis','Fahrzeug sicher aufbocken! Nie unter nur durch Wagenheber gesichertem Fahrzeug!','','## Schritt 1 - Vorbereitung','1. Fahrzeug aufbocken, Auspuff demontieren','2. Kardanwelle vorne und hinten abschrauben','','## Schritt 2 - Getriebe ausbauen','1. Stecker und Leitungen abziehen','2. Schaltstange trennen, Kupplungszug abklemmen','3. Getriebe mit Heber stuetzen, Schrauben loesen','4. Getriebe vorsichtig nach hinten herausziehen','','## Schritt 3 - Kupplung ausbauen','1. Druckplatte markieren, ueber Kreuz loesen','2. Druckplatte und Scheibe entnehmen, Ausrucklager abziehen','','## Schritt 4 - Neue Kupplung einbauen','1. Neues Ausrucklager aufsetzen','2. Kupplungsscheibe mit Zentrierdorn ausrichten','3. Druckplatte ueber Kreuz anziehen: 20-25 Nm','','## Schritt 5 - Montage','1. Getriebe einfuehren (Eingangswelle zentrisch!)','2. Schrauben: 70-80 Nm, Kardanwelle: 22 Nm','3. Kupplungsspiel einstellen: 20-25 mm Freiweg','','## Tipps','- Immer kompletten Kupplungssatz tauschen','- Schwungrad bei hoher Laufleistung schleifen lassen']},
+  zahnriemen:{tags:['zahnriemen','timing','nockenwelle','wasserpumpe','spannrolle'],models:['vw','golf','audi','seat','skoda','ford','opel','fiat','renault'],title:'Zahnriemenwechsel',steps:['## Benotigste Teile und Werkzeuge','- Zahnriemensatz (Riemen, Spannrolle, Umlenkrolle)','- Motoreinstell-Werkzeug (Nockenwellen-Arretierung)','','## Sicherheitshinweis','Motor muss abgekuehlt sein! Falsche Steuerzeiten fuehren zu Motorschaden.','','## Schritt 1 - OT einstellen','1. Motor auf OT drehen, Nockenwelle arretieren','2. Kurbelwelle arretieren','','## Schritt 2 - Zerlegung','1. Keilriemen entfernen, Riemenscheibe abbauen (150-200 Nm)','2. Zahnriemendeckel abnehmen','','## Schritt 3 - Riemen tauschen','1. Spannrolle loesen, Riemen abnehmen','2. Wasserpumpe gleichzeitig tauschen (empfohlen!)','3. Neuen Riemen auflegen - Laufrichtungspfeil beachten!','4. Spannrolle: 20-25 Nm','','## Schritt 4 - Steuerzeiten pruefen','1. Motor 2x per Hand durchdrehen','2. Alle Markierungen muessen exakt uebereinstimmen','','## Tipps','- Zahnriemen alle 60.000-120.000 km tauschen','- Dehnschrauben immer erneuern!']},
+  bremsen:{tags:['bremse','bremsbelag','bremsscheibe','bremssattel','brake'],models:['bmw','mercedes','audi','vw','opel','ford','toyota','honda'],title:'Bremsbelaege wechseln',steps:['## Benotigste Teile und Werkzeuge','- Bremsbelaege (achsweise tauschen!)','- Bremsscheiben bei Rillen oder ueber 80.000 km','- Kolbenrueckdrueckwerkzeug, Bremsenreiniger','','## Sicherheitshinweis','Nach Einbau Bremspedal mehrfach pumpen bevor Fahrzeug bewegt wird!','','## Schritt 1 - Rad abbauen','1. Fahrzeug aufbocken, Rad abnehmen','','## Schritt 2 - Bremssattel','1. Fuehrungsbolzen loesen (7-9 Nm)','2. Sattel abheben, aufhaengen - nicht am Bremsschlauch!','3. Alte Belaege entnehmen, Kolben zurueckdruecken','','## Schritt 3 - Bremsscheibe','1. Fuehrungsschraube loesen, Scheibe abziehen','2. Neue Scheibe: 8-10 Nm','','## Schritt 4 - Neue Belaege','1. Fuehrungsbleche reinigen, Kupferpaste auf Metall','2. Belaege einlegen, Sattel: 25-35 Nm, Rad: 110-130 Nm','','## Tipps','- Belaege immer achsweise tauschen','- Bremsflussigkeit alle 2 Jahre wechseln']},
+  oel:{tags:['ol','oel','oil','olwechsel','motorol'],models:['alle','porsche','bmw','mercedes','vw','audi','toyota'],title:'Oelwechsel',steps:['## Benotigste Teile und Werkzeuge','- Motoroel (Spezifikation laut Handbuch, z.B. 5W-40)','- Oelfilter, neuer Dichtring fuer Ablassschraube','','## Sicherheitshinweis','Heisses Oel verbrennt! Oel fachgerecht entsorgen.','','## Schritt 1','1. Motor 5 Min. warmlaufen lassen, abstellen','','## Schritt 2 - Oel ablassen','1. Auffangwanne positionieren','2. Ablassschraube loesen (17 oder 19 mm)','3. Oel 5-10 Min. ablaufen lassen','4. Neuen Dichtring: 25-30 Nm','','## Schritt 3 - Oelfilter','1. Filter abschrauben, Dichtflaeche reinigen','2. Neuen Filter: O-Ring mit Oel benetzen, handfest + 3/4 Umdrehung','','## Schritt 4 - Einfullen','1. Frisches Oel einfullen (Menge laut Handbuch)','2. Motor starten, Oeldruckleuchte muss erloeschen','3. 5 Min. warten, Oelstand pruefen','','## Tipps','- Oelwechsel alle 10.000-15.000 km oder jaehrlich','- Immer Original-Oelspezifikation verwenden']},
+  stossdaempfer:{tags:['stossdampfer','federbein','feder','fahrwerk','shock'],models:['audi','a4','bmw','mercedes','vw','opel','ford'],title:'Stossdaempfer wechseln',steps:['## Benotigste Teile und Werkzeuge','- Stossdaempfer paarweise (links + rechts!)','- Federspanner - Lebensgefahr ohne!','- Drehmomentschlussel, Gelenkkopf-Abzieher','','## Sicherheitshinweis','Federn unter extremer Spannung! Nur zugelassene Federspanner!','','## Schritt 1','1. Fahrzeug aufbocken, Rad abnehmen','2. Bremssattel abbauen, ABS-Sensor abziehen','','## Schritt 2 - Ausbauen','1. Spurstangenkopf loesen (Abzieher!)','2. Stabilisatorkoppelstange abschrauben','3. Federbein herausnehmen','','## Schritt 3 - Feder spannen','1. Federspanner gleichmaessig einsetzen','2. Domlager pruefen (Knistern = defekt)','3. Kolbenstangenmutter loesen','','## Schritt 4 - Einbauen','1. Feder korrekt einlegen, Kolbenstangenmutter: 60-80 Nm','2. Spurstangenkopf: 40-50 Nm, Federbeinschraube: 100-120 Nm','3. Rad: 110-130 Nm','','## Tipps','- Immer achsweise tauschen','- Fahrwerksvermessung danach!']},
+  beleuchtung:{tags:['lampe','licht','birne','scheinwerfer','blinker','rucklicht','led','h7','h4','gluhlampe','leuchtmittel'],models:['smart','451','mercedes','bmw','vw','golf','audi','ford','opel','alle'],title:'Leuchtmittel wechseln',steps:['## Benotigste Teile und Werkzeuge','- Passendes Leuchtmittel (H4, H7, W5W, P21W - laut Handbuch)','- Einweghandschuhe (Halogen nie mit blossen Haenden!)','','## Sicherheitshinweis','Halogen-Lampen nie mit blossen Haenden anfassen! Zuendung aus!','','## Schritt 1 - Scheinwerfer vorne','1. Motorhaube oeffnen, Kabelstecker abziehen','2. Gummischutzkappe abdrehen (gegen Uhrzeigersinn)','3. Haeltebugel loesen, alte Lampe herausziehen','4. Neue Lampe mit Handschuh einsetzen, einrasten','5. Kappe aufsetzen (Pfeil nach oben!)','','## Schritt 2 - Sonderfall Smart 451','1. Kein Zugang von hinten - Scheinwerfer ausbauen','2. 2 Schrauben oben, 1 unten loesen','3. Einheit nach vorne ziehen, Lampe tauschen','','## Schritt 3 - Blinker / Rucklicht','1. Blinker vorne: durch Radkasten zugaenglich','2. Rucklicht: Kofferraum oeffnen, Verkleidung abziehen','3. Fassung 90 Grad drehen, herausziehen, Birne wechseln','','## Tipps','- Immer paarweise tauschen (links + rechts)','- LED-Nachruesting: auf Zulassung E1/E4 achten']},
+  batterie:{tags:['batterie','akku','battery','starthilfe','startproblem','springt nicht an'],models:['alle','smart','451','mercedes','bmw','vw','golf','audi','ford','opel'],title:'Batterie wechseln',steps:['## Benotigste Teile und Werkzeuge','- Neue Starterbatterie (passende Ah-Zahl und Polposition!)','- Schraubenschlussel 10 mm und 10-13 mm','- Radio-Code bereithalten','','## Sicherheitshinweis','Zuendung aus! Zuerst Minuspol (-) abklemmen, zuletzt anklemmen!','','## Schritt 1 - Alte Batterie','1. Minuspol (-, schwarz) ZUERST abklemmen','2. Pluspol (+, rot) abklemmen','3. Halteklammer loesen, Batterie herausheben (15-20 kg!)','','## Schritt 2 - Neue Batterie','1. Batteriefach reinigen, Polposition pruefen!','2. Batterie einsetzen, Halteklammer befestigen','3. Pluspol (+) ZUERST anklemmen','4. Minuspol (-) ZULETZT anklemmen','','## Nach dem Einbau','1. Radio-Code eingeben','2. Fensterheber einlernen (Taste halten bis Anschlag)','3. Ab 2010: Batterie im Steuergeraet anmelden!','','## Tipps','- Batterie alle 4-5 Jahre tauschen','- Im Winter haeufiger pruefen']},
+  luftfilter:{tags:['luftfilter','filter','innenraumfilter','pollenfilter','air filter'],models:['alle','smart','451','mercedes','bmw','vw','golf','audi','ford','opel'],title:'Luft- und Pollenfilter wechseln',steps:['## Benotigste Teile und Werkzeuge','- Neuer Luftfilter (fahrzeugspezifisch)','- Innenraumfilter / Pollenfilter','','## Motorluftfilter','1. Motorhaube oeffnen, Luftfiltergehaeuse finden','2. Clips loesen, Deckel abnehmen','3. Alten Filter herausnehmen, Gehaeuse auswischen','4. Neuen Filter einlegen (Richtung beachten!), Deckel schliessen','','## Innenraumfilter','1. Meist hinter Handschuhfach - Seiten eindruecken','2. Filterrahmen herausziehen, alten Filter entnehmen','3. Neuen Filter mit Pfeil in Stroemungsrichtung einsetzen','','## Tipps','- Luftfilter alle 15.000-30.000 km','- Pollenfilter jaehrlich oder alle 15.000 km','- Aktivkohle-Filter bei Allergikern empfohlen']},
+  zuendkerzen:{tags:['zundkerze','zundkerzen','spark','plug','fehlzundung','ruckeln'],models:['alle','mercedes','bmw','vw','golf','audi','ford','opel','toyota','smart'],title:'Zuendkerzen wechseln',steps:['## Benotigste Teile und Werkzeuge','- Neue Zuendkerzen (Anzahl = Zylinder, Typ laut Handbuch!)','- Zuendkerzenschlussel 16 mm oder 21 mm','- Drehmomentschlussel','','## Sicherheitshinweis','Nur bei KALTEM Motor! Heisse Kerzen beschaedigen das Gewinde.','','## Schritt 1','1. Motor mind. 1 Stunde abkuehlen lassen','2. Zuendkabel nummerieren und abziehen','','## Schritt 2 - Kerzen wechseln','1. Zuendkerzenschacht ausblasen','2. Kerze gegen Uhrzeigersinn loesen','3. Alte Kerze pruefen: graubraun = normal, schwarz/oelig = Problem','4. Neue Kerze von Hand eindrehen, dann: 20-30 Nm','5. Zuendkabel einrasten','','## Tipps','- Alle Kerzen gleichzeitig tauschen','- Alle 30.000-60.000 km (Iridium: 100.000 km)']}
+};
+
+var SUGGS = ['Kupplungswechsel Mercedes W107','Zahnriemenwechsel VW Golf 4','Bremsbelaege BMW E46','Oelwechsel Porsche 911','Stossdaempfer Audi A4','Gluehlampe Smart 451','Batterie wechseln','Luftfilter wechseln','Zuendkerzen wechseln'];
+
+function findGuide(q){
+  var ql=norm(q), best=null, bs=0;
+  Object.keys(DB).forEach(function(k){
+    var e=DB[k], sc=0;
+    e.tags.forEach(function(t){if(ql.indexOf(t)>=0)sc+=3;});
+    e.models.forEach(function(m){if(ql.indexOf(m)>=0)sc+=1;});
+    if(sc>bs){bs=sc;best=e;}
+  });
+  return bs>0?best:null;
+}
+
+function doSearch(){
+  var q=document.getElementById('qi').value.trim();
+  if(!q) return;
+  var g=findGuide(q);
+  document.getElementById('a-nf').style.display='none';
+  document.getElementById('a-suggs').style.display='none';
+  if(g){
+    ST.curResult={title:g.title+' - '+q, steps:g.steps, query:q};
+    document.getElementById('a-rtitle').textContent=ST.curResult.title;
+    document.getElementById('a-rbody').innerHTML=renderSteps(g.steps);
+    document.getElementById('a-result').style.display='';
+    document.getElementById('a-smsg').textContent='';
   } else {
-    nav.style.display = 'none';
+    ST.curResult=null;
+    document.getElementById('a-result').style.display='none';
+    document.getElementById('a-nf').style.display='';
   }
 }
 
-function fotoNav(e, idx, dir) {
-  e.stopPropagation();
-  e.preventDefault();
-  var arr = fotos[idx];
-  if (!arr.length) return;
-  fotoIdx[idx] = (fotoIdx[idx] + dir + arr.length) % arr.length;
-  updateSlotUI(idx);
+function clearResult(){
+  ST.curResult=null;
+  document.getElementById('a-result').style.display='none';
+  document.getElementById('a-nf').style.display='none';
+  document.getElementById('a-suggs').style.display='';
+  document.getElementById('qi').value='';
 }
 
-function setStatus(text) {
-  document.getElementById('statusText').textContent = text;
-  document.getElementById('statusBar').classList.add('active');
+function doPrint(){
+  if(!ST.curResult) return;
+  openPrint(buildPrint(ST.curResult.steps, ST.curResult.query));
 }
-function hideStatus() { document.getElementById('statusBar').classList.remove('active'); }
-function showError(msg) {
-  var el = document.getElementById('errorBox');
-  el.textContent = msg;
-  el.classList.add('visible');
-}
-function hideError() { document.getElementById('errorBox').classList.remove('visible'); }
 
-function callProxy(payload) {
-  return fetch(PROXY_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-    },
-    body: JSON.stringify(payload)
-  }).then(function(r) {
-    if (!r.ok) return r.text().then(function(t) { throw new Error('Proxy ' + r.status + ': ' + t); });
-    return r.json();
+function doSave(){
+  if(!ST.curResult) return;
+  var msg=document.getElementById('a-smsg');
+  if(ST.saved.find(function(x){return x.query===ST.curResult.query;})){
+    msg.style.color='var(--r2)'; msg.textContent='Bereits vorhanden';
+  } else {
+    ST.saved.unshift({id:Date.now(),title:ST.curResult.title,steps:ST.curResult.steps,query:ST.curResult.query,date:new Date().toLocaleDateString('de-DE')});
+    SS('ag_saved',ST.saved); updateTabLabels();
+    msg.style.color='var(--g)'; msg.textContent='Gespeichert!';
+  }
+  setTimeout(function(){msg.textContent='';},2000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SAVED GUIDES
+// ═══════════════════════════════════════════════════════════
+function renderSaved(){
+  var list=document.getElementById('g-list');
+  document.getElementById('g-cnt').textContent=ST.saved.length+' Eintraege';
+  if(!ST.saved.length){list.innerHTML='<div style="padding:28px;text-align:center;color:#444;font-size:13px">Noch keine Anleitungen gespeichert</div>';return;}
+  list.innerHTML=ST.saved.map(function(sv){
+    return '<div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px">'
+      +'<div style="flex:1;min-width:0"><div style="color:#e0e0e0;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+sv.title+'</div>'
+      +'<div style="color:#666;font-size:11px;margin-top:2px">'+sv.date+'</div></div>'
+      +'<button class="rb" style="padding:5px 10px;font-size:11px" onclick="openSaved('+sv.id+')">Oeffnen</button>'
+      +'<button class="gb" style="padding:5px 9px" onclick="printSaved('+sv.id+')">PDF</button>'
+      +'<button class="xb" style="padding:5px 9px" onclick="delSaved('+sv.id+')">&times;</button>'
+      +'</div>';
+  }).join('');
+}
+function openSaved(id){var sv=ST.saved.find(function(x){return x.id===id;});if(!sv)return;ST.curResult=sv;document.getElementById('a-rtitle').textContent=sv.title;document.getElementById('a-rbody').innerHTML=renderSteps(sv.steps);document.getElementById('a-result').style.display='';document.getElementById('a-smsg').textContent='';document.getElementById('a-suggs').style.display='none';showTab('anleitungen');}
+function printSaved(id){var sv=ST.saved.find(function(x){return x.id===id;});if(sv)openPrint(buildPrint(sv.steps,sv.query));}
+function delSaved(id){ST.saved=ST.saved.filter(function(x){return x.id!==id;});SS('ag_saved',ST.saved);renderSaved();updateTabLabels();}
+
+// ═══════════════════════════════════════════════════════════
+// VIDEOS
+// ═══════════════════════════════════════════════════════════
+var DEFCATS=['Schweissen','Motor','Getriebe','Bremsen','Elektrik','Karosserie','Reparatur','Sonstiges'];
+function getCats(){return DEFCATS.concat(ST.userCats);}
+
+function getYtId(url){var m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);return m?m[1]:null;}
+function getPlatform(url){
+  if(!url)return 'link';
+  if(url.indexOf('youtube.com')>=0||url.indexOf('youtu.be')>=0)return 'youtube';
+  if(url.indexOf('facebook.com')>=0||url.indexOf('fb.watch')>=0)return 'facebook';
+  if(url.indexOf('instagram.com')>=0)return 'instagram';
+  if(url.indexOf('tiktok.com')>=0)return 'tiktok';
+  if(url.indexOf('vimeo.com')>=0)return 'vimeo';
+  return 'link';
+}
+function platLabel(p){return {youtube:'YouTube',facebook:'Facebook',instagram:'Instagram',tiktok:'TikTok',vimeo:'Vimeo',link:'Link'}[p]||'Link';}
+function platColor(p){return {youtube:'#ff0000',facebook:'#1877f2',instagram:'#e1306c',tiktok:'#555',vimeo:'#1ab7ea',link:'#888'}[p]||'#888';}
+
+function rebuildCats(){
+  var cats=getCats();
+  var sel=document.getElementById('v-cat');
+  var cur=sel?sel.value:'';
+  if(sel){sel.innerHTML=cats.map(function(c){return '<option value="'+c+'">'+c+'</option>';}).join('');if(cats.indexOf(cur)>=0)sel.value=cur;}
+  var fil=document.getElementById('v-catf');
+  var curf=fil?fil.value:'';
+  if(fil){fil.innerHTML='<option value="Alle">Alle Kategorien</option>'+cats.map(function(c){return '<option value="'+c+'">'+c+'</option>';}).join('');if(curf&&(curf==='Alle'||cats.indexOf(curf)>=0))fil.value=curf;}
+  var box=document.getElementById('cat-list');
+  if(!box)return;
+  if(!ST.userCats.length){box.innerHTML='<div style="color:#555;font-size:12px;padding:4px 0">Noch keine eigenen Kategorien</div>';return;}
+  box.innerHTML=ST.userCats.map(function(cat){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,.04);border-radius:7px;margin-bottom:5px">'
+      +'<span style="color:#e0e0e0;font-size:13px">'+cat+'</span>'
+      +'<button onclick="delCat(this)" data-cat="'+cat+'" style="background:none;border:none;color:#666;font-size:15px;cursor:pointer;padding:0 5px">&times;</button>'
+      +'</div>';
+  }).join('');
+}
+function addCat(name){name=(name||'').trim();if(!name||getCats().indexOf(name)>=0)return;ST.userCats.push(name);SS('ag_cats',ST.userCats);rebuildCats();}
+function delCat(btn){var name=btn.getAttribute('data-cat');ST.userCats=ST.userCats.filter(function(c){return c!==name;});SS('ag_cats',ST.userCats);rebuildCats();}
+
+function saveVideo(){
+  var url=document.getElementById('v-url').value.trim();
+  var title=document.getElementById('v-title').value.trim();
+  var msg=document.getElementById('v-msg');
+  if(!url||!title){msg.style.color='var(--r2)';msg.textContent='URL und Titel benoetigt!';setTimeout(function(){msg.textContent='';},3000);return;}
+  var en={id:ST.vEditId||Date.now(),url:url,ytId:getYtId(url),platform:getPlatform(url),title:title,
+    category:document.getElementById('v-cat').value,
+    tags:document.getElementById('v-tags').value.split(',').map(function(t){return t.trim();}).filter(Boolean),
+    notes:document.getElementById('v-notes').value.trim(),date:new Date().toLocaleDateString('de-DE')};
+  if(ST.vEditId){ST.videos=ST.videos.map(function(v){return v.id===ST.vEditId?en:v;});ST.vEditId=null;}
+  else{ST.videos.unshift(en);}
+  ['v-url','v-title','v-tags','v-notes'].forEach(function(id){document.getElementById(id).value='';});
+  SS('ag_vids',ST.videos);updateTabLabels();renderVids();
+  document.getElementById('vf-lbl').textContent='Video hinzufuegen';
+  document.getElementById('v-savebtn').textContent='+ Video speichern';
+  document.getElementById('v-cancelbtn').style.display='none';
+  msg.style.color='var(--g)';msg.textContent='Gespeichert!';setTimeout(function(){msg.textContent='';},2000);
+}
+function cancelVEdit(){ST.vEditId=null;['v-url','v-title','v-tags','v-notes'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('vf-lbl').textContent='Video hinzufuegen';document.getElementById('v-savebtn').textContent='+ Video speichern';document.getElementById('v-cancelbtn').style.display='none';}
+function editVideo(id){
+  var v=ST.videos.find(function(x){return x.id===id;});if(!v)return;
+  document.getElementById('v-url').value=v.url;document.getElementById('v-title').value=v.title;
+  document.getElementById('v-cat').value=v.category;document.getElementById('v-tags').value=v.tags.join(', ');
+  document.getElementById('v-notes').value=v.notes;ST.vEditId=v.id;
+  document.getElementById('vf-lbl').textContent='Video bearbeiten';
+  document.getElementById('v-savebtn').textContent='Aktualisieren';
+  document.getElementById('v-cancelbtn').style.display='';
+  window.scrollTo(0,0);
+}
+function delVideo(id){ST.videos=ST.videos.filter(function(v){return v.id!==id;});SS('ag_vids',ST.videos);updateTabLabels();renderVids();}
+
+function renderVids(){
+  var s=(document.getElementById('v-search').value||'').toLowerCase();
+  var cat=document.getElementById('v-catf').value;
+  var fv=ST.videos.filter(function(v){
+    var mc=cat==='Alle'||v.category===cat;
+    var ms=!s||v.title.toLowerCase().indexOf(s)>=0||v.notes.toLowerCase().indexOf(s)>=0||v.tags.some(function(t){return t.toLowerCase().indexOf(s)>=0;});
+    return mc&&ms;
   });
+  document.getElementById('v-srow').style.display=ST.videos.length>0?'flex':'none';
+  document.getElementById('v-empty').style.display=ST.videos.length===0?'':'none';
+  var list=document.getElementById('v-list');
+  if(!fv.length&&ST.videos.length>0){list.innerHTML='<div style="text-align:center;color:#555;font-size:13px;padding:20px">Keine Videos gefunden</div>';return;}
+  list.innerHTML=fv.map(function(v){
+    var plat=v.platform||getPlatform(v.url);
+    var col=platColor(plat); var lbl=platLabel(plat);
+    var thumb=v.ytId
+      ? '<img src=https://img.youtube.com/vi/'+v.ytId+'/mqdefault.jpg alt="" style=width:100%;height:100%;object-fit:cover;display:block>'
+      : '<div style=width:100%;min-height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:'+col+'22;gap:4px><span style=font-size:24px;color:'+col+'>&#9654;</span><span style=font-size:10px;color:#888>'+lbl+'</span></div>';
+    var tags=v.tags.map(function(t){return t?'<span class="vtag vfree">'+t+'</span>':'';}).join('');
+    return '<div class="card fu" style=display:flex>'
+      +'<div style=width:108px;min-width:108px;background:#111;position:relative;flex-shrink:0>'
+      +thumb
+      +'<a href='+v.url+' target=_blank style=position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-decoration:none>'
+      +'<div style=background:rgba(192,57,43,.85);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px>&#9654;</div>'
+      +'</a></div>'
+      +'<div style=flex:1;padding:10px 12px;min-width:0>'
+      +'<div style=display:flex;justify-content:space-between;align-items:flex-start;gap:5px>'
+      +'<div style=font-weight:700;color:#e0e0e0;font-size:13px;line-height:1.4>'+v.title+'</div>'
+      +'<div style=display:flex;gap:5px;flex-shrink:0>'
+      +'<button onclick=editVideo('+v.id+') style=background:rgba(255,200,0,.12);border:1px solid rgba(255,200,0,.35);color:#f0c040;font-size:12px;cursor:pointer;padding:5px 10px;border-radius:7px;font-weight:600>&#9998; Edit</button>'
+      +'<button onclick=delVideo('+v.id+') style=background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.35);color:var(--r2);font-size:12px;cursor:pointer;padding:5px 10px;border-radius:7px>&#128465;</button>'
+      +'</div></div>'
+      +'<div style=display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;align-items:center>'
+      +'<span class="vtag vcat" style=border-left:2px solid '+col+'>'+lbl+' &middot; '+v.category+'</span>'+tags
+      +'<span style=color:#444;font-size:10px;margin-left:auto>'+v.date+'</span>'
+      +'</div>'
+      +(v.notes?'<div style=margin-top:5px;color:#777;font-size:12px;font-style:italic;line-height:1.4>'+v.notes+'</div>':'')
+      +'</div></div>';
+  }).join('');
 }
 
-// Robuster JSON-Extraktor mit Auto-Repair bei truncated responses
-function extractJSON(raw) {
-  var start = raw.indexOf('{');
-  if (start === -1) throw new Error('Kein JSON im Ergebnis gefunden');
+// ═══════════════════════════════════════════════════════════
+// FEHLERCODES
+// ═══════════════════════════════════════════════════════════
+var FDB = {
+  "P0016":{"titel":"Kurbelwellen-/Nockenwellen-Korrelation (Bank 1)","symptome":["Motor springt schlecht an","Ruckeln beim Beschleunigen","Motorleuchte"],"ursachen":["Gestreckter Steuerkettentrieb","Defekter Phasensteller","Falsche Steuerzeiten nach Reparatur"],"pruefung":["Steuerzeiten pruefen","Steuerkette auf Spiel pruefen","Nockenwellen- und Kurbelwellensensor pruefen"],"massnahmen":{"Allgemein":"Steuerkette/Zahnriemen pruefen, ggf. Steuerkettensatz tauschen","Mercedes":"M271/M272: Steuerkette dehnt sich - kompletter Kettensatz","BMW":"N47: Steuerkette + Fuehrungen tauschen (bekanntes Problem)","VW":"TSI-Motoren: Steuerkette + Spanner tauschen","Audi":"Wie VW - TSI Steuerkette pruefen"},"schwere":"hoch"},
+  "P0030":{"titel":"Lambdasonde Heizkreis (Bank 1, Sensor 1)","symptome":["Erhoehter Kraftstoffverbrauch","Schlechte Abgaswerte","Motorleuchte"],"ursachen":["Defekte Lambdasonde (Heizung)","Kabelbruch","Sicherung defekt"],"pruefung":["Heizwiderstand messen (Soll: 3-30 Ohm)","Versorgungsspannung pruefen (12V)","Zuleitung auf Durchgang pruefen"],"massnahmen":{"Allgemein":"Lambdasonde tauschen, vorher Zuleitung pruefen","Mercedes":"Original-Bosch Sonde empfohlen","BMW":"Auf korrekte NGK/Bosch Sonde achten","VW":"Kabelbruch vor Katalysator haeufig"},"schwere":"mittel"},
+  "P0100":{"titel":"Luftmassenmesser - Fehler im Messkreis","symptome":["Ruckeln","Schwarzer Rauch","Leistungsabfall","Motor geht aus"],"ursachen":["Verschmutzter Luftmassenmesser","Luftansaugleck","Kabelbruch","Defekter LMM"],"pruefung":["LMM reinigen (Spezialreiniger!)","Luftfilter pruefen","Ansaugsystem auf Undichtigkeiten pruefen"],"massnahmen":{"Allgemein":"LMM reinigen, bei Defekt tauschen","Mercedes":"Haeufig verschmutzt - Reinigung mit CRC MAF-Reiniger","BMW":"Bosch-LMM tauschen, Ansaugbruecke auf Risse pruefen","VW":"1.9 TDI: LMM tauschen, vorher Ladeluftkuehler auf Oel pruefen"},"schwere":"mittel"},
+  "P0171":{"titel":"Gemischregelung - System zu mager (Bank 1)","symptome":["Ruckeln bei Last","Erhoehter Verbrauch","Leistungsverlust","Zuendaussetzer"],"ursachen":["Ansaugluftverlust (Vakuumleck)","Defekte Einspritzventile","Kraftstoffpumpe schwach","Lambdasonde defekt"],"pruefung":["Ansaugsystem auf Undichtigkeiten pruefen","Kraftstoffdruck messen (Soll: 3,0-3,5 bar)","Lambdasonde-Spannung pruefen"],"massnahmen":{"Allgemein":"Ansauganlage abdichten, Einspritzventile reinigen/tauschen","Mercedes":"Haeufig undichtes Kurbelgehaeuse-Entlueftungsventil","BMW":"Drosselklappe reinigen, Unterdruckschlaeuche pruefen","VW":"Unterdruckschlaeuche am Bremskraftverstaerker pruefen"},"schwere":"mittel"},
+  "P0300":{"titel":"Zuendaussetzer erkannt - Mehrere Zylinder","symptome":["Ruckeln im gesamten Drehzahlbereich","Motorleuchte blinkt","Leistungsabfall","Kraftstoffgeruch"],"ursachen":["Defekte Zuendkerzen","Defekte Zuendspulen","Fehlerhafte Einspritzventile","Kompressionsabfall","Steuerkette"],"pruefung":["Zuendkerzen pruefen","Zuendspulen einzeln tauschen/testen","Kompressionstest aller Zylinder","Kraftstoffdruck messen"],"massnahmen":{"Allgemein":"Zuendkerzen und Zuendspulen tauschen, Kompressionstest","Mercedes":"M271: Haeufig Zuendspulen defekt - alle 4 tauschen","BMW":"N43/N53: Injektor-Lecktest, Zuendspulen tauschen","VW":"TSI: Zuendspulen und NGK-Zuendkerzen, Steuerkette pruefen","Porsche":"Boxster/911: Zuendspulen und Kerzen, AOS-Ventil pruefen"},"schwere":"hoch"},
+  "P0301":{"titel":"Zuendaussetzer Zylinder 1","symptome":["Ruckeln","Motorleuchte blinkt","Ein Zylinder faellt aus"],"ursachen":["Defekte Zuendkerze Zyl. 1","Defekte Zuendspule Zyl. 1","Defektes Einspritzventil Zyl. 1","Kompressionsabfall Zyl. 1"],"pruefung":["Zuendspule Zyl. 1 mit anderer tauschen (Wandert Fehler mit?)","Zuendkerze Zyl. 1 pruefen","Kompression Zyl. 1 messen (Soll: min. 10 bar)"],"massnahmen":{"Allgemein":"Zuendspule und Kerze Zyl. 1 tauschen","Mercedes":"Zuendspule tauschen (Bosch/Beru), NGK Iridium Kerzen","BMW":"Zuendspule Zyl. 1 tauschen","VW":"Zuendspule tauschen (haeufiges Problem bei TSI)"},"schwere":"hoch"},
+  "P0400":{"titel":"Abgasrueckfuehrung (AGR) - Mengenfehler","symptome":["Motorleuchte","Ruckeln im Teillastbereich","Schwarzer Rauch (Diesel)"],"ursachen":["Verschmutztes AGR-Ventil","Defekter AGR-Kuehler","Unterdruckdose defekt"],"pruefung":["AGR-Ventil auf Beweglichkeit pruefen","Unterdruckversorgung pruefen","Istwert AGR-Ventil mit Diagnosegeraet pruefen"],"massnahmen":{"Allgemein":"AGR-Ventil reinigen oder tauschen","Mercedes":"OM651: AGR-Ventil haeufig verkokt - Reinigung oder Tausch","BMW":"320d N47: AGR-Kuehler haeufig undicht - Tausch empfohlen","VW":"TDI: AGR-Ventil reinigen, ggf. tauschen"},"schwere":"mittel"},
+  "P0420":{"titel":"Katalysator - Wirksamkeit unter Grenzwert (Bank 1)","symptome":["Motorleuchte","Erhoehte Abgaswerte","Kraftstoffgeruch aus Auspuff"],"ursachen":["Gealterter Katalysator","Defekte Lambdasonde","Oelverbrauch (Kat vergiftet)"],"pruefung":["Lambdasonden-Signale vergleichen (vor/nach Kat)","Katalysator auf Beschaedigungen pruefen","Oelverbrauch pruefen"],"massnahmen":{"Allgemein":"Katalysator tauschen, vorher Ursache der Vergiftung beseitigen","Mercedes":"Original-Kat empfohlen","BMW":"Auf OEM-Qualitaet achten, Lambdasondentest vor Kattausch","VW":"Haeufig Oelverbrauch als Ursache - erst Zylinderkoepfe pruefen"},"schwere":"mittel"},
+  "P0500":{"titel":"Fahrzeuggeschwindigkeitssensor - Fehler","symptome":["Tacho faellt aus","ABS-Leuchte","Getriebeprobleme"],"ursachen":["Defekter Geschwindigkeitssensor","Kabelbruch","ABS-Sensor defekt"],"pruefung":["Sensor-Signal pruefen","Kabelbaum pruefen","ABS-Sensor pruefen"],"massnahmen":{"Allgemein":"Geschwindigkeitssensor tauschen","Mercedes":"Haeufig ABS-Sensor am Getriebe defekt","BMW":"DSC-Sensor pruefen"},"schwere":"mittel"},
+  "P0505":{"titel":"Leerlaufregelung - Fehler","symptome":["Unruhiger Leerlauf","Motor stirbt ab","Leerlaufdrehzahl schwankt"],"ursachen":["Defektes Leerlaufregelventil","Verschmutzte Drosselklappe","Unterdruckleck"],"pruefung":["Drosselklappe reinigen","Leerlaufregelventil pruefen","Istwert Leerlauf mit Diagnosegeraet pruefen"],"massnahmen":{"Allgemein":"Drosselklappe reinigen, Leerlaufregelventil tauschen","Mercedes":"Drosselklappe Basic Setting nach Reinigung durchfuehren","BMW":"Drosselklappe adaptieren nach Reinigung","VW":"Drosselklappe reinigen und adaptieren"},"schwere":"mittel"},
+  "P0700":{"titel":"Getriebesteuerung - Fehleranzeige","symptome":["Getriebe schaltet nicht richtig","Notlaufprogramm","Ruckeln beim Schalten"],"ursachen":["Defektes Getriebesteuergeraet","Schaltsolenoid defekt","ATF-Oelstand niedrig"],"pruefung":["Getriebeoel pruefen","Getriebesteuergeraet auslesen","Schaltsolenoid-Widerstand messen"],"massnahmen":{"Allgemein":"Getriebeoel wechseln, dann Steuergeraet auslesen","Mercedes":"7G-Tronic: Haeufig Y3/7 Mechatronik defekt","BMW":"ZF-Getriebe: Mechatronik/Oelwechsel"},"schwere":"hoch"},
+  "P1000":{"titel":"OBD-Systemtest nicht abgeschlossen","symptome":["Motorleuchte (gelb)","Keine Fahrbarkeitseinschraenkung"],"ursachen":["Batterie abgeklemmt","Steuergeraet neu programmiert","Fehlerspeicher geloescht"],"pruefung":["Fahrzyklus durchfuehren","Alle Monitore auf Complete pruefen"],"massnahmen":{"Allgemein":"Fahrzyklus nach Herstellervorgabe (ca. 20-30 Min. Fahrt)","Mercedes":"Kalt starten, Leerlauf 2 Min., Stadtfahrt, Autobahn min. 90 km/h","BMW":"Vollstaendiger Warm-Kalt-Zyklus erforderlich"},"schwere":"niedrig"},
+  "P2100":{"titel":"Drosselklappenaktuator - Steuerkreis offen","symptome":["Motorleuchte","Limp-Home-Mode","Keine Gasannahme","Drehzahl begrenzt"],"ursachen":["Defekter Drosselklappenmotor","Kabelbruch","Mechanisch blockiert"],"pruefung":["Drosselklappe auf Leichtgaengigkeit pruefen","Motorwiderstand messen","Versorgungsspannung pruefen"],"massnahmen":{"Allgemein":"Drosselklappe reinigen/tauschen","Mercedes":"E-Gas Drosselklappe tauschen","BMW":"Drosselklappe tauschen, Basic Setting","VW":"Drosselklappe reinigen und adaptieren"},"schwere":"hoch"},
+  "C0031":{"titel":"Vorderrad links - Raddrehzahlsensor Fehler","symptome":["ABS-Leuchte","ESP deaktiviert","ABS funktioniert nicht"],"ursachen":["Defekter ABS-Sensor","Sensor verschmutzt","Kabelbruch","Impulsring beschaedigt"],"pruefung":["Sensor-Signal pruefen","Sensor auf Verschmutzung pruefen","Impulsring pruefen"],"massnahmen":{"Allgemein":"ABS-Sensor tauschen, Impulsring pruefen","Mercedes":"Haeufig Kabelbruch direkt am Sensor","BMW":"Sensor tauschen, korrekten Luftspalt beachten (max 1,5 mm)"},"schwere":"hoch"},
+  "U0001":{"titel":"CAN-Bus Kommunikationsfehler","symptome":["Mehrere Systeme ausgefallen","Viele Fehlercodes gleichzeitig","Fahrzeug im Notbetrieb"],"ursachen":["Kurzschluss im CAN-Bus","Steuergeraet defekt","Korrodierte Steckverbinder","Masseproblem"],"pruefung":["CAN-Bus Widerstand messen (Soll: 60 Ohm)","Alle Steckverbinder pruefen","Masseverbindungen messen"],"massnahmen":{"Allgemein":"Systematische Suche: CAN-Widerstand, Masse, Steckverbinder","Mercedes":"Massepunkte unter Batterie haeufig korrodiert","BMW":"Feuchtigkeit in Steckverbindern - Kontaktspray"},"schwere":"hoch"},
+  "B0001":{"titel":"Fahrerairbag - Zuendkreisfehler","symptome":["Airbag-Leuchte","Airbag deaktiviert"],"ursachen":["Defekter Airbag-Zuender","Kabelbruch Lenkradspirale"],"pruefung":["Lenkradspirale auf Durchgang pruefen","Widerstand Zuendkreis messen"],"massnahmen":{"Allgemein":"ACHTUNG: Nur Fachwerkstatt! Airbag-System spannungsfrei schalten!","Mercedes":"Lenkradspirale haeufig defekt bei hoher Laufleistung"},"schwere":"hoch"}
+};
 
-  // Versuch 1: sauberes JSON
-  var end = raw.lastIndexOf('}');
-  if (end > start) {
-    try { return JSON.parse(raw.substring(start, end + 1)); } catch(e1) {}
-  }
+var FSUGGS = ['P0300','P0420','P0171','P0400','P0700','C0031','U0001','P0016','P0505','P0100'];
 
-  // Versuch 2: JSON wurde abgeschnitten — fehlende Klammern ergänzen
-  var partial = raw.substring(start);
-  var opens   = (partial.match(/\{/g) || []).length;
-  var closes  = (partial.match(/\}/g) || []).length;
-  var missing = opens - closes;
-  partial = partial.replace(/,\s*$/, '').replace(/:\s*"[^"]*$/, ':"—"');
-  for (var i = 0; i < missing; i++) partial += '}';
-  try { return JSON.parse(partial); } catch(e2) {
-    throw new Error('JSON Parse error: ' + e2.message);
-  }
+function searchCode(){
+  var code=document.getElementById('f-code').value.trim().toUpperCase();
+  var her=document.getElementById('f-her').value;
+  if(!code) return;
+  document.getElementById('f-nf').style.display='none';
+  document.getElementById('f-result').style.display='none';
+  var e=FDB[code];
+  if(!e){document.getElementById('f-nf').style.display='';return;}
+  var hi=e.massnahmen[her]||e.massnahmen['Allgemein'];
+  var sc={hoch:'#e74c3c',mittel:'#f0a500',niedrig:'#27ae60'}[e.schwere]||'#888';
+  document.getElementById('f-title').textContent=code+' - '+e.titel;
+  var html='<div style="display:flex;align-items:center;gap:8px;margin-bottom:13px">'
+    +'<span style="background:'+sc+'22;border:1px solid '+sc+';color:'+sc+';padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700">Schwere: '+e.schwere.toUpperCase()+'</span>'
+    +'<span style="color:#888;font-size:12px">'+her+'</span></div>';
+  html+='<div class="step-h">Symptome</div>';
+  e.symptome.forEach(function(s){html+='<div class="step-d"><b>&#9658;</b><span>'+s+'</span></div>';});
+  html+='<div class="step-h">Moegliche Ursachen</div>';
+  e.ursachen.forEach(function(u){html+='<div class="step-d"><b>&#9658;</b><span>'+u+'</span></div>';});
+  html+='<div class="step-h">Pruefung und Diagnose</div>';
+  e.pruefung.forEach(function(p,i){html+='<div class="step-n"><b>'+(i+1)+'.</b><span>'+p+'</span></div>';});
+  html+='<div class="step-h" style="border-left-color:var(--g);color:#2ecc71">Massnahmen - '+her+'</div>';
+  html+='<div style="background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.2);border-radius:8px;padding:12px;margin:6px 0;font-size:13px;color:#ccc;line-height:1.6">'+hi+'</div>';
+  document.getElementById('f-body').innerHTML=html;
+  document.getElementById('f-result').style.display='';
+  ST.curCode={code:code,her:her,e:e,hi:hi};
 }
 
-function startAnalyse() {
-  var marke   = document.getElementById('marke').value.trim();
-  var modell  = document.getElementById('modell').value.trim();
-  var baujahr = document.getElementById('baujahr').value.trim();
-  if (!marke || !modell || !baujahr) { alert('Bitte Hersteller, Modell und Baujahr eingeben.'); return; }
+function clearCode(){document.getElementById('f-result').style.display='none';document.getElementById('f-nf').style.display='none';document.getElementById('f-code').value='';}
 
-  var btn = document.getElementById('analyseBtn');
-  btn.disabled = true;
-  hideError();
-  document.getElementById('datenblatt').classList.remove('visible');
-  document.getElementById('btnPdf').style.display = 'none';
-  // Paywall zurücksetzen
-  document.getElementById('overlayMarkt').style.display = 'flex';
-  var premiumSections = document.querySelectorAll('.premium-content');
-  for (var i = 0; i < premiumSections.length; i++) { premiumSections[i].style.display = 'none'; }
-  // Foto-Slots zurücksetzen
-  fotos = [[], [], [], []];
-  fotoIdx = [0, 0, 0, 0];
+function printCode(){
+  if(!ST.curCode) return;
+  var d=ST.curCode, date=new Date().toLocaleDateString('de-DE');
+  var sc={hoch:'#e74c3c',mittel:'#f39c12',niedrig:'#27ae60'}[d.e.schwere]||'#888';
+  var body='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="background:'+sc+'22;border:1px solid '+sc+';color:'+sc+';padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700">Schwere: '+d.e.schwere.toUpperCase()+'</span><span style="color:#888;font-size:11px">Hersteller: '+d.her+'</span></div>';
+  body+='<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin:11px 0 3px;border-left:3px solid #c0392b;padding-left:7px">Symptome</div>';
+  d.e.symptome.forEach(function(s){body+='<div style="margin:2px 0;font-size:11px;padding-left:12px">&#9658; '+s+'</div>';});
+  body+='<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin:11px 0 3px;border-left:3px solid #c0392b;padding-left:7px">Moegliche Ursachen</div>';
+  d.e.ursachen.forEach(function(u){body+='<div style="margin:2px 0;font-size:11px;padding-left:12px">&#9658; '+u+'</div>';});
+  body+='<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin:11px 0 3px;border-left:3px solid #c0392b;padding-left:7px">Pruefung</div>';
+  d.e.pruefung.forEach(function(p,i){body+='<div style="display:flex;gap:7px;margin:3px 0;font-size:11px"><b style="color:#c0392b;min-width:16px">'+(i+1)+'.</b><span>'+p+'</span></div>';});
+  body+='<div style="font-size:12px;font-weight:700;color:#27ae60;margin:11px 0 3px;border-left:3px solid #27ae60;padding-left:7px">Massnahmen - '+d.her+'</div>';
+  body+='<div style="background:#f0fff4;border:1px solid #27ae60;border-radius:6px;padding:10px;font-size:11px;line-height:1.6;color:#222">'+d.hi+'</div>';
+  openPrint('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>OBD2 '+d.code+'</title><style>body{font-family:sans-serif;color:#222;padding:28px 36px;max-width:660px;margin:0 auto}.pb{display:block;margin:18px auto;padding:10px 26px;background:#c0392b;color:#fff;border:none;border-radius:5px;font-size:13px;cursor:pointer}@media print{.pb{display:none}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>'
+    +'<div style="border-bottom:3px solid #1a1a2e;padding-bottom:11px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-size:19px;font-weight:800;color:#1a1a2e">OBD2 Fehlercode</div><div style="font-size:15px;font-weight:700;color:#c0392b;margin-top:2px">'+d.code+' - '+d.e.titel+'</div></div><div style="text-align:right"><div style="font-size:9px;color:#999">Erstellt '+date+'</div><div style="background:#c0392b;color:#fff;font-size:8px;padding:2px 6px;border-radius:2px;display:inline-block">AutoGuide AI</div></div></div>'
+    +body+'<button class="pb" onclick="window.print()">Drucken / Als PDF speichern</button>'
+    +'<div style="margin-top:14px;padding-top:8px;border-top:1px solid #eee;font-size:8px;color:#aaa">AutoGuide AI - Alle Angaben ohne Gewaehr - Fachwerkstatt konsultieren</div></body></html>');
+}
 
-  var baureihe  = document.getElementById('baureihe').value.trim();
-  var zustand   = document.getElementById('zustand').value;
-  var farbe     = document.getElementById('farbe').value.trim();
-  var km        = document.getElementById('km').value.trim();
-  var anmerkung = document.getElementById('anmerkung').value.trim();
+// ═══════════════════════════════════════════════════════════
+// TEILESUCHE
+// ═══════════════════════════════════════════════════════════
+var LIEFERANTEN = [
+  {name:'Mercedes Teile', kat:'OEM',   col:'#00adef', url:'https://shop.mercedes-benz.com/de-de/search?query={NR}'},
+  {name:'BMW Teile',      kat:'OEM',   col:'#1c69d4', url:'https://www.bmw.de/de/footer/metanavigation/search.html?term={NR}'},
+  {name:'VW Teile',       kat:'OEM',   col:'#001e50', url:'https://www.volkswagen-shop.de/de/search?q={NR}'},
+  {name:'Porsche Classic',kat:'OEM',   col:'#d5001c', url:'https://www.porsche-classic.com/search?q={NR}'},
+  {name:'Bosch AM',       kat:'OEM',   col:'#e2001a', url:'https://www.bosch-automotive.com/de/search?term={NR}'},
+  {name:'TecDoc',         kat:'IAM',   col:'#e63312', url:'https://www.tecdoc.de/de/search/article/{NR}'},
+  {name:'Autodoc',        kat:'IAM',   col:'#ff6600', url:'https://www.autodoc.de/search?query={NR}'},
+  {name:'Kfzteile24',     kat:'IAM',   col:'#e2001a', url:'https://www.kfzteile24.de/suche/?query={NR}'},
+  {name:'1A Autoteile',   kat:'IAM',   col:'#cc0000', url:'https://www.1a-autoteile.de/suche/?q={NR}'},
+  {name:'Febi Bilstein',  kat:'IAM',   col:'#0057a8', url:'https://www.febi.com/de/suche/?q={NR}'},
+  {name:'MAHLE',          kat:'IAM',   col:'#009bd4', url:'https://www.mahle-aftermarket.com/de/de/search/?q={NR}'},
+  {name:'Oscaro',         kat:'IAM',   col:'#003087', url:'https://www.oscaro.de/recherche?q={NR}'},
+  {name:'eBay',           kat:'Markt', col:'#e53238', url:'https://www.ebay.de/sch/i.html?_nkw={NR}&_sacat=0'},
+  {name:'Amazon',         kat:'Markt', col:'#ff9900', url:'https://www.amazon.de/s?k={NR}'},
+  {name:'Kleinanzeigen',  kat:'Markt', col:'#00a650', url:'https://www.kleinanzeigen.de/s-{NR}/k0'},
+  {name:'mobile.de',      kat:'Markt', col:'#003d82', url:'https://suchen.mobile.de/ersatzteile/?q={NR}'}
+];
 
-  var fahrzeugInfo = marke + ' ' + modell
-    + (baureihe  ? ' (' + baureihe + ')'       : '')
-    + ', Baujahr ' + baujahr
-    + (zustand   ? ', Zustand Note ' + zustand  : '')
-    + (farbe     ? ', Farbe: ' + farbe          : '')
-    + (km        ? ', KM-Stand: ' + km          : '')
-    + (anmerkung ? ', Besonderheiten: ' + anmerkung : '');
+var TSEARCH = [];
 
-  // Zähle hochgeladene Slots
-  var aktiveFotos = fotos.filter(function(arr) { return arr.length > 0; });
+function kiAnalyse(nr, her){
+  var n=nr.toUpperCase().replace(/[\s-]/g,'');
+  var info=[];
+  if(her==='Mercedes'||n.match(/^A?0{0,3}\d{7,10}$/)){
+    var clean=n.replace(/^A/,'');
+    info.push('Mercedes-Benz Teilenummer erkannt');
+    info.push('- Originalformat: A'+clean);
+    info.push('- Kurzformat: '+clean);
+    info.push('- Beide Varianten bei Lieferanten versuchen');
+    info.push('- Fuer Oldtimer (W107, W108, W111...): auch Oldtimer-Spezialisten');
+  } else if(her==='BMW'||n.match(/^\d{7,11}$/)){
+    info.push('BMW Teilenummer erkannt');
+    info.push('- BMW Format: meist 11-stellig numerisch');
+    info.push('- ETK (BMW Teilekatalog) fuer genaue Identifikation');
+  } else if(n.match(/^(0\d{9,11}|F00|F01|F02)/)){
+    info.push('Bosch Teilenummer erkannt');
+    info.push('- Bosch Nummern beginnen oft mit 0 oder F00');
+    info.push('- Direkt bei Bosch Aftermarket oder Autodoc suchen');
+  } else if(n.match(/^\d{4,6}$/)&&parseInt(n)<100000){
+    info.push('Moegliche IAM Teilenummer (Febi, Lemfoerder, SKF)');
+    info.push('- Kurze Nummern oft von IAM-Herstellern');
+    info.push('- Bei TecDoc nach Kreuzreferenzen suchen');
+  } else {
+    info.push('Teilenummer: '+n);
+    if(n.length>=10) info.push('- Koennte Original OEM-Nummer sein');
+    if(n.match(/^[A-Z]/)) info.push('- Buchstabenpraeefix: '+n.slice(0,2)+' = moeglicher Hersteller');
+    info.push('- Hersteller im Dropdown angeben fuer bessere Analyse');
+  }
+  info.push('');
+  info.push('Empfohlene Suchstrategie:');
+  info.push('1. Original-Preis: OEM-Shop des Herstellers');
+  info.push('2. Kreuznummer finden: TecDoc oder Autodoc');
+  info.push('3. IAM-Alternativen: Febi, Lemfoerder, Bosch, SKF');
+  info.push('4. Gebraucht/guenstig: eBay, Kleinanzeigen');
+  info.push('');
+  info.push('Tipp fuer Oldtimer:');
+  info.push('- Nummern mit/ohne fuehrende Nullen versuchen');
+  info.push('- Google: Nummer + Nachbau oder cross reference');
+  return info;
+}
 
-  setStatus('KI erstellt Fahrzeugdaten' + (aktiveFotos.length > 0 ? ' (' + aktiveFotos.length + ' Bereich(e))' : '') + '…');
-
-  var systemPrompt = 'Du bist ein präziser Oldtimer- und Youngtimer-Experte mit tiefem Wissen über den DACH-Markt. '
-    + 'Du erstellst strukturierte Fahrzeug-Datenblätter im JSON-Format für Restaurierungsbetriebe und Händler. '
-    + 'Antworte NUR mit validem JSON, kein Markdown, keine Erklärungen davor oder danach. '
-    + 'Alle Texte auf Deutsch. Zahlen immer mit deutschem Tausenderpunkt (z.B. 1.500).';
-
-  // ── CALL 1: Stammdaten, Technik, Markt, Prognose ─────
-  var prompt1 = 'Fahrzeugdaten für: ' + fahrzeugInfo + '\n\n'
-    + 'NUR dieses JSON, kein Markdown:\n'
-    + '{"titel":"...","baureihe_label":"...",'
-    + '"badges":["..."],'
-    + '"quartett":['
-    +   '{"label":"Hubraum","value":"...","unit":"cm³"},'
-    +   '{"label":"Leistung","value":"...","unit":"PS"},'
-    +   '{"label":"Drehmoment","value":"...","unit":"Nm"},'
-    +   '{"label":"Vmax","value":"...","unit":"km/h"},'
-    +   '{"label":"0–100","value":"...","unit":"sec"},'
-    +   '{"label":"Verbrauch","value":"...","unit":"L/100km"}'
-    + '],'
-    + '"identifikation":['
-    +   '{"label":"Karosserieform","value":"..."},'
-    +   '{"label":"Produktionszeitraum","value":"..."},'
-    +   '{"label":"Gesamtstückzahl Baureihe","value":"..."},'
-    +   '{"label":"Stückzahl dieses Modells","value":"..."},'
-    +   '{"label":"Seltenheitsgrad","value":"..."},'
-    +   '{"label":"Motor","value":"..."},'
-    +   '{"label":"Getriebe","value":"..."},'
-    +   '{"label":"Antrieb","value":"..."},'
-    +   '{"label":"Leergewicht","value":"..."},'
-    +   '{"label":"Maße L/B/H","value":"..."}'
-    + '],'
-    + '"motorvarianten":[{"modell":"...","motor":"...","ps":"...","baujahre":"...","stueck":"...","aktuell":false}],'
-    + '"markt":{"bewertungswert":"...","marktdurchschnitt":"...","angebote_dach":"...","hinweis":"..."},'
-    + '"preise":['
-    +   '{"note":"Note 1","beschreibung":"Concours","range":"...","farbe":"#d4af37"},'
-    +   '{"note":"Note 1–","beschreibung":"Vollrestauriert","range":"...","farbe":"#b8960c"},'
-    +   '{"note":"Note 2","beschreibung":"Sehr gut","range":"...","farbe":"#888"},'
-    +   '{"note":"Note 3","beschreibung":"Gebrauchszustand","range":"...","farbe":"#666"},'
-    +   '{"note":"Note 4–5","beschreibung":"Restaurierungsobjekt","range":"...","farbe":"#444"}'
-    + '],'
-    + '"prognose":['
-    +   '{"label":"Trend 3 Jahre","wert":"...","richtung":"up"},'
-    +   '{"label":"Nachfrage DACH","wert":"...","richtung":"up"},'
-    +   '{"label":"Ersatzteile","wert":"...","richtung":"neutral"},'
-    +   '{"label":"H-Kennzeichen","wert":"...","richtung":"up"},'
-    +   '{"label":"Langfristprognose","wert":"...","richtung":"up"}'
-    + '],'
-    + '"prognose_text":"2–3 Sätze."'
-    + '}';
-
-  // ── CALL 2: Verschleiß, Features, Fazit ───────────────
-  var prompt2 = 'Fahrzeugdaten für: ' + fahrzeugInfo + '\n\n'
-    + 'NUR dieses JSON, kein Markdown:\n'
-    + '{"verschleiss":['
-    +   '{"nr":1,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":2,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":3,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":4,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":5,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":6,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":7,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":8,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":9,"name":"...","kosten":"€ X.000 – Y.000"},'
-    +   '{"nr":10,"name":"...","kosten":"€ X.000 – Y.000"}'
-    + '],'
-    + '"features":['
-    +   '{"icon":"✅","text":"..."},'
-    +   '{"icon":"✅","text":"..."},'
-    +   '{"icon":"✅","text":"..."},'
-    +   '{"icon":"⚠️","text":"..."},'
-    +   '{"icon":"⚠️","text":"..."}'
-    + '],'
-    + '"fazit":"2–3 Sätze Experteneinschätzung zu Marktwert, Zustand und Kaufempfehlung."'
-    + '}';
-
-  // Fotos nur in Call 1 — jeweils nur das ERSTE Foto pro Slot (spart Payload)
-  var messages1 = [];
-  fotos.forEach(function(arr, idx) {
-    if (!arr.length) return;
-    var f = arr[0]; // nur erstes Foto an KI
-    messages1.push({
-      role: 'user',
-      content: [
-        { type: 'image', source: { type: 'base64', media_type: f.mime, data: f.base64 } },
-        { type: 'text', text: 'Foto: ' + fotoLabels[idx] + (arr.length > 1 ? ' (' + arr.length + ' Bilder, erstes gezeigt)' : '') + ' — Zustand, Besonderheiten, sichtbare Mängel.' }
-      ]
+function startTeilesuche(){
+  var nr=document.getElementById('t-nr').value.trim();
+  var her=document.getElementById('t-her').value;
+  if(!nr) return;
+  if(TSEARCH.indexOf(nr)<0){TSEARCH.unshift(nr);if(TSEARCH.length>10)TSEARCH.pop();SS('ag_tsearch',TSEARCH);renderTHist();}
+  document.getElementById('t-ki').style.display='';
+  document.getElementById('t-ki-nr').textContent=nr;
+  var analysis=kiAnalyse(nr,her);
+  document.getElementById('t-ki-body').innerHTML=analysis.map(function(line){
+    if(!line) return '<div style="height:5px"></div>';
+    if(line.match(/^\d+\./)){var nm=line.match(/^(\d+)\. (.+)/);return '<div class="step-n"><b>'+nm[1]+'.</b><span>'+nm[2]+'</span></div>';}
+    if(line.indexOf('- ')===0) return '<div class="step-d"><b>&#9658;</b><span>'+line.slice(2)+'</span></div>';
+    if(!line.match(/^[A-Za-z0-9]/)) return '<div style="height:3px"></div>';
+    return '<div class="step-h" style="font-size:13px">'+line+'</div>';
+  }).join('');
+  var links=LIEFERANTEN.map(function(l){return Object.assign({},l,{fullUrl:l.url.replace('{NR}',encodeURIComponent(nr))});});
+  ST.tLinks=links;
+  var cats={OEM:'OEM / Original',IAM:'IAM / Nachbau',Markt:'Marktplaetze'};
+  var icons={OEM:'&#127919;',IAM:'&#128295;',Markt:'&#128722;'};
+  var html='';
+  ['OEM','IAM','Markt'].forEach(function(cat){
+    var cl=links.filter(function(l){return l.kat===cat;});
+    if(!cl.length) return;
+    html+='<div style="margin-bottom:12px"><div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:7px">'+icons[cat]+' '+cats[cat]+'</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">';
+    cl.forEach(function(l){
+      html+='<a href="'+l.fullUrl+'" target="_blank" rel="noreferrer" '
+        +'style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);'
+        +'border-radius:9px;padding:10px 12px;text-decoration:none;border-left:3px solid '+l.col+'">'
+        +'<span style="font-size:12px;font-weight:700;color:#e0e0e0">'+l.name+'</span>'
+        +'<span style="color:'+l.col+';font-size:14px">&#10132;</span></a>';
     });
-    messages1.push({ role: 'assistant', content: fotoLabels[idx] + ' analysiert.' });
+    html+='</div></div>';
   });
-  messages1.push({ role: 'user', content: prompt1 });
+  document.getElementById('t-linklist').innerHTML=html;
+  document.getElementById('t-links').style.display='';
+}
 
-  // Beide Calls parallel + DACH-Suche
-  Promise.all([
-    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2500, system: systemPrompt, messages: messages1 }),
-    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2000, system: systemPrompt, messages: [{ role: 'user', content: prompt2 }] })
-  ])
-  .then(function(results) {
-    var raw1 = results[0].content ? results[0].content.map(function(i){return i.text||'';}).join('') : '';
-    var raw2 = results[1].content ? results[1].content.map(function(i){return i.text||'';}).join('') : '';
-    if (!raw1) throw new Error('Leere Antwort Call 1: ' + JSON.stringify(results[0]).substring(0,200));
-    var d1 = extractJSON(raw1);
-    var d2 = raw2 ? extractJSON(raw2) : {};
-    // Zusammenführen
-    var d = Object.assign({}, d1, d2);
+function openAll(){ST.tLinks.forEach(function(l){window.open(l.fullUrl,'_blank');});}
 
-    setStatus('Aktuelle DACH-Marktpreise werden abgerufen…');
-    return searchDACH(marke, modell, baureihe, baujahr).then(function(dachData) {
-      return { ki: d, dach: dachData };
-    });
-  })
-  .then(function(result) {
-    renderDatenblatt(result.ki, result.dach, marke, modell, baureihe, baujahr, zustand);
-    hideStatus();
-    btn.disabled = false;
-    // PDF-Button nur wenn bereits freigeschaltet
-    if (premiumFreigeschaltet) document.getElementById('btnPdf').style.display = 'inline-block';
-    window.scrollTo({ top: document.getElementById('datenblatt').offsetTop - 80, behavior: 'smooth' });
-  })
-  .catch(function(err) {
-    console.error(err);
-    hideStatus();
-    showError('Fehler: ' + err.message + ' — Supabase Key oder Proxy prüfen.');
-    btn.disabled = false;
+function renderTHist(){
+  var box=document.getElementById('t-hist');
+  if(!TSEARCH.length){box.innerHTML='<span style="color:#444;font-size:12px">Noch keine Suchen</span>';return;}
+  box.innerHTML='';
+  TSEARCH.forEach(function(nr){
+    var a=document.createElement('a');
+    a.href='#'; a.className='sb'; a.textContent=nr;
+    a.onclick=function(){document.getElementById('t-nr').value=nr;startTeilesuche();return false;};
+    box.appendChild(a);
   });
 }
 
-function searchDACH(marke, modell, baureihe, baujahr) {
-  var suchbegriff = marke + ' ' + modell + (baureihe ? ' ' + baureihe : '') + ' ' + baujahr + ' kaufen Oldtimer Preis DACH';
-  return callProxy({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1500,
-    system: 'Du bist Oldtimer-Marktexperte. Suche aktuelle Angebote und Preise im DACH-Raum. Antworte NUR mit validem JSON ohne Markdown.',
-    messages: [{ role: 'user', content:
-      'Aktuelle Marktpreise und Angebote für: ' + suchbegriff + '\n\n'
-      + 'JSON-Schema:\n'
-      + '{"gefunden":true,"anzahl_angebote":"ca. X","preisrange":"€ X – Y","durchschnitt":"€ X",'
-      + '"angebote":[{"titel":"...","preis":"€ X.000","km":"X.000 km","jahr":"YYYY","quelle":"mobile.de"}],'
-      + '"markt_kommentar":"1 Satz Marktlage"}'
-    }],
-    tools: [{ type: 'web_search_20250305', name: 'web_search' }]
-  })
-  .then(function(data) {
-    var raw = data.content.map(function(i) { return i.type === 'text' ? i.text : ''; }).join('');
-    if (!raw.trim()) return null;
-    return extractJSON(raw);
-  })
-  .catch(function() { return null; });
+// ═══════════════════════════════════════════════════════════
+// KALKULATION
+// ═══════════════════════════════════════════════════════════
+function saveFirma(){
+  ST.firma={name:document.getElementById('k-firma').value,str:document.getElementById('k-str').value,ort:document.getElementById('k-ort').value,tel:document.getElementById('k-tel').value,mail:document.getElementById('k-mail').value,steuernr:document.getElementById('k-steuernr').value,mwst:document.getElementById('k-mwst').checked,mwstSatz:parseInt(document.getElementById('k-mwst-satz').value)};
+  SS('ag_firma',ST.firma); calcSum(); alert('Firmeneinstellungen gespeichert!');
 }
 
-function renderDatenblatt(d, dach, marke, modell, baureihe, baujahr, zustand) {
-  document.getElementById('dbTitel').textContent    = d.titel || (marke + ' ' + modell);
-  document.getElementById('dbBaureihe').textContent = d.baureihe_label || (baureihe + ' · Baujahr ' + baujahr);
+function toggleFirma(){var b=document.getElementById('f-box'),t=document.getElementById('f-toggle');if(b.style.display==='none'){b.style.display='';t.textContent='\u25bc Einklappen';}else{b.style.display='none';t.textContent='\u25b6 Ausklappen';}}
 
-  // Foto-Galerie im Header — erstes Foto pro Slot
-  var aktiveFotos = fotos.filter(function(arr) { return arr.length > 0; });
-  if (aktiveFotos.length > 0) {
-    var grid = document.getElementById('dbFotoGrid');
-    grid.innerHTML = '';
-    fotos.forEach(function(arr, idx) {
-      if (!arr.length) return;
-      var f = arr[0];
-      grid.innerHTML += '<div style="position:relative;">'
-        + '<img src="data:' + f.mime + ';base64,' + f.base64 + '" '
-        + 'style="width:80px;height:54px;object-fit:cover;border-radius:4px;border:1px solid var(--border);" />'
-        + '<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);font-size:8px;'
-        + 'text-align:center;padding:1px;letter-spacing:0.04em;color:#aaa;border-radius:0 0 4px 4px;">'
-        + fotoLabels[idx] + (arr.length > 1 ? ' ×' + arr.length : '') + '</div></div>';
-    });
-    document.getElementById('dbFotoGalerie').style.display = 'block';
-  }
-
-  // Badges
-  var badgeEl = document.getElementById('dbBadges');
-  badgeEl.innerHTML = '';
-  (d.badges || []).forEach(function(b, i) {
-    var cls = i === 0 ? 'badge badge-red' : i === 1 ? 'badge badge-gold' : 'badge badge-gray';
-    badgeEl.innerHTML += '<span class="' + cls + '">' + b + '</span>';
-  });
-  if (zustand) badgeEl.innerHTML += '<span class="badge badge-gray">Note ' + zustand + '</span>';
-  if (aktiveFotos.length > 0) badgeEl.innerHTML += '<span class="badge badge-gray">' + aktiveFotos.length + ' Bereich(e) · ' + fotos.reduce(function(s,a){return s+a.length;},0) + ' Foto(s)</span>';
-
-  // Quartett
-  var qg = document.getElementById('quartettGrid');
-  qg.innerHTML = '';
-  (d.quartett || []).forEach(function(q) {
-    qg.innerHTML += '<div class="q-card"><div class="q-label">' + q.label + '</div>'
-      + '<div class="q-value">' + q.value + ' <span class="q-unit">' + q.unit + '</span></div></div>';
-  });
-
-  // Identifikation
-  var it = document.getElementById('identTable');
-  it.innerHTML = '';
-  (d.identifikation || []).forEach(function(row) {
-    it.innerHTML += '<tr><td>' + row.label + '</td><td>' + row.value + '</td></tr>';
-  });
-
-  // Motorvarianten
-  var mb = document.getElementById('motorBody');
-  mb.innerHTML = '';
-  (d.motorvarianten || []).forEach(function(m) {
-    var cls = m.aktuell ? 'current-model' : '';
-    mb.innerHTML += '<tr class="' + cls + '"><td>' + m.modell + '</td><td>' + m.motor + '</td>'
-      + '<td>' + m.ps + '</td><td>' + m.baujahre + '</td><td>' + m.stueck + '</td></tr>';
-  });
-
-  // Markt
-  var mg = document.getElementById('marktGrid');
-  var bewertung = d.markt ? d.markt.bewertungswert   : '—';
-  var hinweis   = d.markt ? d.markt.hinweis           : '';
-  var schnitt   = (dach && dach.durchschnitt)     ? dach.durchschnitt     : (d.markt ? d.markt.marktdurchschnitt : '—');
-  var anzahl    = (dach && dach.anzahl_angebote)  ? dach.anzahl_angebote  : (d.markt ? d.markt.angebote_dach     : '—');
-  mg.innerHTML = '<div class="markt-card highlight"><div class="markt-label">Bewertung dieses Fahrzeugs</div>'
-    + '<div class="markt-value">' + bewertung + '</div><div class="markt-sub">' + hinweis + '</div></div>'
-    + '<div class="markt-card"><div class="markt-label">Marktdurchschnitt DACH</div>'
-    + '<div class="markt-value">' + schnitt + '</div><div class="markt-sub">Aktuelle Angebote: ' + anzahl + '</div></div>';
-  if (dach && dach.gefunden) document.getElementById('liveBadge').style.display = 'inline-block';
-
-  // Preistabelle
-  var pt = document.getElementById('priceTable');
-  pt.innerHTML = '';
-  (d.preise || []).forEach(function(p) {
-    pt.innerHTML += '<tr><td><span class="note-dot" style="background:' + p.farbe + '"></span>' + p.note + '</td>'
-      + '<td>' + p.beschreibung + '</td><td>' + p.range + '</td></tr>';
-  });
-
-  // DACH Angebote
-  if (dach && dach.angebote && dach.angebote.length > 0) {
-    var dl = document.getElementById('dachListe');
-    dl.innerHTML = '';
-    dach.angebote.forEach(function(a) {
-      dl.innerHTML += '<div class="dach-item"><div class="dach-item-info">'
-        + '<div class="dach-item-title">' + a.titel + '</div>'
-        + '<div class="dach-item-sub">' + (a.jahr||'') + (a.km?' · '+a.km:'') + (a.quelle?' · '+a.quelle:'') + '</div>'
-        + '</div><div class="dach-item-price">' + a.preis + '</div></div>';
-    });
-    if (dach.markt_kommentar) dl.innerHTML += '<p style="margin-top:10px;font-size:11px;color:var(--muted);">' + dach.markt_kommentar + '</p>';
-    document.getElementById('dachAngebote').style.display = 'block';
-  }
-
-  // Prognose
-  var pb = document.getElementById('prognoseBody');
-  var html = '';
-  (d.prognose || []).forEach(function(t) {
-    var arrow = t.richtung === 'up' ? '↗' : t.richtung === 'down' ? '↘' : '→';
-    var cls   = t.richtung === 'up' ? 'up' : t.richtung === 'down' ? 'down' : 'neutral';
-    html += '<div class="trend-row"><span class="trend-label">' + t.label + '</span>'
-      + '<span class="trend-arrow ' + cls + '">' + arrow + '</span><span>' + t.wert + '</span></div>';
-  });
-  pb.innerHTML = html;
-  if (d.prognose_text) pb.innerHTML += '<p style="margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6;">' + d.prognose_text + '</p>';
-
-  // Verschleiß
-  var wl = document.getElementById('wearList');
-  wl.innerHTML = '';
-  (d.verschleiss || []).forEach(function(v) {
-    wl.innerHTML += '<li><span class="wear-rank">' + String(v.nr).padStart(2,'0') + '</span>'
-      + '<span class="wear-name">' + v.name + '</span>'
-      + '<span class="wear-cost">' + v.kosten + '</span></li>';
-  });
-
-  // Features
-  var fl = document.getElementById('featureList');
-  fl.innerHTML = '';
-  (d.features || []).forEach(function(f) {
-    fl.innerHTML += '<li><span class="feature-icon">' + f.icon + '</span><span>' + f.text + '</span></li>';
-  });
-
-  document.getElementById('fazitText').textContent = d.fazit || '—';
-  document.getElementById('datenblatt').classList.add('visible');
+function renderSS(){
+  document.getElementById('ss-list').innerHTML=ST.ss.map(function(ss,i){
+    return '<div style="display:flex;gap:6px;align-items:center">'
+      +'<input value="'+ss.name+'" style="flex:2;font-size:12px" onchange="ST.ss['+i+'].name=this.value;SS(\'ag_ss\',ST.ss);renderArbeit()"/>'
+      +'<input value="'+ss.preis+'" type="number" style="flex:1;font-size:12px" onchange="ST.ss['+i+'].preis=parseFloat(this.value)||0;SS(\'ag_ss\',ST.ss);calcSum()"/>'
+      +'<span style="color:#888;font-size:11px">&#8364;/h</span>'
+      +'<button onclick="ST.ss.splice('+i+',1);SS(\'ag_ss\',ST.ss);renderSS();renderArbeit()" style="background:none;border:none;color:#666;cursor:pointer;font-size:14px;padding:0 4px">&times;</button>'
+      +'</div>';
+  }).join('');
 }
 
-var premiumFreigeschaltet = false;
-
-function unlockPremium() {
-  // Später: Stripe/PayPal Checkout hier
-  // Jetzt: direkt freischalten (Demo-Modus)
-  premiumFreigeschaltet = true;
-  document.getElementById('overlayMarkt').style.display = 'none';
-  var premiumSections = document.querySelectorAll('.premium-content');
-  for (var i = 0; i < premiumSections.length; i++) {
-    premiumSections[i].style.display = 'block';
-  }
-  document.getElementById('btnPdf').style.display = 'inline-block';
-  window.scrollTo({ top: document.getElementById('sectionPrognose').offsetTop - 80, behavior: 'smooth' });
+function addSS(){
+  var n=document.getElementById('ss-name').value.trim();
+  var p=parseFloat(document.getElementById('ss-preis').value)||0;
+  if(!n||!p) return;
+  ST.ss.push({name:n,preis:p}); SS('ag_ss',ST.ss);
+  document.getElementById('ss-name').value=''; document.getElementById('ss-preis').value='';
+  renderSS(); renderArbeit();
 }
 
-function exportPDF() { window.print(); }
+function addArbeit(){ST.arbeit.push({id:Date.now(),desc:'',kat:ST.ss[0]?ST.ss[0].name:'Allgemein',std:1});renderArbeit();}
+function delArbeit(id){ST.arbeit=ST.arbeit.filter(function(a){return a.id!==id;});renderArbeit();calcSum();}
+function renderArbeit(){
+  var empty=document.getElementById('arb-empty');
+  var list=document.getElementById('arb-list');
+  empty.style.display=ST.arbeit.length?'none':'';
+  list.innerHTML=ST.arbeit.map(function(a){
+    var opts=ST.ss.map(function(s){return '<option value="'+s.name+'" '+(a.kat===s.name?'selected':'')+'>'+s.name+' ('+s.preis+' \u20ac/h)</option>';}).join('');
+    var ss=ST.ss.find(function(s){return s.name===a.kat;}); var preis=ss?ss.preis:0;
+    return '<div class="card" style="padding:11px;display:flex;flex-direction:column;gap:7px">'
+      +'<div style="display:flex;gap:7px"><input value="'+a.desc+'" placeholder="Beschreibung z.B. Kupplungswechsel" style="flex:3;font-size:13px" onchange="updArbeit('+a.id+',\'desc\',this.value)"/>'
+      +'<button onclick="delArbeit('+a.id+')" style="background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--r2);border-radius:7px;padding:6px 10px;cursor:pointer;flex-shrink:0">&times;</button></div>'
+      +'<div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">'
+      +'<select style="flex:2;font-size:12px;min-width:130px" onchange="updArbeit('+a.id+',\'kat\',this.value)">'+opts+'</select>'
+      +'<input value="'+a.std+'" type="number" step="0.5" min="0" style="width:65px;font-size:13px;text-align:center" onchange="updArbeit('+a.id+',\'std\',parseFloat(this.value)||0)"/>'
+      +'<span style="color:#888;font-size:12px">Std.</span>'
+      +'<span style="color:var(--g);font-weight:700;font-size:13px;white-space:nowrap">= '+fmt(preis*(a.std||0))+'</span>'
+      +'</div></div>';
+  }).join('');
+  calcSum();
+}
+function updArbeit(id,f,v){var a=ST.arbeit.find(function(x){return x.id===id;});if(a){a[f]=v;renderArbeit();}}
+
+function addMaterial(){ST.material.push({id:Date.now(),nr:'',bez:'',ek:0,auf:30});renderMaterial();}
+function delMaterial(id){ST.material=ST.material.filter(function(m){return m.id!==id;});renderMaterial();calcSum();}
+function renderMaterial(){
+  var empty=document.getElementById('mat-empty');
+  var list=document.getElementById('mat-list');
+  empty.style.display=ST.material.length?'none':'';
+  list.innerHTML=ST.material.map(function(m){
+    var vk=(m.ek||0)*(1+(m.auf||0)/100);
+    return '<div class="card" style="padding:11px;display:flex;flex-direction:column;gap:7px">'
+      +'<div style="display:flex;gap:7px"><input value="'+m.nr+'" placeholder="Teilenr. (optional)" style="flex:1;font-size:12px" onchange="updMat('+m.id+',\'nr\',this.value)"/>'
+      +'<input value="'+m.bez+'" placeholder="Bezeichnung z.B. Kupplungsscheibe" style="flex:3;font-size:13px" onchange="updMat('+m.id+',\'bez\',this.value)"/>'
+      +'<button onclick="delMaterial('+m.id+')" style="background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--r2);border-radius:7px;padding:6px 10px;cursor:pointer;flex-shrink:0">&times;</button></div>'
+      +'<div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">'
+      +'<span style="color:#888;font-size:11px">EK netto</span><input value="'+m.ek+'" type="number" step="0.01" min="0" style="width:75px;font-size:13px;text-align:right" onchange="updMat('+m.id+',\'ek\',parseFloat(this.value)||0)"/><span style="color:#888;font-size:11px">\u20ac</span>'
+      +'<span style="color:#888;font-size:11px">Aufschlag</span><input value="'+m.auf+'" type="number" step="1" min="0" style="width:55px;font-size:13px;text-align:right" onchange="updMat('+m.id+',\'auf\',parseFloat(this.value)||0)"/><span style="color:#888;font-size:11px">%</span>'
+      +'<span style="color:var(--g);font-weight:700;font-size:13px;white-space:nowrap;margin-left:auto">VK: '+fmt(vk)+'</span>'
+      +'</div></div>';
+  }).join('');
+  calcSum();
+}
+function updMat(id,f,v){var m=ST.material.find(function(x){return x.id===id;});if(m){m[f]=v;renderMaterial();}}
+
+function calcSum(){
+  var arbNetto=0;
+  ST.arbeit.forEach(function(a){var ss=ST.ss.find(function(s){return s.name===a.kat;});arbNetto+=(ss?ss.preis:0)*(a.std||0);});
+  var matEK=0,matVK=0;
+  ST.material.forEach(function(m){matEK+=m.ek||0;matVK+=(m.ek||0)*(1+(m.auf||0)/100);});
+  var netto=arbNetto+matVK;
+  var mwstSatz=ST.firma.mwstSatz||19;
+  var mwst=ST.firma.mwst?netto*mwstSatz/100:0;
+  var brutto=netto+mwst;
+  var db=arbNetto+(matVK-matEK);
+  document.getElementById('s-arb').textContent=fmt(arbNetto);
+  document.getElementById('s-ek').textContent=fmt(matEK);
+  document.getElementById('s-mat').textContent=fmt(matVK);
+  document.getElementById('s-netto').textContent=fmt(netto);
+  document.getElementById('s-mwst-lbl').textContent='MwSt. '+(mwstSatz||19)+'%';
+  document.getElementById('s-mwst').textContent=fmt(mwst);
+  document.getElementById('s-mwst-row').style.display=ST.firma.mwst?'':'none';
+  document.getElementById('s-brutto').textContent=fmt(brutto);
+  document.getElementById('s-db').textContent=fmt(db);
+}
+
+function printAngebot(){
+  var f=ST.firma;
+  var date=document.getElementById('k-datum').value||new Date().toLocaleDateString('de-DE');
+  var gueltig=document.getElementById('k-gueltig').value||'-';
+  var kunde=document.getElementById('k-kunde').value||'-';
+  var kfz=document.getElementById('k-kfz').value;
+  var fzg=document.getElementById('k-fzg').value;
+  var angnr=document.getElementById('k-angnr').value||'-';
+  var mwstSatz=f.mwstSatz||19;
+  var arbNetto=0, arbRows='';
+  ST.arbeit.forEach(function(a,i){
+    var ss=ST.ss.find(function(s){return s.name===a.kat;});var preis=ss?ss.preis:0;var ges=preis*(a.std||0);arbNetto+=ges;
+    arbRows+='<tr><td style="padding:6px 8px">'+(i+1)+'</td><td style="padding:6px 8px">'+a.desc+'</td><td style="padding:6px 8px;text-align:center">'+a.std+' Std.</td><td style="padding:6px 8px;text-align:right">'+preis.toFixed(2)+' \u20ac</td><td style="padding:6px 8px;text-align:right;font-weight:600">'+ges.toFixed(2)+' \u20ac</td></tr>';
+  });
+  var matEK=0,matVK=0,matRows='';
+  ST.material.forEach(function(m,i){
+    var vk=(m.ek||0)*(1+(m.auf||0)/100);matEK+=m.ek||0;matVK+=vk;
+    matRows+='<tr><td style="padding:6px 8px">'+(i+1)+'</td><td style="padding:6px 8px">'+(m.nr?'<span style="color:#888;font-size:10px">'+m.nr+'</span><br>':'')+m.bez+'</td><td style="padding:6px 8px;text-align:center">1</td><td style="padding:6px 8px;text-align:right">-</td><td style="padding:6px 8px;text-align:right;font-weight:600">'+vk.toFixed(2)+' \u20ac</td></tr>';
+  });
+  var netto=arbNetto+matVK;
+  var mwstBetrag=f.mwst?netto*mwstSatz/100:0;
+  var brutto=netto+mwstBetrag;
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Angebot '+angnr+'</title>'
+    +'<style>body{font-family:sans-serif;color:#222;padding:28px 36px;max-width:780px;margin:0 auto;font-size:12px}table{width:100%;border-collapse:collapse}th{background:#1a1a2e;color:#fff;padding:8px;text-align:left;font-size:11px}tr:nth-child(even){background:#f8f8f8}.tr{background:#1a1a2e;color:#fff;font-weight:700}.pb{display:block;margin:20px auto;padding:10px 26px;background:#c0392b;color:#fff;border:none;border-radius:5px;font-size:13px;cursor:pointer}@media print{.pb{display:none}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;padding-bottom:14px;border-bottom:3px solid #1a1a2e">'
+    +'<div><div style="font-size:21px;font-weight:800;color:#1a1a2e">'+(f.name||'Werkstatt')+'</div>'
+    +'<div style="color:#666;font-size:11px;margin-top:3px">'+(f.str||'')+(f.str&&f.ort?' &bull; ':'')+( f.ort||'')+'</div>'
+    +'<div style="color:#666;font-size:11px">'+(f.tel?'Tel: '+f.tel:'')+(f.tel&&f.mail?' &bull; ':'')+( f.mail||'')+'</div>'
+    +(f.steuernr?'<div style="color:#666;font-size:11px">'+f.steuernr+'</div>':'')+'</div>'
+    +'<div style="text-align:right"><div style="font-size:20px;font-weight:800;color:#c0392b">ANGEBOT</div>'
+    +'<div style="font-size:11px;color:#666;margin-top:4px">Nr: <strong>'+angnr+'</strong></div>'
+    +'<div style="font-size:11px;color:#666">Datum: '+date+'</div>'
+    +'<div style="font-size:11px;color:#666">Gueltig bis: '+gueltig+'</div></div></div>'
+    +'<div style="margin-bottom:18px;padding:10px;background:#f8f8f8;border-radius:4px">'
+    +'<div style="font-size:10px;color:#888;text-transform:uppercase;margin-bottom:3px">Auftraggeber</div>'
+    +'<div style="font-weight:700">'+kunde+'</div>'
+    +(kfz?'<div style="color:#666;font-size:11px">Kennzeichen: '+kfz+'</div>':'')
+    +(fzg?'<div style="color:#666;font-size:11px">Fahrzeug: '+fzg+'</div>':'')+'</div>'
+    +(arbRows?'<div style="font-weight:700;font-size:12px;margin-bottom:5px;color:#1a1a2e">Arbeitsleistungen</div>'
+    +'<table style="margin-bottom:14px"><thead><tr><th style="width:30px">#</th><th>Beschreibung</th><th style="width:75px;text-align:center">Menge</th><th style="width:80px;text-align:right">Stundensatz</th><th style="width:90px;text-align:right">Betrag netto</th></tr></thead><tbody>'+arbRows+'</tbody></table>':'')
+    +(matRows?'<div style="font-weight:700;font-size:12px;margin-bottom:5px;color:#1a1a2e">Ersatzteile / Material</div>'
+    +'<table style="margin-bottom:14px"><thead><tr><th style="width:30px">#</th><th>Bezeichnung</th><th style="width:75px;text-align:center">Menge</th><th style="width:80px;text-align:right">Einzelpreis</th><th style="width:90px;text-align:right">Betrag netto</th></tr></thead><tbody>'+matRows+'</tbody></table>':'')
+    +'<table style="margin-top:6px"><tbody>'
+    +'<tr><td colspan="4" style="padding:5px 8px;text-align:right;color:#666">Zwischensumme netto</td><td style="padding:5px 8px;text-align:right;width:110px">'+netto.toFixed(2)+' \u20ac</td></tr>'
+    +(f.mwst?'<tr><td colspan="4" style="padding:5px 8px;text-align:right;color:#666">zzgl. MwSt. '+mwstSatz+'%</td><td style="padding:5px 8px;text-align:right">'+mwstBetrag.toFixed(2)+' \u20ac</td></tr>':'')
+    +'<tr class="tr"><td colspan="4" style="padding:8px;text-align:right">Gesamtbetrag '+(f.mwst?'brutto':'netto')+'</td><td style="padding:8px;text-align:right;font-size:14px">'+brutto.toFixed(2)+' \u20ac</td></tr></tbody></table>'
+    +'<div style="margin-top:22px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#888">Dieses Angebot ist freibleibend. Gueltig bis: '+gueltig+'. '+(f.mwst?'Alle Preise zzgl. '+mwstSatz+'% MwSt.':'Kleinunternehmerregelung gem. \u00a7 19 UStG.')+'</div>'
+    +'<button class="pb" onclick="window.print()">&#128424; Drucken / Als PDF speichern</button></body></html>';
+  openPrint(html);
+}
+
+function saveKalk(){
+  var name=(document.getElementById('k-kunde').value||'Kalkulation')+' - '+(document.getElementById('k-fzg').value||new Date().toLocaleDateString('de-DE'));
+  var entry={id:Date.now(),name:name,date:new Date().toLocaleDateString('de-DE'),
+    arbeit:JSON.parse(JSON.stringify(ST.arbeit)),material:JSON.parse(JSON.stringify(ST.material)),
+    kunde:document.getElementById('k-kunde').value,kfz:document.getElementById('k-kfz').value,
+    fzg:document.getElementById('k-fzg').value,angnr:document.getElementById('k-angnr').value};
+  ST.kalks.unshift(entry);if(ST.kalks.length>20)ST.kalks.pop();
+  SS('ag_kalk',ST.kalks);renderSavedKalks();alert('Gespeichert!');
+}
+function loadKalk(id){
+  var k=ST.kalks.find(function(x){return x.id===id;});if(!k)return;
+  ST.arbeit=JSON.parse(JSON.stringify(k.arbeit));ST.material=JSON.parse(JSON.stringify(k.material));
+  document.getElementById('k-kunde').value=k.kunde||'';document.getElementById('k-kfz').value=k.kfz||'';
+  document.getElementById('k-fzg').value=k.fzg||'';document.getElementById('k-angnr').value=k.angnr||'';
+  renderArbeit();renderMaterial();calcSum();
+}
+function delKalk(id){ST.kalks=ST.kalks.filter(function(x){return x.id!==id;});SS('ag_kalk',ST.kalks);renderSavedKalks();}
+function renderSavedKalks(){
+  var box=document.getElementById('kalk-saved-box');
+  var list=document.getElementById('kalk-list');
+  if(!ST.kalks.length){box.style.display='none';return;}
+  box.style.display='';
+  document.getElementById('kalk-cnt').textContent=ST.kalks.length+' Eintraege';
+  list.innerHTML=ST.kalks.map(function(k){
+    return '<div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px">'
+      +'<div style="flex:1;min-width:0"><div style="color:#e0e0e0;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+k.name+'</div>'
+      +'<div style="color:#666;font-size:11px;margin-top:2px">'+k.date+'</div></div>'
+      +'<button class="rb" style="padding:5px 10px;font-size:11px" onclick="loadKalk('+k.id+')">Laden</button>'
+      +'<button class="xb" style="padding:5px 9px" onclick="delKalk('+k.id+')">&times;</button>'
+      +'</div>';
+  }).join('');
+}
+function clearKalk(){
+  if(!confirm('Aktuelle Kalkulation leeren?')) return;
+  ST.arbeit=[];ST.material=[];
+  ['k-kunde','k-kfz','k-fzg','k-angnr'].forEach(function(id){document.getElementById(id).value='';});
+  renderArbeit();renderMaterial();calcSum();
+}
+function initKalk(){
+  var f=ST.firma;
+  document.getElementById('k-firma').value=f.name||'';document.getElementById('k-str').value=f.str||'';
+  document.getElementById('k-ort').value=f.ort||'';document.getElementById('k-tel').value=f.tel||'';
+  document.getElementById('k-mail').value=f.mail||'';document.getElementById('k-steuernr').value=f.steuernr||'';
+  document.getElementById('k-mwst').checked=f.mwst||false;document.getElementById('k-mwst-satz').value=f.mwstSatz||19;
+  var today=new Date().toISOString().slice(0,10);
+  document.getElementById('k-datum').value=today;
+  var g=new Date();g.setDate(g.getDate()+30);document.getElementById('k-gueltig').value=g.toISOString().slice(0,10);
+  renderSS();renderArbeit();renderMaterial();calcSum();renderSavedKalks();
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════
+function exportData(){
+  var data={saved:ST.saved,videos:ST.videos,userCats:ST.userCats,firma:ST.firma,ss:ST.ss,kalks:ST.kalks,date:new Date().toLocaleString('de-DE')};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='autoguide-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+function importData(inp){
+  var file=inp.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    try{
+      var d=JSON.parse(e.target.result);
+      if(d.saved)ST.saved=d.saved;if(d.videos)ST.videos=d.videos;if(d.userCats)ST.userCats=d.userCats;
+      if(d.firma)ST.firma=d.firma;if(d.ss)ST.ss=d.ss;if(d.kalks)ST.kalks=d.kalks;
+      SS('ag_saved',ST.saved);SS('ag_vids',ST.videos);SS('ag_cats',ST.userCats);
+      SS('ag_firma',ST.firma);SS('ag_ss',ST.ss);SS('ag_kalk',ST.kalks);
+      rebuildCats();updateTabLabels();alert('Geladen: '+ST.saved.length+' Anleitungen, '+ST.videos.length+' Videos, '+ST.kalks.length+' Kalkulationen');
+    }catch(err){alert('Fehler beim Laden: '+err.message);}
+  };
+  r.readAsText(file);inp.value='';
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', function(){
+  // Suggestions
+  var sl=document.getElementById('a-sugglist');
+  SUGGS.forEach(function(s){
+    var a=document.createElement('a');a.href='#';a.className='sb';a.textContent=s;
+    a.onclick=function(){document.getElementById('qi').value=s;return false;};
+    sl.appendChild(a);
+  });
+  // Fehlercode Schnellauswahl
+  var fl=document.getElementById('f-suggs');
+  FSUGGS.forEach(function(code){
+    var a=document.createElement('a');a.href='#';a.className='sb';a.textContent=code;
+    a.onclick=function(){document.getElementById('f-code').value=code;searchCode();return false;};
+    fl.appendChild(a);
+  });
+  // Teilesuche History
+  TSEARCH=LS('ag_tsearch',[]);
+  renderTHist();
+  // Video cats
+  rebuildCats();
+  updateTabLabels();
+  window.addEventListener('pagehide',function(){
+    SS('ag_saved',ST.saved);SS('ag_vids',ST.videos);SS('ag_cats',ST.userCats);
+  });
+});
 </script>
 </body>
 </html>
