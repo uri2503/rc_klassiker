@@ -131,17 +131,22 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
   .foto-slot:hover { border-color: var(--blue); }
+  .foto-slot.dragover { border-color: var(--blue); background: #e8f2fb; border-style: solid; }
   .foto-slot.has-foto { border-color: var(--subtle); border-style: solid; background: var(--surface); }
-  .foto-slot input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .foto-slot input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    /* Obere rechte Ecke aussparen, damit der ✕-Löschbutton zuverlässig klickbar bleibt */
+    clip-path: polygon(0 0, calc(100% - 32px) 0, calc(100% - 32px) 32px, 100% 32px, 100% 100%, 0 100%);
+  }
   .foto-slot-icon { font-size: 20px; margin-bottom: 4px; }
   .foto-slot-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
   .foto-slot-preview { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; display: none; }
   .foto-slot-delete {
-    position: absolute; top: 6px; right: 6px; z-index: 5;
-    width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(16,40,64,0.78); color: #fff;
+    position: absolute; top: 5px; right: 5px; z-index: 5;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: rgba(16,40,64,0.82); color: #fff;
     display: none; align-items: center; justify-content: center;
-    font-size: 12px; line-height: 1; cursor: pointer;
+    font-size: 13px; line-height: 1; cursor: pointer;
   }
   .foto-slot.has-foto .foto-slot-delete { display: flex; }
   .foto-carousel { position: relative; width: 100%; }
@@ -511,7 +516,7 @@
     </div>
     <div class="foto-label">Fotos · optional · bis zu 5 pro Bereich · unterstützen die KI-Analyse</div>
     <div class="foto-grid">
-      <div class="foto-slot" id="slot0">
+      <div class="foto-slot" id="slot0" ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event,0)">
         <input type="file" accept="image/*" multiple onchange="fotoLoad(this,0)" />
         <span class="foto-slot-check" id="check0">✓</span>
         <span class="foto-slot-delete" onclick="fotoDelete(event,0)">✕</span>
@@ -526,7 +531,7 @@
         <div class="foto-slot-icon" id="icon0">🚗</div>
         <div class="foto-slot-label" id="lbl0">Außenansicht</div>
       </div>
-      <div class="foto-slot" id="slot1">
+      <div class="foto-slot" id="slot1" ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event,1)">
         <input type="file" accept="image/*" multiple onchange="fotoLoad(this,1)" />
         <span class="foto-slot-check" id="check1">✓</span>
         <span class="foto-slot-delete" onclick="fotoDelete(event,1)">✕</span>
@@ -541,7 +546,7 @@
         <div class="foto-slot-icon" id="icon1">🪑</div>
         <div class="foto-slot-label" id="lbl1">Innenraum</div>
       </div>
-      <div class="foto-slot" id="slot2">
+      <div class="foto-slot" id="slot2" ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event,2)">
         <input type="file" accept="image/*" multiple onchange="fotoLoad(this,2)" />
         <span class="foto-slot-check" id="check2">✓</span>
         <span class="foto-slot-delete" onclick="fotoDelete(event,2)">✕</span>
@@ -556,7 +561,7 @@
         <div class="foto-slot-icon" id="icon2">🔩</div>
         <div class="foto-slot-label" id="lbl2">Motorraum</div>
       </div>
-      <div class="foto-slot" id="slot3">
+      <div class="foto-slot" id="slot3" ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event,3)">
         <input type="file" accept="image/*" multiple onchange="fotoLoad(this,3)" />
         <span class="foto-slot-check" id="check3">✓</span>
         <span class="foto-slot-delete" onclick="fotoDelete(event,3)">✕</span>
@@ -749,6 +754,10 @@ function komprimiere(file, cb) {
 
 function fotoLoad(input, idx) {
   var files = Array.prototype.slice.call(input.files, 0, 5); // max 5
+  loadFotosForSlot(files, idx);
+}
+
+function loadFotosForSlot(files, idx) {
   if (!files.length) return;
   fotos[idx] = [];
   fotoIdx[idx] = 0;
@@ -760,6 +769,23 @@ function fotoLoad(input, idx) {
       if (loaded === files.length) updateSlotUI(idx);
     });
   });
+}
+
+function fotoDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('dragover');
+}
+function fotoDragLeave(e) {
+  e.currentTarget.classList.remove('dragover');
+}
+function fotoDrop(e, idx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  var files = Array.prototype.slice.call(e.dataTransfer.files, 0, 5).filter(function(f) {
+    return f.type && f.type.indexOf('image/') === 0;
+  });
+  if (!files.length) return;
+  loadFotosForSlot(files, idx);
 }
 
 function updateSlotUI(idx) {
@@ -946,32 +972,19 @@ function startAnalyse() {
     + (km        ? ', KM-Stand: ' + km          : '')
     + (anmerkung ? ', Besonderheiten: ' + anmerkung : '');
 
-  // Zähle hochgeladene Slots
+  // Zähle hochgeladene Slots (für evtl. spätere Diagnostik)
   var aktiveFotos = fotos.filter(function(arr) { return arr.length > 0; });
-
-  setStatus('KI erstellt Fahrzeugdaten' + (aktiveFotos.length > 0 ? ' (' + aktiveFotos.length + ' Bereich(e))' : '') + '…');
-  startProgressTicker(6, 62);
 
   var systemPrompt = 'Du bist ein präziser Oldtimer- und Youngtimer-Experte mit tiefem Wissen über den DACH-Markt. '
     + 'Du erstellst strukturierte Fahrzeug-Datenblätter im JSON-Format für Restaurierungsbetriebe und Händler — '
     + 'dein Publikum sind Fachleute, die technische Fehler sofort erkennen. '
-    + 'WICHTIG: Bei technischen Details, die je nach Modelljahr oder Ausführung variieren können (z.B. Vergaser vs. '
-    + 'Einspritzanlage, genaue PS-Angaben, Getriebevarianten, Produktionszahlen), verlasse dich NICHT auf vages '
-    + 'Erinnern — recherchiere aktiv per Websuche und nenne die für dieses konkrete Baujahr/diese Modellvariante '
-    + 'korrekte technische Ausführung. Lieber ein Detail kurz recherchieren als ein falsches Fachdetail nennen. '
-    + 'Recherchiere dabei gezielt mit maximal 2 Suchanfragen — nicht ausufernd recherchieren, danach das vollständige '
-    + 'JSON ausgeben. '
     + 'Falls der Nutzer im Eingabefeld "Besonderheiten" bereits konkrete technische Angaben gemacht hat (z.B. '
-    + 'Kraftstoffsystem, Getriebeart, Umbauten), übernimm diese als gesicherte Fakten statt eigene Annahmen zu treffen '
-    + '— die Nutzerangabe hat immer Vorrang vor recherchierten Standardwerten der Baureihe. '
+    + 'Kraftstoffsystem, Getriebeart, Umbauten), übernimm diese als gesicherte Fakten statt eigene Annahmen zu treffen. '
     + 'Antworte NUR mit validem JSON, kein Markdown, keine Erklärungen davor oder danach. '
     + 'Alle Texte auf Deutsch. Zahlen immer mit deutschem Tausenderpunkt (z.B. 1.500).';
 
   // ── CALL 1: Stammdaten, Technik, Markt, Prognose ─────
   var prompt1 = 'Fahrzeugdaten für: ' + fahrzeugInfo + '\n\n'
-    + 'WICHTIG: Beim Feld "Motor" und in "motorvarianten" das Kraftstoffsystem (Vergaser oder Einspritzanlage) '
-    + 'für genau dieses Baujahr/diese Modellvariante recherchieren statt zu pauschalisieren — das ist ein häufiger '
-    + 'Fehlerpunkt, den Fachleute sofort bemerken.\n\n'
     + 'NUR dieses JSON, kein Markdown:\n'
     + '{"titel":"...","baureihe_label":"...",'
     + '"badges":["..."],'
@@ -1055,10 +1068,16 @@ function startAnalyse() {
   });
   messages1.push({ role: 'user', content: prompt1 });
 
-  // Beide Calls parallel + DACH-Suche
+  // Vier schlanke, unabhängige Calls parallel — keine Anfrage kombiniert Bilder UND Websuche,
+  // damit auch bei mehreren Fotos niemand das 60s-Timeout der Proxy-Function reißt.
+  setStatus('KI erstellt Fahrzeugdaten, prüft Technik & Marktpreise…');
+  startProgressTicker(6, 90);
+
   Promise.all([
-    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 5000, system: systemPrompt, messages: messages1, tools: [{ type: 'web_search_20250305', name: 'web_search' }] }),
-    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2000, system: systemPrompt, messages: [{ role: 'user', content: prompt2 }] })
+    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 3000, system: systemPrompt, messages: messages1 }),
+    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2000, system: systemPrompt, messages: [{ role: 'user', content: prompt2 }] }),
+    verifyMotorDetails(fahrzeugInfo),
+    searchDACH(marke, modell, baureihe, baujahr)
   ])
   .then(function(results) {
     var raw1 = results[0].content ? results[0].content.map(function(i){return i.text||'';}).join('') : '';
@@ -1066,20 +1085,16 @@ function startAnalyse() {
     if (!raw1) throw new Error('Leere Antwort Call 1: ' + JSON.stringify(results[0]).substring(0,200));
     var d1 = extractJSON(raw1);
     var d2 = raw2 ? extractJSON(raw2) : {};
+    var motorKorrektur = results[2]; // bereits geparst oder null
+    var dachData = results[3];       // bereits geparst oder null
     // Zusammenführen
     var d = Object.assign({}, d1, d2);
+    applyMotorKorrektur(d, motorKorrektur);
 
-    setStatus('Aktuelle DACH-Marktpreise werden abgerufen…');
-    startProgressTicker(62, 93);
-    return searchDACH(marke, modell, baureihe, baujahr).then(function(dachData) {
-      return { ki: d, dach: dachData };
-    });
-  })
-  .then(function(result) {
-    renderDatenblatt(result.ki, result.dach, marke, modell, baureihe, baujahr, zustand);
-    currentDossier = { id: null, marke: marke, modell: modell, baureihe: baureihe, baujahr: baujahr, zustand: zustand, ki: result.ki, dach: result.dach };
     clearProgressTicker();
     setProgress(100);
+    renderDatenblatt(d, dachData, marke, modell, baureihe, baujahr, zustand);
+    currentDossier = { id: null, marke: marke, modell: modell, baureihe: baureihe, baujahr: baujahr, zustand: zustand, ki: d, dach: dachData };
     setTimeout(hideStatus, 300);
     btn.disabled = false;
     // PDF-Button nur wenn bereits freigeschaltet
@@ -1089,9 +1104,51 @@ function startAnalyse() {
   .catch(function(err) {
     console.error(err);
     hideStatus();
-    showError('Fehler: ' + err.message + ' — Supabase Key oder Proxy prüfen.');
+    showError('Fehler: ' + err.message + ' — bei Zeitüberschreitung: ein-zwei Fotos mit dem ✕ entfernen und erneut versuchen.');
     btn.disabled = false;
   });
+}
+
+// Verifiziert NUR das Kraftstoffsystem/Motordetail per gezielter Websuche — bewusst klein & bildfrei,
+// damit diese Anfrage auch bei vollem Fotoset schnell durchläuft. Liefert null statt zu blockieren, wenn's nicht klappt.
+function verifyMotorDetails(fahrzeugInfo) {
+  var prompt = 'Fahrzeug: ' + fahrzeugInfo + '\n\n'
+    + 'Recherchiere kurz (max. 2 Suchanfragen) das für GENAU dieses Baujahr/diese Modellvariante korrekte '
+    + 'Kraftstoffsystem (Vergaser oder Einspritzanlage) sowie ggf. weitere präzise Motordetails — das ist ein '
+    + 'häufiger Fehlerpunkt, den Fachleute sofort bemerken. '
+    + 'Falls im Fahrzeugtext bereits eine konkrete technische Angabe steckt (z.B. unter "Besonderheiten"), '
+    + 'übernimm diese unverändert statt zu recherchieren.\n\n'
+    + 'NUR dieses JSON, kein Markdown:\n'
+    + '{"motor_korrektur":"vollständiger, korrekter Motor-Text inkl. Kraftstoffsystem, oder null falls keine Korrektur nötig"}';
+  return callProxy({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 600,
+    system: 'Du bist Technik-Experte für Oldtimer- und Youngtimer-Motoren im DACH-Raum. Antworte NUR mit validem JSON ohne Markdown.',
+    messages: [{ role: 'user', content: prompt }],
+    tools: [{ type: 'web_search_20250305', name: 'web_search' }]
+  })
+  .then(function(data) {
+    var raw = data.content.map(function(i) { return i.type === 'text' ? i.text : ''; }).join('');
+    if (!raw.trim()) return null;
+    return extractJSON(raw);
+  })
+  .catch(function() { return null; });
+}
+
+// Überschreibt das Motor-Feld in Identifikation & der aktuellen Motorvarianten-Zeile mit der verifizierten Angabe
+function applyMotorKorrektur(d, korrektur) {
+  if (!korrektur || !korrektur.motor_korrektur) return;
+  var neuerWert = korrektur.motor_korrektur;
+  if (d.identifikation && d.identifikation.length) {
+    for (var i = 0; i < d.identifikation.length; i++) {
+      if (d.identifikation[i].label === 'Motor') { d.identifikation[i].value = neuerWert; break; }
+    }
+  }
+  if (d.motorvarianten && d.motorvarianten.length) {
+    for (var j = 0; j < d.motorvarianten.length; j++) {
+      if (d.motorvarianten[j].aktuell) { d.motorvarianten[j].motor = neuerWert; break; }
+    }
+  }
 }
 
 function searchDACH(marke, modell, baureihe, baujahr) {
