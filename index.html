@@ -1421,49 +1421,68 @@ function getAnalysenLimit() {
 }
 
 function submitLeadGate() {
-  var email = document.getElementById('leadEmail').value.trim();
-  if (!email || email.indexOf('@') === -1) { alert('Bitte eine gültige E-Mail-Adresse eingeben.'); return; }
+  var btn;
+  try {
+    var email = document.getElementById('leadEmail').value.trim();
+    if (!email || email.indexOf('@') === -1) { alert('Bitte eine gültige E-Mail-Adresse eingeben.'); return; }
 
-  var btn = document.getElementById('leadSubmitBtn');
-  var originalLabel = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Wird gesendet…';
-  hideError();
+    btn = document.getElementById('leadSubmitBtn');
+    var originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Wird gesendet…';
+    hideError();
 
-  var payload = {
-    email: email,
-    marke: document.getElementById('marke').value.trim(),
-    modell: document.getElementById('modell').value.trim(),
-    baujahr: document.getElementById('baujahr').value.trim(),
-    bewertung_lack: document.getElementById('ratingLack').value || null,
-    bewertung_innenraum: document.getElementById('ratingInnenraum').value || null,
-    bewertung_technik: document.getElementById('ratingTechnik').value || null,
-    bewertung_unterboden: document.getElementById('ratingUnterboden').value || null,
-    marketing_consent: document.getElementById('leadConsent').checked
-  };
+    var payload = {
+      email: email,
+      marke: document.getElementById('marke').value.trim(),
+      modell: document.getElementById('modell').value.trim(),
+      baujahr: document.getElementById('baujahr').value.trim(),
+      bewertung_lack: document.getElementById('ratingLack').value || null,
+      bewertung_innenraum: document.getElementById('ratingInnenraum').value || null,
+      bewertung_technik: document.getElementById('ratingTechnik').value || null,
+      bewertung_unterboden: document.getElementById('ratingUnterboden').value || null,
+      marketing_consent: document.getElementById('leadConsent').checked
+    };
 
-  fetch(LEAD_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
-    body: JSON.stringify(payload)
-  })
-  .then(function(r) {
-    if (!r.ok) return r.text().then(function(t) { throw new Error('Lead ' + r.status + ': ' + t); });
-    return r.json();
-  })
-  .then(function() {
-    localStorage.setItem('rc_email_bonus', '1');
-    document.getElementById('leadGate').style.display = 'none';
-    btn.disabled = false;
-    btn.textContent = originalLabel;
-    startAnalyse(); // jetzt mit freigeschaltetem Bonus direkt weiteranalysieren
-  })
-  .catch(function(err) {
-    console.error(err);
-    showError('Danke senden hat nicht geklappt: ' + err.message + ' — bitte nochmal versuchen.');
-    btn.disabled = false;
-    btn.textContent = originalLabel;
-  });
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function() { controller.abort(); }, 15000);
+
+    console.log('submitLeadGate: sende an', LEAD_URL, payload);
+
+    fetch(LEAD_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    })
+    .then(function(r) {
+      clearTimeout(timeoutId);
+      console.log('submitLeadGate: Antwort Status', r.status);
+      if (!r.ok) return r.text().then(function(t) { throw new Error('Lead ' + r.status + ': ' + t); });
+      return r.json();
+    })
+    .then(function() {
+      localStorage.setItem('rc_email_bonus', '1');
+      document.getElementById('leadGate').style.display = 'none';
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+      startAnalyse(); // jetzt mit freigeschaltetem Bonus direkt weiteranalysieren
+    })
+    .catch(function(err) {
+      clearTimeout(timeoutId);
+      if (err && err.name === 'AbortError') err = new Error('Zeitüberschreitung (15s) — Supabase Function antwortet nicht.');
+      console.error('submitLeadGate fetch error:', err);
+      showError('Senden hat nicht geklappt: ' + err.message + ' — bitte nochmal versuchen.');
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    });
+  } catch (syncErr) {
+    // Fängt JEDEN Fehler ab, der VOR dem Netzwerk-Aufruf passiert (z.B. fehlendes Feld) —
+    // damit der Button nie wieder stumm bei "Wird gesendet…" hängen bleibt.
+    console.error('submitLeadGate Fehler vor dem Senden:', syncErr);
+    showError('Fehler im Formular: ' + syncErr.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Absenden & 2 weitere Analysen freischalten'; }
+  }
 }
 
 function generateDossierId() {
