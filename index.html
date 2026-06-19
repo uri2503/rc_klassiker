@@ -449,12 +449,30 @@
   <div class="input-panel">
     <div class="panel-label">Fahrzeug eingeben</div>
     <div class="form-row">
-      <div class="field"><label>Hersteller *</label><input type="text" id="marke" placeholder="z.B. Mercedes-Benz" /></div>
+      <div class="field"><label>Hersteller *</label>
+        <input type="text" id="marke" placeholder="z.B. Mercedes-Benz" list="markenListe" autocomplete="off" />
+        <datalist id="markenListe">
+          <option value="Mercedes-Benz"><option value="Porsche"><option value="BMW">
+          <option value="Volkswagen"><option value="Audi"><option value="Opel">
+          <option value="Ford"><option value="Jaguar"><option value="MG">
+          <option value="Triumph"><option value="Alfa Romeo"><option value="Fiat">
+          <option value="Ferrari"><option value="Lamborghini"><option value="Maserati">
+          <option value="Aston Martin"><option value="Bentley"><option value="Rolls-Royce">
+          <option value="Citroën"><option value="Peugeot"><option value="Renault">
+          <option value="Volvo"><option value="Saab"><option value="Lancia">
+          <option value="DKW"><option value="NSU"><option value="Borgward">
+          <option value="Wartburg"><option value="Trabant"><option value="Land Rover">
+          <option value="Chevrolet"><option value="Cadillac"><option value="Chrysler">
+        </datalist>
+      </div>
       <div class="field"><label>Modell *</label><input type="text" id="modell" placeholder="z.B. 250 SE Cabriolet" /></div>
       <div class="field"><label>Baureihe</label><input type="text" id="baureihe" placeholder="z.B. W111" /></div>
     </div>
     <div class="form-row-2">
-      <div class="field"><label>Baujahr *</label><input type="text" id="baujahr" placeholder="z.B. 1966" /></div>
+      <div class="field"><label>Baujahr *</label>
+        <input type="text" id="baujahr" placeholder="z.B. 1966" list="baujahrListe" autocomplete="off" />
+        <datalist id="baujahrListe"></datalist>
+      </div>
       <div class="field">
         <label>Zustandsnote</label>
         <select id="zustand">
@@ -472,9 +490,13 @@
       <div class="field"><label>Farbe</label><input type="text" id="farbe" placeholder="z.B. Weiß" /></div>
       <div class="field"><label>Kilometerstand</label><input type="text" id="km" placeholder="z.B. 85.000 km" /></div>
     </div>
-    <div class="field" style="margin-bottom:12px;">
+    <div class="field" style="margin-bottom:8px;">
       <label>Besonderheiten / Anmerkungen</label>
-      <textarea id="anmerkung" placeholder="z.B. Vollrestauriert 2023, orig. Ausstattung, H-Kennzeichen, Serviceheft…"></textarea>
+      <textarea id="anmerkung" placeholder="z.B. Vollrestauriert 2023, Einspritzanlage (Bosch), Schaltgetriebe, orig. Ausstattung, Matching Numbers, H-Kennzeichen, Serviceheft…"></textarea>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.5;">
+      💡 Je detaillierter, desto präziser das Ergebnis — besonders hilfreich: Kraftstoffsystem (Vergaser/Einspritzung),
+      Getriebeart, bekannte Umbauten oder Sonderausstattung. So vermeidet die KI Annahmen, die Fachleute sofort als falsch erkennen.
     </div>
     <div class="foto-label">Fotos · optional · bis zu 5 pro Bereich · unterstützen die KI-Analyse</div>
     <div class="foto-grid">
@@ -845,12 +867,23 @@ function startAnalyse() {
   setStatus('KI erstellt Fahrzeugdaten' + (aktiveFotos.length > 0 ? ' (' + aktiveFotos.length + ' Bereich(e))' : '') + '…');
 
   var systemPrompt = 'Du bist ein präziser Oldtimer- und Youngtimer-Experte mit tiefem Wissen über den DACH-Markt. '
-    + 'Du erstellst strukturierte Fahrzeug-Datenblätter im JSON-Format für Restaurierungsbetriebe und Händler. '
+    + 'Du erstellst strukturierte Fahrzeug-Datenblätter im JSON-Format für Restaurierungsbetriebe und Händler — '
+    + 'dein Publikum sind Fachleute, die technische Fehler sofort erkennen. '
+    + 'WICHTIG: Bei technischen Details, die je nach Modelljahr oder Ausführung variieren können (z.B. Vergaser vs. '
+    + 'Einspritzanlage, genaue PS-Angaben, Getriebevarianten, Produktionszahlen), verlasse dich NICHT auf vages '
+    + 'Erinnern — recherchiere aktiv per Websuche und nenne die für dieses konkrete Baujahr/diese Modellvariante '
+    + 'korrekte technische Ausführung. Lieber ein Detail kurz recherchieren als ein falsches Fachdetail nennen. '
+    + 'Falls der Nutzer im Eingabefeld "Besonderheiten" bereits konkrete technische Angaben gemacht hat (z.B. '
+    + 'Kraftstoffsystem, Getriebeart, Umbauten), übernimm diese als gesicherte Fakten statt eigene Annahmen zu treffen '
+    + '— die Nutzerangabe hat immer Vorrang vor recherchierten Standardwerten der Baureihe. '
     + 'Antworte NUR mit validem JSON, kein Markdown, keine Erklärungen davor oder danach. '
     + 'Alle Texte auf Deutsch. Zahlen immer mit deutschem Tausenderpunkt (z.B. 1.500).';
 
   // ── CALL 1: Stammdaten, Technik, Markt, Prognose ─────
   var prompt1 = 'Fahrzeugdaten für: ' + fahrzeugInfo + '\n\n'
+    + 'WICHTIG: Beim Feld "Motor" und in "motorvarianten" das Kraftstoffsystem (Vergaser oder Einspritzanlage) '
+    + 'für genau dieses Baujahr/diese Modellvariante recherchieren statt zu pauschalisieren — das ist ein häufiger '
+    + 'Fehlerpunkt, den Fachleute sofort bemerken.\n\n'
     + 'NUR dieses JSON, kein Markdown:\n'
     + '{"titel":"...","baureihe_label":"...",'
     + '"badges":["..."],'
@@ -936,7 +969,7 @@ function startAnalyse() {
 
   // Beide Calls parallel + DACH-Suche
   Promise.all([
-    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2500, system: systemPrompt, messages: messages1 }),
+    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2500, system: systemPrompt, messages: messages1, tools: [{ type: 'web_search_20250305', name: 'web_search' }] }),
     callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2000, system: systemPrompt, messages: [{ role: 'user', content: prompt2 }] })
   ])
   .then(function(results) {
@@ -1117,6 +1150,16 @@ function renderDatenblatt(d, dach, marke, modell, baureihe, baujahr, zustand) {
 
 // ── PAYWALL / STRIPE CHECKOUT ──────────────────────────
 
+// Baujahr-Vorschlagsliste füllen (aktuelles Jahr abwärts bis 1920)
+(function fillBaujahrListe() {
+  var dl = document.getElementById('baujahrListe');
+  if (!dl) return;
+  var jetzt = new Date().getFullYear();
+  var html = '';
+  for (var y = jetzt; y >= 1920; y--) html += '<option value="' + y + '">';
+  dl.innerHTML = html;
+})();
+
 function generateDossierId() {
   return 'd' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 }
@@ -1130,20 +1173,58 @@ function clearDossierCache() {
   keys.forEach(function(k) { sessionStorage.removeItem(k); });
 }
 
-function saveDossierState(id) {
-  var payload = {
-    marke: currentDossier.marke, modell: currentDossier.modell,
-    baureihe: currentDossier.baureihe, baujahr: currentDossier.baujahr,
-    zustand: currentDossier.zustand, ki: currentDossier.ki, dach: currentDossier.dach,
-    fotos: fotos
-  };
-  try {
-    sessionStorage.setItem('rc_dossier_' + id, JSON.stringify(payload));
-  } catch (e) {
-    // Quota überschritten (meist wegen Fotos) — ohne Fotos nochmal versuchen
-    payload.fotos = [[], [], [], []];
-    try { sessionStorage.setItem('rc_dossier_' + id, JSON.stringify(payload)); } catch (e2) { /* gibt auf */ }
-  }
+// Erzeugt kleine Thumbnails (für Zwischenspeicherung vor Stripe-Redirect) aus den
+// bereits geladenen Fotos, damit der sessionStorage-Speicherplatz ausreicht.
+function buildThumbFotos(cb) {
+  var result = [[], [], [], []];
+  var tasks = [];
+  fotos.forEach(function(arr, slotIdx) {
+    arr.forEach(function(f, i) { tasks.push({ slotIdx: slotIdx, i: i, foto: f }); });
+  });
+  if (!tasks.length) { cb(result); return; }
+  var done = 0;
+  tasks.forEach(function(t) {
+    result[t.slotIdx][t.i] = null; // Platzhalter, damit Reihenfolge stimmt
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var MAX = 320;
+      var w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
+      else       { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+      result[t.slotIdx][t.i] = { base64: dataUrl.split(',')[1], mime: 'image/jpeg' };
+      done++;
+      if (done === tasks.length) cb(result);
+    };
+    img.onerror = function() {
+      result[t.slotIdx][t.i] = t.foto; // Fallback: Original behalten
+      done++;
+      if (done === tasks.length) cb(result);
+    };
+    img.src = 'data:' + t.foto.mime + ';base64,' + t.foto.base64;
+  });
+}
+
+function saveDossierState(id, cb) {
+  buildThumbFotos(function(thumbFotos) {
+    var payload = {
+      marke: currentDossier.marke, modell: currentDossier.modell,
+      baureihe: currentDossier.baureihe, baujahr: currentDossier.baujahr,
+      zustand: currentDossier.zustand, ki: currentDossier.ki, dach: currentDossier.dach,
+      fotos: thumbFotos
+    };
+    try {
+      sessionStorage.setItem('rc_dossier_' + id, JSON.stringify(payload));
+    } catch (e) {
+      // Immer noch zu groß — ohne Fotos nochmal versuchen, damit der Rest des Dossiers erhalten bleibt
+      payload.fotos = [[], [], [], []];
+      try { sessionStorage.setItem('rc_dossier_' + id, JSON.stringify(payload)); } catch (e2) { /* gibt auf */ }
+    }
+    if (cb) cb();
+  });
 }
 
 function restoreDossierState(id) {
@@ -1178,28 +1259,29 @@ function unlockPremium() {
 
   var id = currentDossier.id || generateDossierId();
   currentDossier.id = id;
-  saveDossierState(id);
 
   var baseUrl = window.location.origin + window.location.pathname;
 
-  fetch(CHECKOUT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
-    body: JSON.stringify({ dossier_id: id, return_url: baseUrl })
-  })
-  .then(function(r) {
-    if (!r.ok) return r.text().then(function(t) { throw new Error('Checkout ' + r.status + ': ' + t); });
-    return r.json();
-  })
-  .then(function(data) {
-    if (!data.url) throw new Error('Keine Checkout-URL erhalten.');
-    window.location.href = data.url; // Weiterleitung zu Stripe
-  })
-  .catch(function(err) {
-    console.error(err);
-    showError('Zahlung konnte nicht gestartet werden: ' + err.message);
-    btn.disabled = false;
-    btn.textContent = originalLabel;
+  saveDossierState(id, function() {
+    fetch(CHECKOUT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ dossier_id: id, return_url: baseUrl })
+    })
+    .then(function(r) {
+      if (!r.ok) return r.text().then(function(t) { throw new Error('Checkout ' + r.status + ': ' + t); });
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data.url) throw new Error('Keine Checkout-URL erhalten.');
+      window.location.href = data.url; // Weiterleitung zu Stripe
+    })
+    .catch(function(err) {
+      console.error(err);
+      showError('Zahlung konnte nicht gestartet werden: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    });
   });
 }
 
