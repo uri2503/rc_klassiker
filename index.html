@@ -3,22 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Klassiker Analyse · Riedel Classics</title>
+<title>RC Klassiker Wertdossier</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap');
-
+<style>
   :root {
-    --bg:        #0d0d0d;
-    --surface:   #161616;
-    --surface2:  #1e1e1e;
-    --border:    #2a2a2a;
-    --red:       #c0392b;
-    --red-dim:   #8b1a10;
+    --bg:        #f4f6f8;
+    --surface:   #ffffff;
+    --surface2:  #eef3f8;
+    --border:    #e0e6ec;
+    --navy:      #1a3a5c;
+    --navy-dim:  #102840;
+    --blue:      #2a6090;
+    --blue-light:#7ab3d4;
     --gold:      #b8960c;
-    --gold-light:#d4af37;
-    --text:      #e8e4dc;
-    --muted:     #888;
-    --subtle:    #555;
+    --gold-dark: #8a6d00;
+    --red:       #c0392b;
+    --green:     #2e7d32;
+    --text:      #1c2b3a;
+    --muted:     #6b7785;
+    --subtle:    #9aa7b3;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,7 +29,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Inter', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     font-size: 14px;
     line-height: 1.6;
     min-height: 100vh;
@@ -34,35 +37,34 @@
 
   /* ── HEADER ── */
   .header {
-    border-bottom: 1px solid var(--border);
-    padding: 20px 24px;
+    border-bottom: 3px solid var(--blue);
+    padding: 18px 24px;
     display: flex;
     align-items: center;
     gap: 16px;
-    background: var(--surface);
+    background: var(--navy-dim);
     position: sticky; top: 0; z-index: 100;
   }
   .logo-mark {
     width: 36px; height: 36px;
-    border: 2px solid var(--red);
+    background: var(--blue);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-  .logo-mark span { color: var(--red); font-weight: 700; font-size: 14px; }
+  .logo-mark span { color: #fff; font-weight: 800; font-size: 13px; }
   .header-text h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px; font-weight: 600; letter-spacing: 0.02em;
+    font-size: 17px; font-weight: 800; letter-spacing: 0.01em; color: #fff;
   }
-  .header-text p { color: var(--muted); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-text p { color: var(--blue-light); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
   .header-actions { margin-left: auto; }
   .btn-pdf {
     background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
+    border: 1px solid var(--blue);
+    color: var(--blue-light);
     border-radius: 4px;
     padding: 7px 14px;
-    font-family: 'Inter', sans-serif;
+    font-family: inherit;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -71,7 +73,7 @@
     display: none;
     transition: all 0.2s;
   }
-  .btn-pdf:hover { border-color: var(--gold); color: var(--gold-light); }
+  .btn-pdf:hover { background: var(--blue); color: #fff; }
   .btn-pdf.visible { display: inline-block; }
 
   /* ── MAIN ── */
@@ -81,13 +83,14 @@
   .input-panel {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 24px;
     margin-bottom: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
   }
   .panel-label {
     font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--red); font-weight: 600; margin-bottom: 16px;
+    color: var(--blue); font-weight: 700; margin-bottom: 16px;
   }
   .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
   .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
@@ -99,17 +102,17 @@
   .field input, .field select, .field textarea {
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 6px;
     color: var(--text);
     padding: 9px 12px;
-    font-family: 'Inter', sans-serif;
+    font-family: inherit;
     font-size: 13px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     -webkit-appearance: none;
   }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--red); }
-  .field select option { background: var(--surface2); }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(42,96,144,.15); }
+  .field select option { background: var(--surface); }
   .field textarea { resize: vertical; min-height: 70px; }
 
   /* Multi-Foto */
@@ -118,6 +121,7 @@
   @media (max-width: 500px) { .foto-grid { grid-template-columns: 1fr 1fr; } }
   .foto-slot {
     border: 1px dashed var(--border);
+    background: var(--surface2);
     border-radius: 6px;
     padding: 12px 8px;
     text-align: center;
@@ -127,8 +131,8 @@
     min-height: 90px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .foto-slot:hover { border-color: var(--red); }
-  .foto-slot.has-foto { border-color: var(--subtle); border-style: solid; }
+  .foto-slot:hover { border-color: var(--blue); }
+  .foto-slot.has-foto { border-color: var(--subtle); border-style: solid; background: var(--surface); }
   .foto-slot input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .foto-slot-icon { font-size: 20px; margin-bottom: 4px; }
   .foto-slot-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
@@ -137,7 +141,7 @@
   .foto-nav {
     position: absolute; bottom: 4px; left: 0; right: 0;
     display: flex; align-items: center; justify-content: center; gap: 6px;
-    background: rgba(0,0,0,0.55); border-radius: 0 0 4px 4px; padding: 2px 0;
+    background: rgba(16,40,64,0.7); border-radius: 0 0 4px 4px; padding: 2px 0;
   }
   .foto-nav button {
     background: none; border: none; color: #fff;
@@ -148,36 +152,35 @@
   /* Button */
   .btn-analyse {
     width: 100%;
-    background: var(--red); color: #fff;
-    border: none; border-radius: 5px;
+    background: var(--blue); color: #fff;
+    border: none; border-radius: 6px;
     padding: 13px 24px;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px; font-weight: 600;
+    font-family: inherit;
+    font-size: 13px; font-weight: 700;
     letter-spacing: 0.06em; text-transform: uppercase;
     cursor: pointer; transition: background 0.2s; margin-top: 4px;
   }
-  .btn-analyse:hover { background: #a93226; }
+  .btn-analyse:hover { background: var(--navy); }
   .btn-analyse:disabled { background: var(--subtle); cursor: not-allowed; }
 
   /* Status */
   .status-bar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--gold);
-    border-radius: 4px;
+    background: #e8f0f8;
+    border-left: 3px solid var(--blue);
+    border-radius: 0 6px 6px 0;
     padding: 12px 16px;
     margin-bottom: 24px;
     display: none;
     align-items: center;
     gap: 10px;
     font-size: 13px;
-    color: var(--gold-light);
+    color: var(--navy);
   }
   .status-bar.active { display: flex; }
   .spinner {
     width: 16px; height: 16px;
     border: 2px solid var(--border);
-    border-top-color: var(--gold-light);
+    border-top-color: var(--blue);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     flex-shrink: 0;
@@ -186,14 +189,13 @@
 
   /* Fehlerbox */
   .error-box {
-    background: #1a0505;
-    border: 1px solid #5a1010;
+    background: #fdecea;
     border-left: 3px solid var(--red);
-    border-radius: 4px;
+    border-radius: 0 6px 6px 0;
     padding: 12px 16px;
     margin-bottom: 24px;
     font-size: 12px;
-    color: #ff7a6e;
+    color: #7a1a1a;
     display: none;
   }
   .error-box.visible { display: block; }
@@ -205,13 +207,14 @@
   .db-header {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-top: 3px solid var(--red);
-    border-radius: 8px;
+    border-top: 3px solid var(--blue);
+    border-radius: 10px;
     padding: 24px;
     margin-bottom: 20px;
     display: flex;
     align-items: flex-start;
     gap: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
   }
   .db-header-photo {
     width: 120px; height: 80px;
@@ -221,19 +224,18 @@
   }
   .db-header-info { flex: 1; }
   .db-fahrzeug-titel {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px; font-weight: 700;
-    line-height: 1.2; margin-bottom: 4px;
+    font-size: 21px; font-weight: 800; color: var(--navy);
+    line-height: 1.25; margin-bottom: 4px;
   }
-  .db-baureihe { color: var(--muted); font-size: 12px; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .db-baureihe { color: var(--muted); font-size: 12px; letter-spacing: 0.04em; margin-bottom: 10px; }
   .db-badges { display: flex; gap: 8px; flex-wrap: wrap; }
-  .badge { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; font-weight: 600; }
-  .badge-red { background: var(--red-dim); color: #ff7a6e; }
-  .badge-gold { background: #2a2200; color: var(--gold-light); }
+  .badge { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; font-weight: 700; }
+  .badge-red { background: #fdecea; color: var(--red); }
+  .badge-gold { background: #fff3e0; color: var(--gold-dark); }
   .badge-gray { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
 
   /* Sektionen */
-  .db-section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+  .db-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
   .db-section-header {
     background: var(--surface2);
     padding: 12px 20px;
@@ -241,7 +243,7 @@
     border-bottom: 1px solid var(--border);
   }
   .db-section-icon { font-size: 15px; }
-  .db-section-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); font-weight: 600; }
+  .db-section-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
   .db-section-body { padding: 16px 20px; }
 
   /* Tabellen */
@@ -250,29 +252,29 @@
   .data-table tr:last-child { border-bottom: none; }
   .data-table td { padding: 8px 0; vertical-align: top; }
   .data-table td:first-child { color: var(--muted); font-size: 11px; letter-spacing: 0.04em; width: 42%; padding-right: 12px; white-space: nowrap; }
-  .data-table td:last-child { font-size: 13px; font-weight: 500; }
+  .data-table td:last-child { font-size: 13px; font-weight: 500; color: var(--text); }
 
   /* Quartett */
   .quartett-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   @media (max-width: 500px) { .quartett-grid { grid-template-columns: repeat(2, 1fr); } }
-  .q-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 10px 12px; }
+  .q-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
   .q-label { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
-  .q-value { font-family: 'Courier Prime', monospace; font-size: 18px; font-weight: 700; color: var(--gold-light); line-height: 1.1; }
+  .q-value { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 18px; font-weight: 700; color: var(--navy); line-height: 1.1; }
   .q-unit { font-size: 10px; color: var(--muted); }
 
   /* Marktpreise */
   .markt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   @media (max-width: 500px) { .markt-grid { grid-template-columns: 1fr; } }
-  .markt-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 14px; }
-  .markt-card.highlight { border-color: var(--gold); }
+  .markt-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
+  .markt-card.highlight { border-color: var(--gold); background: #fffdf5; }
   .markt-label { font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-  .markt-value { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold-light); }
+  .markt-value { font-size: 19px; font-weight: 800; color: var(--gold-dark); }
   .markt-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
   /* DACH Live Badge */
   .live-badge {
     display: inline-block;
-    background: #002200; color: #4caf50;
+    background: #e8f5e9; color: var(--green);
     font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
     padding: 2px 6px; border-radius: 3px; font-weight: 700;
     margin-left: 8px; vertical-align: middle;
@@ -281,33 +283,33 @@
   .price-table { width: 100%; border-collapse: collapse; }
   .price-table tr { border-bottom: 1px solid var(--border); }
   .price-table tr:last-child { border-bottom: none; }
-  .price-table td { padding: 7px 0; font-size: 12px; vertical-align: middle; }
+  .price-table td { padding: 7px 0; font-size: 12px; vertical-align: middle; color: var(--text); }
   .price-table td:first-child { color: var(--muted); width: 30%; }
   .price-table td:last-child { text-align: right; }
   .note-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
 
   /* Motorvarianten */
   .motor-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .motor-table th { text-align: left; padding: 6px 8px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 500; }
-  .motor-table td { padding: 8px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .motor-table th { text-align: left; padding: 6px 8px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 600; }
+  .motor-table td { padding: 8px 8px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text); }
   .motor-table tr:last-child td { border-bottom: none; }
-  .motor-table tr.current-model td { color: var(--gold-light); }
-  .motor-table tr.current-model td:first-child::before { content: "▶ "; color: var(--red); }
+  .motor-table tr.current-model td { color: var(--blue); font-weight: 700; }
+  .motor-table tr.current-model td:first-child::before { content: "▶ "; color: var(--blue); }
 
   /* Verschleiß */
   .wear-list { list-style: none; }
   .wear-list li { display: flex; align-items: flex-start; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px; }
   .wear-list li:last-child { border-bottom: none; }
-  .wear-rank { font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--red); font-weight: 700; flex-shrink: 0; width: 18px; }
-  .wear-name { flex: 1; font-size: 12px; }
-  .wear-cost { font-size: 11px; color: var(--gold-light); white-space: nowrap; text-align: right; }
+  .wear-rank { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; color: var(--blue); font-weight: 700; flex-shrink: 0; width: 18px; }
+  .wear-name { flex: 1; font-size: 12px; color: var(--text); }
+  .wear-cost { font-size: 11px; color: var(--gold-dark); font-weight: 600; white-space: nowrap; text-align: right; }
 
   /* Prognose */
   .trend-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
   .trend-row:last-child { border-bottom: none; }
   .trend-label { color: var(--muted); width: 140px; flex-shrink: 0; }
   .trend-arrow { font-size: 14px; }
-  .up { color: #4caf50; }
+  .up { color: var(--green); }
   .down { color: var(--red); }
   .neutral { color: var(--muted); }
 
@@ -317,98 +319,100 @@
   .dach-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px; font-size: 12px; }
   .dach-item:last-child { border-bottom: none; }
   .dach-item-info { flex: 1; }
-  .dach-item-title { font-weight: 500; margin-bottom: 2px; }
+  .dach-item-title { font-weight: 600; margin-bottom: 2px; color: var(--text); }
   .dach-item-sub { color: var(--muted); font-size: 11px; }
-  .dach-item-price { color: var(--gold-light); font-weight: 600; white-space: nowrap; }
+  .dach-item-price { color: var(--gold-dark); font-weight: 700; white-space: nowrap; }
 
   /* Features */
   .feature-list { list-style: none; }
-  .feature-list li { padding: 6px 0; font-size: 12px; display: flex; gap: 8px; align-items: flex-start; border-bottom: 1px solid var(--border); }
+  .feature-list li { padding: 6px 0; font-size: 12px; display: flex; gap: 8px; align-items: flex-start; border-bottom: 1px solid var(--border); color: var(--text); }
   .feature-list li:last-child { border-bottom: none; }
   .feature-icon { flex-shrink: 0; }
 
   /* Fazit */
-  .fazit-box { background: #0f0700; border: 1px solid var(--gold); border-left: 3px solid var(--gold-light); border-radius: 5px; padding: 16px 18px; }
-  .fazit-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-  .fazit-text { font-family: 'Playfair Display', serif; font-size: 15px; line-height: 1.6; }
+  .fazit-box { background: #fffdf0; border: 1px solid var(--gold); border-left: 3px solid var(--gold); border-radius: 6px; padding: 16px 18px; }
+  .fazit-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 8px; font-weight: 700; }
+  .fazit-text { font-size: 14px; line-height: 1.7; color: var(--text); }
 
   /* ── FREEMIUM ── */
   .free-badge {
     display: inline-block;
-    background: #002200; color: #4caf50;
+    background: #e8f5e9; color: var(--green);
     font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
     padding: 2px 7px; border-radius: 3px; font-weight: 700; margin-left: 8px;
   }
   .premium-badge {
     display: inline-block;
-    background: #2a2200; color: var(--gold-light);
+    background: #fff3e0; color: var(--gold-dark);
     font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
     padding: 2px 7px; border-radius: 3px; font-weight: 700; margin-left: 8px;
   }
   .paywall-section { position: relative; }
   .paywall-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(13,13,13,0) 0%, rgba(13,13,13,0.92) 40%, rgba(13,13,13,0.98) 100%);
-    border-radius: 8px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.93) 40%, rgba(255,255,255,0.99) 100%);
+    border-radius: 10px;
     display: flex; flex-direction: column;
     align-items: center; justify-content: flex-end;
     padding: 20px; text-align: center; z-index: 10;
   }
   .paywall-icon { font-size: 28px; margin-bottom: 8px; }
   .paywall-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 16px; font-weight: 700; margin-bottom: 4px;
+    font-size: 16px; font-weight: 800; margin-bottom: 4px; color: var(--navy);
   }
   .paywall-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
   .btn-unlock {
     background: var(--gold);
-    color: #000;
-    border: none; border-radius: 5px;
+    color: #fff;
+    border: none; border-radius: 6px;
     padding: 10px 24px;
-    font-family: 'Inter', sans-serif;
+    font-family: inherit;
     font-size: 12px; font-weight: 700;
     letter-spacing: 0.06em; text-transform: uppercase;
     cursor: pointer; transition: background 0.2s;
   }
-  .btn-unlock:hover { background: var(--gold-light); }
+  .btn-unlock:hover { background: var(--gold-dark); }
   .paywall-hint { font-size: 10px; color: var(--subtle); margin-top: 8px; }
 
   /* Footer */
-  .footer { text-align: center; padding: 24px; color: var(--subtle); font-size: 11px; letter-spacing: 0.05em; border-top: 1px solid var(--border); margin-top: 32px; }
-  .footer span { color: var(--red); }
+  .footer { text-align: center; padding: 22px; color: var(--blue-light); font-size: 11px; letter-spacing: 0.05em; background: var(--navy-dim); margin-top: 32px; }
+  .footer span { color: #fff; font-weight: 700; }
 
   /* ── PDF PRINT ── */
   @media print {
     body { background: #fff; color: #111; font-size: 12px; }
-    .header { position: static; background: #fff; border-bottom: 2px solid #c0392b; }
-    .logo-mark { border-color: #c0392b; }
-    .logo-mark span { color: #c0392b; }
+    .header { position: static; background: #fff; border-bottom: 2px solid #1a3a5c; }
+    .logo-mark { background: #1a3a5c; }
+    .logo-mark span { color: #fff; }
+    .header-text h1, .header-text p { color: #1a3a5c; }
     .input-panel, .status-bar, .error-box, .btn-pdf, .btn-analyse, .header-actions { display: none !important; }
     .datenblatt { display: block !important; }
-    .db-section { background: #fff; border: 1px solid #ddd; break-inside: avoid; margin-bottom: 10px; }
+    .db-section { background: #fff; border: 1px solid #ddd; break-inside: avoid; margin-bottom: 10px; box-shadow: none; }
     .db-section-header { background: #f5f5f5; }
-    .db-section-title { color: #c0392b; }
-    .db-header { background: #fff; border: 1px solid #ddd; border-top: 3px solid #c0392b; }
+    .db-section-title { color: #1a3a5c; }
+    .db-header { background: #fff; border: 1px solid #ddd; border-top: 3px solid #1a3a5c; box-shadow: none; }
+    .db-fahrzeug-titel { color: #1a3a5c; }
     .q-card { background: #f9f9f9; border: 1px solid #ddd; }
-    .q-value { color: #8a6d00; }
+    .q-value { color: #1a3a5c; }
     .markt-card { background: #f9f9f9; border: 1px solid #ddd; }
-    .markt-card.highlight { border-color: #b8960c; }
+    .markt-card.highlight { border-color: #b8960c; background: #fffdf5; }
     .markt-value { color: #8a6d00; font-size: 16px; }
     .markt-label { color: #666; font-size: 9px; }
     .markt-sub { color: #888; font-size: 10px; }
     .markt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .wear-rank { color: #2a6090; }
     .wear-cost { color: #8a6d00; }
     .fazit-box { background: #fffdf0; border-color: #b8960c; }
-    .fazit-label { color: #b8960c; }
+    .fazit-label { color: #8a6d00; }
     .up { color: #2e7d32; }
     .down { color: #c0392b; }
     .data-table td:first-child, .trend-label, .dach-item-sub, .markt-sub { color: #666; }
-    .badge-red { background: #fde; color: #c0392b; }
-    .badge-gold { background: #fef9e7; color: #8a6d00; }
+    .badge-red { background: #fdecea; color: #c0392b; }
+    .badge-gold { background: #fff3e0; color: #8a6d00; }
     .badge-gray { background: #f5f5f5; color: #666; border-color: #ddd; }
     .live-badge { background: #e8f5e9; color: #2e7d32; }
-    .footer { color: #999; }
-    .footer span { color: #c0392b; }
+    .footer { color: #999; background: #fff; }
+    .footer span { color: #1a3a5c; }
     .db-header-photo { display: block !important; }
     /* Foto-Sektion im Print */
     #sectionFotos { display: block !important; }
@@ -424,17 +428,18 @@
     #dbFotoGalerie { display: none !important; }
   }
 </style>
+</style>
 </head>
 <body>
 
 <header class="header">
   <div class="logo-mark"><span>RC</span></div>
   <div class="header-text">
-    <h1>Klassiker Analyse</h1>
-    <p>Riedel Classics · Old- &amp; Youngtimer Bewertung</p>
+    <h1>RC Klassiker Wertdossier</h1>
+    <p>von Riedel Classics · Old- &amp; Youngtimer Bewertung</p>
   </div>
   <div class="header-actions">
-    <span style="font-size:10px;color:var(--subtle);letter-spacing:0.06em;margin-right:10px;">V5.1</span>
+    <span style="font-size:10px;color:var(--blue-light);letter-spacing:0.06em;margin-right:10px;">V6.0</span>
     <button class="btn-pdf" id="btnPdf" onclick="exportPDF()" style="display:none;">⬇ PDF</button>
   </div>
 </header>
@@ -659,15 +664,21 @@
 </div><!-- /container -->
 
 <footer class="footer">
-  Riedel Classics · <span>...mit Liebe zum Detail</span> · Klassiker Analyse V5
+  RC Klassiker Wertdossier · ein Tool von <span>Riedel Classics</span>
 </footer>
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────
 var SUPABASE_URL      = 'https://ysqzdqazcgyuzdorauiq.supabase.co';
 var SUPABASE_ANON_KEY = 'DEIN_SUPABASE_ANON_KEY'; // <── Publishable Key eintragen
-var PROXY_URL         = SUPABASE_URL + '/functions/v1/claude-proxy';
+var PROXY_URL          = SUPABASE_URL + '/functions/v1/claude-proxy';
+var CHECKOUT_URL       = SUPABASE_URL + '/functions/v1/create-checkout-session';
+var VERIFY_URL         = SUPABASE_URL + '/functions/v1/verify-checkout-session';
 // ────────────────────────────────────────────────────────
+
+// Aktuell generiertes Dossier (für Stripe-Checkout & Wiederherstellung nach Redirect)
+var currentDossier   = null; // { id, marke, modell, baureihe, baujahr, zustand, ki, dach }
+var premiumFreigeschaltet = false;
 
 // Fotos: Array mit {base64, mime, label} für bis zu 4 Slots
 var fotos = [null, null, null, null];
@@ -806,6 +817,9 @@ function startAnalyse() {
   document.getElementById('btnPdf').style.display = 'none';
   // Paywall zurücksetzen
   document.getElementById('overlayMarkt').style.display = 'flex';
+  premiumFreigeschaltet = false;
+  currentDossier = null;
+  clearDossierCache();
   var premiumSections = document.querySelectorAll('.premium-content');
   for (var i = 0; i < premiumSections.length; i++) { premiumSections[i].style.display = 'none'; }
   // Foto-Slots zurücksetzen
@@ -942,6 +956,7 @@ function startAnalyse() {
   })
   .then(function(result) {
     renderDatenblatt(result.ki, result.dach, marke, modell, baureihe, baujahr, zustand);
+    currentDossier = { id: null, marke: marke, modell: modell, baureihe: baureihe, baujahr: baujahr, zustand: zustand, ki: result.ki, dach: result.dach };
     hideStatus();
     btn.disabled = false;
     // PDF-Button nur wenn bereits freigeschaltet
@@ -1101,11 +1116,49 @@ function renderDatenblatt(d, dach, marke, modell, baureihe, baujahr, zustand) {
   document.getElementById('datenblatt').classList.add('visible');
 }
 
-var premiumFreigeschaltet = false;
+// ── PAYWALL / STRIPE CHECKOUT ──────────────────────────
 
-function unlockPremium() {
-  // Später: Stripe/PayPal Checkout hier
-  // Jetzt: direkt freischalten (Demo-Modus)
+function generateDossierId() {
+  return 'd' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+function clearDossierCache() {
+  var keys = [];
+  for (var i = 0; i < sessionStorage.length; i++) {
+    var k = sessionStorage.key(i);
+    if (k && k.indexOf('rc_dossier_') === 0) keys.push(k);
+  }
+  keys.forEach(function(k) { sessionStorage.removeItem(k); });
+}
+
+function saveDossierState(id) {
+  var payload = {
+    marke: currentDossier.marke, modell: currentDossier.modell,
+    baureihe: currentDossier.baureihe, baujahr: currentDossier.baujahr,
+    zustand: currentDossier.zustand, ki: currentDossier.ki, dach: currentDossier.dach,
+    fotos: fotos
+  };
+  try {
+    sessionStorage.setItem('rc_dossier_' + id, JSON.stringify(payload));
+  } catch (e) {
+    // Quota überschritten (meist wegen Fotos) — ohne Fotos nochmal versuchen
+    payload.fotos = [[], [], [], []];
+    try { sessionStorage.setItem('rc_dossier_' + id, JSON.stringify(payload)); } catch (e2) { /* gibt auf */ }
+  }
+}
+
+function restoreDossierState(id) {
+  var raw = sessionStorage.getItem('rc_dossier_' + id);
+  if (!raw) return false;
+  var d;
+  try { d = JSON.parse(raw); } catch (e) { return false; }
+  fotos = d.fotos && d.fotos.length === 4 ? d.fotos : [[], [], [], []];
+  currentDossier = { id: id, marke: d.marke, modell: d.modell, baureihe: d.baureihe, baujahr: d.baujahr, zustand: d.zustand, ki: d.ki, dach: d.dach };
+  renderDatenblatt(d.ki, d.dach, d.marke, d.modell, d.baureihe, d.baujahr, d.zustand);
+  return true;
+}
+
+function activatePremiumUI(scroll) {
   premiumFreigeschaltet = true;
   document.getElementById('overlayMarkt').style.display = 'none';
   var premiumSections = document.querySelectorAll('.premium-content');
@@ -1113,10 +1166,98 @@ function unlockPremium() {
     premiumSections[i].style.display = 'block';
   }
   document.getElementById('btnPdf').style.display = 'inline-block';
-  window.scrollTo({ top: document.getElementById('sectionPrognose').offsetTop - 80, behavior: 'smooth' });
+  if (scroll) window.scrollTo({ top: document.getElementById('sectionPrognose').offsetTop - 80, behavior: 'smooth' });
+}
+
+function unlockPremium() {
+  if (!currentDossier) { showError('Bitte zuerst ein Fahrzeug analysieren.'); return; }
+  var btn = document.querySelector('#overlayMarkt .btn-unlock');
+  var originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Weiterleitung zu Stripe…';
+  hideError();
+
+  var id = currentDossier.id || generateDossierId();
+  currentDossier.id = id;
+  saveDossierState(id);
+
+  var baseUrl = window.location.origin + window.location.pathname;
+
+  fetch(CHECKOUT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ dossier_id: id, return_url: baseUrl })
+  })
+  .then(function(r) {
+    if (!r.ok) return r.text().then(function(t) { throw new Error('Checkout ' + r.status + ': ' + t); });
+    return r.json();
+  })
+  .then(function(data) {
+    if (!data.url) throw new Error('Keine Checkout-URL erhalten.');
+    window.location.href = data.url; // Weiterleitung zu Stripe
+  })
+  .catch(function(err) {
+    console.error(err);
+    showError('Zahlung konnte nicht gestartet werden: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  });
 }
 
 function exportPDF() { window.print(); }
+
+// ── NACH STRIPE-REDIRECT: Zahlung verifizieren & Dossier wiederherstellen ──
+(function checkPaymentReturn() {
+  var params = new URLSearchParams(window.location.search);
+  var sessionId   = params.get('session_id');
+  var dossierParam = params.get('dossier');
+  var canceled    = params.get('canceled');
+
+  if (!sessionId && !dossierParam) return; // normaler Seitenaufruf
+
+  // URL sofort bereinigen (kein Session-Token in Adressleiste/Verlauf stehen lassen)
+  window.history.replaceState(null, '', window.location.pathname);
+
+  if (dossierParam) {
+    var restored = restoreDossierState(dossierParam);
+    if (restored) {
+      window.scrollTo({ top: document.getElementById('datenblatt').offsetTop - 80, behavior: 'smooth' });
+    }
+  }
+
+  if (canceled) {
+    showError('Zahlung abgebrochen. Du kannst es jederzeit erneut versuchen.');
+    return;
+  }
+
+  if (sessionId) {
+    setStatus('Zahlung wird bestätigt…');
+    fetch(VERIFY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ session_id: sessionId })
+    })
+    .then(function(r) {
+      if (!r.ok) return r.text().then(function(t) { throw new Error('Verify ' + r.status + ': ' + t); });
+      return r.json();
+    })
+    .then(function(data) {
+      hideStatus();
+      if (data.paid) {
+        // Falls Dossier noch nicht über URL-Param wiederhergestellt wurde, über server-bestätigte ID versuchen
+        if (!dossierParam && data.dossier_id) restoreDossierState(data.dossier_id);
+        activatePremiumUI(true);
+      } else {
+        showError('Zahlung konnte nicht bestätigt werden. Bitte Support kontaktieren, falls bereits bezahlt wurde.');
+      }
+    })
+    .catch(function(err) {
+      console.error(err);
+      hideStatus();
+      showError('Fehler bei Zahlungsbestätigung: ' + err.message);
+    });
+  }
+})();
 </script>
 </body>
 </html>
