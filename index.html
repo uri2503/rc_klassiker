@@ -136,6 +136,14 @@
   .foto-slot-icon { font-size: 20px; margin-bottom: 4px; }
   .foto-slot-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
   .foto-slot-preview { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; display: none; }
+  .foto-slot-delete {
+    position: absolute; top: 6px; right: 6px; z-index: 5;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(16,40,64,0.78); color: #fff;
+    display: none; align-items: center; justify-content: center;
+    font-size: 12px; line-height: 1; cursor: pointer;
+  }
+  .foto-slot.has-foto .foto-slot-delete { display: flex; }
   .foto-carousel { position: relative; width: 100%; }
   .foto-nav {
     position: absolute; bottom: 4px; left: 0; right: 0;
@@ -170,12 +178,13 @@
     padding: 12px 16px;
     margin-bottom: 24px;
     display: none;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    gap: 9px;
     font-size: 13px;
     color: var(--navy);
   }
   .status-bar.active { display: flex; }
+  .status-bar-row { display: flex; align-items: center; gap: 10px; }
   .spinner {
     width: 16px; height: 16px;
     border: 2px solid var(--border);
@@ -185,6 +194,8 @@
     flex-shrink: 0;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+  .progress-track { width: 100%; height: 5px; background: rgba(42,96,144,0.15); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: var(--blue); border-radius: 3px; transition: width 0.35s ease; }
 
   /* Fehlerbox */
   .error-box {
@@ -503,6 +514,7 @@
       <div class="foto-slot" id="slot0">
         <input type="file" accept="image/*" multiple onchange="fotoLoad(this,0)" />
         <span class="foto-slot-check" id="check0">✓</span>
+        <span class="foto-slot-delete" onclick="fotoDelete(event,0)">✕</span>
         <div class="foto-carousel" id="carousel0">
           <img class="foto-slot-preview" id="prev0" />
           <div class="foto-nav" id="nav0" style="display:none;">
@@ -517,6 +529,7 @@
       <div class="foto-slot" id="slot1">
         <input type="file" accept="image/*" multiple onchange="fotoLoad(this,1)" />
         <span class="foto-slot-check" id="check1">✓</span>
+        <span class="foto-slot-delete" onclick="fotoDelete(event,1)">✕</span>
         <div class="foto-carousel" id="carousel1">
           <img class="foto-slot-preview" id="prev1" />
           <div class="foto-nav" id="nav1" style="display:none;">
@@ -531,6 +544,7 @@
       <div class="foto-slot" id="slot2">
         <input type="file" accept="image/*" multiple onchange="fotoLoad(this,2)" />
         <span class="foto-slot-check" id="check2">✓</span>
+        <span class="foto-slot-delete" onclick="fotoDelete(event,2)">✕</span>
         <div class="foto-carousel" id="carousel2">
           <img class="foto-slot-preview" id="prev2" />
           <div class="foto-nav" id="nav2" style="display:none;">
@@ -545,6 +559,7 @@
       <div class="foto-slot" id="slot3">
         <input type="file" accept="image/*" multiple onchange="fotoLoad(this,3)" />
         <span class="foto-slot-check" id="check3">✓</span>
+        <span class="foto-slot-delete" onclick="fotoDelete(event,3)">✕</span>
         <div class="foto-carousel" id="carousel3">
           <img class="foto-slot-preview" id="prev3" />
           <div class="foto-nav" id="nav3" style="display:none;">
@@ -562,8 +577,11 @@
 
   <!-- STATUS -->
   <div class="status-bar" id="statusBar">
-    <div class="spinner"></div>
-    <span id="statusText">KI analysiert Fahrzeugdaten…</span>
+    <div class="status-bar-row">
+      <div class="spinner"></div>
+      <span id="statusText">KI analysiert Fahrzeugdaten…</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
   <!-- FEHLER -->
@@ -776,11 +794,64 @@ function fotoNav(e, idx, dir) {
   updateSlotUI(idx);
 }
 
+function fotoDelete(e, idx) {
+  e.stopPropagation();
+  e.preventDefault();
+  var arr = fotos[idx];
+  if (!arr || !arr.length) return;
+  var cur = fotoIdx[idx];
+  arr.splice(cur, 1);
+  if (!arr.length) {
+    resetSlotUI(idx);
+  } else {
+    fotoIdx[idx] = cur >= arr.length ? arr.length - 1 : cur;
+    updateSlotUI(idx);
+  }
+}
+
+function resetSlotUI(idx) {
+  fotos[idx] = [];
+  fotoIdx[idx] = 0;
+  var slot = document.getElementById('slot' + idx);
+  var input = slot.querySelector('input[type="file"]');
+  if (input) input.value = ''; // erlaubt erneutes Hochladen derselben Datei
+  document.getElementById('prev' + idx).style.display = 'none';
+  document.getElementById('check' + idx).style.display = 'none';
+  document.getElementById('nav' + idx).style.display = 'none';
+  document.getElementById('icon' + idx).style.display = '';
+  document.getElementById('lbl' + idx).style.display = '';
+  slot.classList.remove('has-foto');
+}
+
 function setStatus(text) {
   document.getElementById('statusText').textContent = text;
   document.getElementById('statusBar').classList.add('active');
 }
-function hideStatus() { document.getElementById('statusBar').classList.remove('active'); }
+function hideStatus() {
+  document.getElementById('statusBar').classList.remove('active');
+  clearProgressTicker();
+  setProgress(0);
+}
+
+// ── Fortschrittsanzeige (kriecht Richtung Obergrenze, da KI-Antwortzeit nicht exakt bekannt ist) ──
+var progressTimer = null;
+function setProgress(percent) {
+  var fill = document.getElementById('progressFill');
+  if (fill) fill.style.width = Math.max(0, Math.min(100, percent)) + '%';
+}
+function clearProgressTicker() {
+  if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+}
+function startProgressTicker(fromPercent, capPercent) {
+  clearProgressTicker();
+  var p = fromPercent;
+  setProgress(p);
+  progressTimer = setInterval(function() {
+    p += (capPercent - p) * 0.08;
+    if (p > capPercent - 0.4) p = capPercent;
+    setProgress(p);
+  }, 350);
+}
 function showError(msg) {
   var el = document.getElementById('errorBox');
   el.textContent = msg;
@@ -813,13 +884,27 @@ function extractJSON(raw) {
     try { return JSON.parse(raw.substring(start, end + 1)); } catch(e1) {}
   }
 
-  // Versuch 2: JSON wurde abgeschnitten — fehlende Klammern ergänzen
+  // Versuch 2: JSON wurde abgeschnitten — Klammern/Arrays korrekt verschachtelt nachziehen
   var partial = raw.substring(start);
-  var opens   = (partial.match(/\{/g) || []).length;
-  var closes  = (partial.match(/\}/g) || []).length;
-  var missing = opens - closes;
-  partial = partial.replace(/,\s*$/, '').replace(/:\s*"[^"]*$/, ':"—"');
-  for (var i = 0; i < missing; i++) partial += '}';
+  var stack = [];
+  var inString = false, escape = false;
+  for (var i = 0; i < partial.length; i++) {
+    var c = partial[i];
+    if (inString) {
+      if (escape) { escape = false; }
+      else if (c === '\\') { escape = true; }
+      else if (c === '"') { inString = false; }
+      continue;
+    }
+    if (c === '"') { inString = true; continue; }
+    if (c === '{' || c === '[') stack.push(c);
+    else if (c === '}') { if (stack[stack.length - 1] === '{') stack.pop(); }
+    else if (c === ']') { if (stack[stack.length - 1] === '[') stack.pop(); }
+  }
+  if (inString) partial += '"'; // abgeschnittener String-Wert
+  partial = partial.replace(/,\s*$/, '');            // hängendes Komma
+  partial = partial.replace(/"[^"]*"\s*:\s*$/, '"—"'); // abgeschnittenes Key-Value-Paar ohne Wert
+  for (var j = stack.length - 1; j >= 0; j--) partial += (stack[j] === '{') ? '}' : ']';
   try { return JSON.parse(partial); } catch(e2) {
     throw new Error('JSON Parse error: ' + e2.message);
   }
@@ -865,6 +950,7 @@ function startAnalyse() {
   var aktiveFotos = fotos.filter(function(arr) { return arr.length > 0; });
 
   setStatus('KI erstellt Fahrzeugdaten' + (aktiveFotos.length > 0 ? ' (' + aktiveFotos.length + ' Bereich(e))' : '') + '…');
+  startProgressTicker(6, 62);
 
   var systemPrompt = 'Du bist ein präziser Oldtimer- und Youngtimer-Experte mit tiefem Wissen über den DACH-Markt. '
     + 'Du erstellst strukturierte Fahrzeug-Datenblätter im JSON-Format für Restaurierungsbetriebe und Händler — '
@@ -873,6 +959,8 @@ function startAnalyse() {
     + 'Einspritzanlage, genaue PS-Angaben, Getriebevarianten, Produktionszahlen), verlasse dich NICHT auf vages '
     + 'Erinnern — recherchiere aktiv per Websuche und nenne die für dieses konkrete Baujahr/diese Modellvariante '
     + 'korrekte technische Ausführung. Lieber ein Detail kurz recherchieren als ein falsches Fachdetail nennen. '
+    + 'Recherchiere dabei gezielt mit maximal 2 Suchanfragen — nicht ausufernd recherchieren, danach das vollständige '
+    + 'JSON ausgeben. '
     + 'Falls der Nutzer im Eingabefeld "Besonderheiten" bereits konkrete technische Angaben gemacht hat (z.B. '
     + 'Kraftstoffsystem, Getriebeart, Umbauten), übernimm diese als gesicherte Fakten statt eigene Annahmen zu treffen '
     + '— die Nutzerangabe hat immer Vorrang vor recherchierten Standardwerten der Baureihe. '
@@ -969,7 +1057,7 @@ function startAnalyse() {
 
   // Beide Calls parallel + DACH-Suche
   Promise.all([
-    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2500, system: systemPrompt, messages: messages1, tools: [{ type: 'web_search_20250305', name: 'web_search' }] }),
+    callProxy({ model: 'claude-sonnet-4-6', max_tokens: 5000, system: systemPrompt, messages: messages1, tools: [{ type: 'web_search_20250305', name: 'web_search' }] }),
     callProxy({ model: 'claude-sonnet-4-6', max_tokens: 2000, system: systemPrompt, messages: [{ role: 'user', content: prompt2 }] })
   ])
   .then(function(results) {
@@ -982,6 +1070,7 @@ function startAnalyse() {
     var d = Object.assign({}, d1, d2);
 
     setStatus('Aktuelle DACH-Marktpreise werden abgerufen…');
+    startProgressTicker(62, 93);
     return searchDACH(marke, modell, baureihe, baujahr).then(function(dachData) {
       return { ki: d, dach: dachData };
     });
@@ -989,7 +1078,9 @@ function startAnalyse() {
   .then(function(result) {
     renderDatenblatt(result.ki, result.dach, marke, modell, baureihe, baujahr, zustand);
     currentDossier = { id: null, marke: marke, modell: modell, baureihe: baureihe, baujahr: baujahr, zustand: zustand, ki: result.ki, dach: result.dach };
-    hideStatus();
+    clearProgressTicker();
+    setProgress(100);
+    setTimeout(hideStatus, 300);
     btn.disabled = false;
     // PDF-Button nur wenn bereits freigeschaltet
     if (premiumFreigeschaltet) document.getElementById('btnPdf').style.display = 'inline-block';
