@@ -141,6 +141,8 @@
   .foto-slot-icon { font-size: 20px; margin-bottom: 4px; }
   .foto-slot-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
   .foto-slot-preview { width: 100%; height: 70px; object-fit: cover; border-radius: 4px; display: none; }
+  .foto-slot-check { display: none; }
+  .foto-slot.has-foto .foto-slot-check { display: inline; }
   .foto-slot-delete {
     position: absolute; top: 5px; right: 5px; z-index: 5;
     width: 26px; height: 26px; border-radius: 50%;
@@ -149,17 +151,14 @@
     font-size: 13px; line-height: 1; cursor: pointer;
   }
   .foto-slot.has-foto .foto-slot-delete { display: flex; }
-  .foto-carousel { position: relative; width: 100%; }
-  .foto-nav {
-    position: absolute; bottom: 4px; left: 0; right: 0;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    background: rgba(16,40,64,0.7); border-radius: 0 0 4px 4px; padding: 2px 0;
+  .galerie-add-tile {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; padding: 12px 8px; border: 1px dashed var(--border); border-radius: 6px;
+    background: var(--surface2); cursor: pointer; text-align: center;
   }
-  .foto-nav button {
-    background: none; border: none; color: #fff;
-    font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1;
-  }
-  .foto-nav span { font-size: 10px; color: #ddd; min-width: 28px; text-align: center; }
+  .galerie-add-tile:has(input:disabled) { opacity: 0.5; cursor: default; }
+  .galerie-add-tile .add-label { font-size: 11px; font-weight: 700; color: var(--blue); }
+  .galerie-add-tile .add-hint { font-size: 9px; color: var(--muted); }
 
   /* Button */
   .btn-analyse {
@@ -400,7 +399,7 @@
     .logo-mark { background: #1a3a5c; }
     .logo-mark span { color: #fff; }
     .header-text h1, .header-text p { color: #1a3a5c; }
-    .input-panel, .status-bar, .error-box, .btn-pdf, .btn-analyse, .header-actions { display: none !important; }
+    .input-panel, .status-bar, .error-box, .btn-pdf, .btn-analyse, .header-actions, #fotoExtraUploader { display: none !important; }
     .datenblatt { display: block !important; }
     .db-section { background: #fff; border: 1px solid #ddd; break-inside: avoid; margin-bottom: 10px; box-shadow: none; }
     .db-section-header { background: #f5f5f5; }
@@ -432,7 +431,7 @@
     /* Foto-Sektion im Print */
     #sectionFotos { display: block !important; }
     #fotoGalerieGrid img {
-      width: 100%; height: 160px;
+      width: 100%; height: 160px !important;
       object-fit: cover;
       border-radius: 4px;
       border: 1px solid #ddd;
@@ -514,70 +513,109 @@
       💡 Je detaillierter, desto präziser das Ergebnis — besonders hilfreich: Kraftstoffsystem (Vergaser/Einspritzung),
       Getriebeart, bekannte Umbauten oder Sonderausstattung. So vermeidet die KI Annahmen, die Fachleute sofort als falsch erkennen.
     </div>
-    <div class="foto-label">Fotos · optional · bis zu 5 pro Bereich · unterstützen die KI-Analyse</div>
+    <div class="foto-label">Fotos · optional · 1 Foto pro Bereich · unterstützen die KI-Analyse</div>
     <div class="foto-grid">
       <div class="foto-slot" id="slot0" ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event,0)">
-        <input type="file" accept="image/*" multiple onchange="fotoLoad(this,0)" />
+        <input type="file" accept="image/*" onchange="fotoLoad(this,0)" />
         <span class="foto-slot-check" id="check0">✓</span>
         <span class="foto-slot-delete" onclick="fotoDelete(event,0)">✕</span>
-        <div class="foto-carousel" id="carousel0">
-          <img class="foto-slot-preview" id="prev0" />
-          <div class="foto-nav" id="nav0" style="display:none;">
-            <button onclick="fotoNav(event,0,-1)">‹</button>
-            <span id="navLabel0">1/1</span>
-            <button onclick="fotoNav(event,0,1)">›</button>
-          </div>
-        </div>
+        <img class="foto-slot-preview" id="prev0" />
         <div class="foto-slot-icon" id="icon0">🚗</div>
         <div class="foto-slot-label" id="lbl0">Außenansicht</div>
       </div>
       <div class="foto-slot" id="slot1" ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event,1)">
-        <input type="file" accept="image/*" multiple onchange="fotoLoad(this,1)" />
+        <input type="file" accept="image/*" onchange="fotoLoad(this,1)" />
         <span class="foto-slot-check" id="check1">✓</span>
         <span class="foto-slot-delete" onclick="fotoDelete(event,1)">✕</span>
-        <div class="foto-carousel" id="carousel1">
-          <img class="foto-slot-preview" id="prev1" />
-          <div class="foto-nav" id="nav1" style="display:none;">
-            <button onclick="fotoNav(event,1,-1)">‹</button>
-            <span id="navLabel1">1/1</span>
-            <button onclick="fotoNav(event,1,1)">›</button>
-          </div>
-        </div>
+        <img class="foto-slot-preview" id="prev1" />
         <div class="foto-slot-icon" id="icon1">🪑</div>
         <div class="foto-slot-label" id="lbl1">Innenraum</div>
       </div>
       <div class="foto-slot" id="slot2" ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event,2)">
-        <input type="file" accept="image/*" multiple onchange="fotoLoad(this,2)" />
+        <input type="file" accept="image/*" onchange="fotoLoad(this,2)" />
         <span class="foto-slot-check" id="check2">✓</span>
         <span class="foto-slot-delete" onclick="fotoDelete(event,2)">✕</span>
-        <div class="foto-carousel" id="carousel2">
-          <img class="foto-slot-preview" id="prev2" />
-          <div class="foto-nav" id="nav2" style="display:none;">
-            <button onclick="fotoNav(event,2,-1)">‹</button>
-            <span id="navLabel2">1/1</span>
-            <button onclick="fotoNav(event,2,1)">›</button>
-          </div>
-        </div>
+        <img class="foto-slot-preview" id="prev2" />
         <div class="foto-slot-icon" id="icon2">🔩</div>
         <div class="foto-slot-label" id="lbl2">Motorraum</div>
       </div>
       <div class="foto-slot" id="slot3" ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event,3)">
-        <input type="file" accept="image/*" multiple onchange="fotoLoad(this,3)" />
+        <input type="file" accept="image/*" onchange="fotoLoad(this,3)" />
         <span class="foto-slot-check" id="check3">✓</span>
         <span class="foto-slot-delete" onclick="fotoDelete(event,3)">✕</span>
-        <div class="foto-carousel" id="carousel3">
-          <img class="foto-slot-preview" id="prev3" />
-          <div class="foto-nav" id="nav3" style="display:none;">
-            <button onclick="fotoNav(event,3,-1)">‹</button>
-            <span id="navLabel3">1/1</span>
-            <button onclick="fotoNav(event,3,1)">›</button>
-          </div>
-        </div>
+        <img class="foto-slot-preview" id="prev3" />
         <div class="foto-slot-icon" id="icon3">⬇</div>
         <div class="foto-slot-label" id="lbl3">Unterboden</div>
       </div>
     </div>
     <button class="btn-analyse" id="analyseBtn" onclick="startAnalyse()">Klassiker analysieren →</button>
+  </div>
+
+  <!-- LEAD-GATE: erscheint statt Analyse, wenn kostenlose Versuche aufgebraucht sind -->
+  <div class="input-panel" id="leadGate" style="display:none;">
+    <div class="panel-label">Kostenlose Analysen aufgebraucht</div>
+    <p style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:16px;">
+      Du hast deine kostenlosen Analysen für diese Sitzung aufgebraucht. Für 2 weitere: Gib uns kurz deine
+      Einschätzung zum Zustand deines Fahrzeugs (hilft uns zu verstehen, was Sammler suchen) und deine E-Mail-Adresse.
+    </p>
+    <div class="form-row-2">
+      <div class="field"><label>Lack &amp; Karosserie</label>
+        <select id="ratingLack">
+          <option value="">— wählen —</option>
+          <option value="1">Note 1 — Concours / Makellos</option>
+          <option value="1-">Note 1– — Vollrestauriert</option>
+          <option value="2">Note 2 — Sehr gut</option>
+          <option value="3">Note 3 — Guter Gebrauchszustand</option>
+          <option value="4">Note 4 — Restaurierungsbedürftig</option>
+          <option value="5">Note 5 — Schlechtester Zustand</option>
+        </select>
+      </div>
+      <div class="field"><label>Innenraum</label>
+        <select id="ratingInnenraum">
+          <option value="">— wählen —</option>
+          <option value="1">Note 1 — Concours / Makellos</option>
+          <option value="1-">Note 1– — Vollrestauriert</option>
+          <option value="2">Note 2 — Sehr gut</option>
+          <option value="3">Note 3 — Guter Gebrauchszustand</option>
+          <option value="4">Note 4 — Restaurierungsbedürftig</option>
+          <option value="5">Note 5 — Schlechtester Zustand</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row-2">
+      <div class="field"><label>Technik &amp; Motor</label>
+        <select id="ratingTechnik">
+          <option value="">— wählen —</option>
+          <option value="1">Note 1 — Concours / Makellos</option>
+          <option value="1-">Note 1– — Vollrestauriert</option>
+          <option value="2">Note 2 — Sehr gut</option>
+          <option value="3">Note 3 — Guter Gebrauchszustand</option>
+          <option value="4">Note 4 — Restaurierungsbedürftig</option>
+          <option value="5">Note 5 — Schlechtester Zustand</option>
+        </select>
+      </div>
+      <div class="field"><label>Unterboden &amp; Fahrwerk</label>
+        <select id="ratingUnterboden">
+          <option value="">— wählen —</option>
+          <option value="1">Note 1 — Concours / Makellos</option>
+          <option value="1-">Note 1– — Vollrestauriert</option>
+          <option value="2">Note 2 — Sehr gut</option>
+          <option value="3">Note 3 — Guter Gebrauchszustand</option>
+          <option value="4">Note 4 — Restaurierungsbedürftig</option>
+          <option value="5">Note 5 — Schlechtester Zustand</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label>E-Mail-Adresse *</label>
+      <input type="email" id="leadEmail" placeholder="deine@email.de" />
+    </div>
+    <label style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:16px;cursor:pointer;">
+      <input type="checkbox" id="leadConsent" style="margin-top:2px;flex-shrink:0;" />
+      Ich bin einverstanden, dass Riedel Classics mich per E-Mail zu passenden Angeboten (z.B. Lackierung,
+      Aufbereitung, Trockeneisreinigung) kontaktiert. Abmeldung jederzeit möglich.
+    </label>
+    <button class="btn-analyse" id="leadSubmitBtn" onclick="submitLeadGate()">Absenden &amp; 2 weitere Analysen freischalten</button>
   </div>
 
   <!-- STATUS -->
@@ -611,6 +649,29 @@
       <div class="db-section-header"><span class="db-section-icon">📷</span><span class="db-section-title">Fahrzeugfotos</span><span class="free-badge">Kostenlos</span></div>
       <div class="db-section-body">
         <div id="fotoGalerieGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;"></div>
+        <div id="fotoExtraUploader" class="premium-content" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">
+            Weitere Fotos hinzufügen · bis zu 5 pro Bereich · nur fürs Dossier/PDF, ohne erneute KI-Analyse
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+            <label class="galerie-add-tile">
+              <input type="file" id="galerieInput0" accept="image/*" multiple style="display:none;" onchange="addGalerieFoto(this,0)" />
+              <span class="add-label">+ Außenansicht</span><span class="add-hint" id="galerieHint0">noch kein Foto</span>
+            </label>
+            <label class="galerie-add-tile">
+              <input type="file" id="galerieInput1" accept="image/*" multiple style="display:none;" onchange="addGalerieFoto(this,1)" />
+              <span class="add-label">+ Innenraum</span><span class="add-hint" id="galerieHint1">noch kein Foto</span>
+            </label>
+            <label class="galerie-add-tile">
+              <input type="file" id="galerieInput2" accept="image/*" multiple style="display:none;" onchange="addGalerieFoto(this,2)" />
+              <span class="add-label">+ Motorraum</span><span class="add-hint" id="galerieHint2">noch kein Foto</span>
+            </label>
+            <label class="galerie-add-tile">
+              <input type="file" id="galerieInput3" accept="image/*" multiple style="display:none;" onchange="addGalerieFoto(this,3)" />
+              <span class="add-label">+ Unterboden</span><span class="add-hint" id="galerieHint3">noch kein Foto</span>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -718,6 +779,9 @@ var SUPABASE_ANON_KEY = 'sb_publishable_v4kXJa0y-2EHsCFPqBFHfg_QvzKLnt2';
 var PROXY_URL          = SUPABASE_URL + '/functions/v1/claude-proxy';
 var CHECKOUT_URL       = SUPABASE_URL + '/functions/v1/create-checkout-session';
 var VERIFY_URL         = SUPABASE_URL + '/functions/v1/verify-checkout-session';
+var LEAD_URL           = SUPABASE_URL + '/functions/v1/Submit-lead';
+var FREE_LIMIT_START   = 2; // kostenlose Analysen ohne alles
+var FREE_LIMIT_BONUS   = 2; // zusätzliche Analysen nach E-Mail-Eingabe
 // ────────────────────────────────────────────────────────
 
 // Aktuell generiertes Dossier (für Stripe-Checkout & Wiederherstellung nach Redirect)
@@ -728,9 +792,8 @@ var premiumFreigeschaltet = false;
 var fotos = [null, null, null, null];
 var fotoLabels = ['Außenansicht', 'Innenraum', 'Motorraum', 'Unterboden'];
 
-// fotos[idx] = Array von {base64, mime} — bis zu 5 pro Slot
+// fotos[idx] = Array von {base64, mime} — idx0 = Primärfoto (Eingabe), idx1-4 = Bonus-Galeriefotos (nach Freischaltung)
 var fotos = [[], [], [], []];
-var fotoIdx = [0, 0, 0, 0]; // aktuell angezeigte Fotos pro Slot
 
 function komprimiere(file, cb) {
   var reader = new FileReader();
@@ -753,21 +816,14 @@ function komprimiere(file, cb) {
 }
 
 function fotoLoad(input, idx) {
-  var files = Array.prototype.slice.call(input.files, 0, 5); // max 5
-  loadFotosForSlot(files, idx);
+  if (!input.files || !input.files.length) return;
+  setFotoForSlot(input.files[0], idx);
 }
 
-function loadFotosForSlot(files, idx) {
-  if (!files.length) return;
-  fotos[idx] = [];
-  fotoIdx[idx] = 0;
-  var loaded = 0;
-  files.forEach(function(file) {
-    komprimiere(file, function(foto) {
-      fotos[idx].push(foto);
-      loaded++;
-      if (loaded === files.length) updateSlotUI(idx);
-    });
+function setFotoForSlot(file, idx) {
+  komprimiere(file, function(foto) {
+    fotos[idx] = [foto]; // genau 1 Foto pro Eingabe-Bereich
+    updateSlotUI(idx);
   });
 }
 
@@ -781,69 +837,37 @@ function fotoDragLeave(e) {
 function fotoDrop(e, idx) {
   e.preventDefault();
   e.currentTarget.classList.remove('dragover');
-  var files = Array.prototype.slice.call(e.dataTransfer.files, 0, 5).filter(function(f) {
+  var files = Array.prototype.slice.call(e.dataTransfer.files).filter(function(f) {
     return f.type && f.type.indexOf('image/') === 0;
   });
   if (!files.length) return;
-  loadFotosForSlot(files, idx);
+  setFotoForSlot(files[0], idx);
 }
 
 function updateSlotUI(idx) {
   var arr = fotos[idx];
   if (!arr.length) return;
-  var cur = fotoIdx[idx];
   var prev  = document.getElementById('prev' + idx);
-  var check = document.getElementById('check' + idx);
   var slot  = document.getElementById('slot' + idx);
-  var nav   = document.getElementById('nav' + idx);
-  var lbl   = document.getElementById('navLabel' + idx);
-  prev.src = arr[cur].dataUrl;
+  prev.src = arr[0].dataUrl;
   prev.style.display = 'block';
-  check.style.display = 'block';
   slot.classList.add('has-foto');
   document.getElementById('icon' + idx).style.display = 'none';
   document.getElementById('lbl' + idx).style.display  = 'none';
-  if (arr.length > 1) {
-    nav.style.display = 'flex';
-    lbl.textContent = (cur + 1) + '/' + arr.length;
-  } else {
-    nav.style.display = 'none';
-  }
-}
-
-function fotoNav(e, idx, dir) {
-  e.stopPropagation();
-  e.preventDefault();
-  var arr = fotos[idx];
-  if (!arr.length) return;
-  fotoIdx[idx] = (fotoIdx[idx] + dir + arr.length) % arr.length;
-  updateSlotUI(idx);
 }
 
 function fotoDelete(e, idx) {
   e.stopPropagation();
   e.preventDefault();
-  var arr = fotos[idx];
-  if (!arr || !arr.length) return;
-  var cur = fotoIdx[idx];
-  arr.splice(cur, 1);
-  if (!arr.length) {
-    resetSlotUI(idx);
-  } else {
-    fotoIdx[idx] = cur >= arr.length ? arr.length - 1 : cur;
-    updateSlotUI(idx);
-  }
+  resetSlotUI(idx);
 }
 
 function resetSlotUI(idx) {
   fotos[idx] = [];
-  fotoIdx[idx] = 0;
   var slot = document.getElementById('slot' + idx);
   var input = slot.querySelector('input[type="file"]');
   if (input) input.value = ''; // erlaubt erneutes Hochladen derselben Datei
   document.getElementById('prev' + idx).style.display = 'none';
-  document.getElementById('check' + idx).style.display = 'none';
-  document.getElementById('nav' + idx).style.display = 'none';
   document.getElementById('icon' + idx).style.display = '';
   document.getElementById('lbl' + idx).style.display = '';
   slot.classList.remove('has-foto');
@@ -937,6 +961,12 @@ function extractJSON(raw) {
 }
 
 function startAnalyse() {
+  if (getAnalysenCount() >= getAnalysenLimit()) {
+    document.getElementById('leadGate').style.display = 'block';
+    window.scrollTo({ top: document.getElementById('leadGate').offsetTop - 80, behavior: 'smooth' });
+    return;
+  }
+
   var marke   = document.getElementById('marke').value.trim();
   var modell  = document.getElementById('modell').value.trim();
   var baujahr = document.getElementById('baujahr').value.trim();
@@ -954,9 +984,9 @@ function startAnalyse() {
   clearDossierCache();
   var premiumSections = document.querySelectorAll('.premium-content');
   for (var i = 0; i < premiumSections.length; i++) { premiumSections[i].style.display = 'none'; }
-  // Foto-Slots zurücksetzen
+  // Foto-Slots zurücksetzen (Daten UND sichtbare Vorschau)
   fotos = [[], [], [], []];
-  fotoIdx = [0, 0, 0, 0];
+  for (var s = 0; s < 4; s++) resetSlotUI(s);
 
   var baureihe  = document.getElementById('baureihe').value.trim();
   var zustand   = document.getElementById('zustand').value;
@@ -1095,6 +1125,7 @@ function startAnalyse() {
     setProgress(100);
     renderDatenblatt(d, dachData, marke, modell, baureihe, baujahr, zustand);
     currentDossier = { id: null, marke: marke, modell: modell, baureihe: baureihe, baujahr: baujahr, zustand: zustand, ki: d, dach: dachData };
+    incrementAnalysenCount();
     setTimeout(hideStatus, 300);
     btn.disabled = false;
     // PDF-Button nur wenn bereits freigeschaltet
@@ -1174,27 +1205,92 @@ function searchDACH(marke, modell, baureihe, baujahr) {
   .catch(function() { return null; });
 }
 
-function renderDatenblatt(d, dach, marke, modell, baureihe, baujahr, zustand) {
-  document.getElementById('dbTitel').textContent    = d.titel || (marke + ' ' + modell);
-  document.getElementById('dbBaureihe').textContent = d.baureihe_label || (baureihe + ' · Baujahr ' + baujahr);
+// Befüllt die Kopf-Vorschau (erstes Foto pro Bereich) UND die vollständige Foto-Sektion
+// (alle Fotos, inkl. nach Freischaltung nachgeladener Bonus-Fotos). Wird sowohl nach der
+// Analyse als auch nach jedem nachträglichen Foto-Upload neu aufgerufen.
+function renderFotoGalerie() {
+  var bereicheMitFoto = fotos.filter(function(arr) { return arr.length > 0; });
 
-  // Foto-Galerie im Header — erstes Foto pro Slot
-  var aktiveFotos = fotos.filter(function(arr) { return arr.length > 0; });
-  if (aktiveFotos.length > 0) {
-    var grid = document.getElementById('dbFotoGrid');
-    grid.innerHTML = '';
+  // Kopf-Vorschau: nur erstes Foto pro Bereich, kompakt
+  var headerGrid = document.getElementById('dbFotoGrid');
+  var headerWrap = document.getElementById('dbFotoGalerie');
+  headerGrid.innerHTML = '';
+  if (bereicheMitFoto.length > 0) {
     fotos.forEach(function(arr, idx) {
       if (!arr.length) return;
       var f = arr[0];
-      grid.innerHTML += '<div style="position:relative;">'
+      headerGrid.innerHTML += '<div style="position:relative;">'
         + '<img src="data:' + f.mime + ';base64,' + f.base64 + '" '
         + 'style="width:80px;height:54px;object-fit:cover;border-radius:4px;border:1px solid var(--border);" />'
         + '<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);font-size:8px;'
         + 'text-align:center;padding:1px;letter-spacing:0.04em;color:#aaa;border-radius:0 0 4px 4px;">'
         + fotoLabels[idx] + (arr.length > 1 ? ' ×' + arr.length : '') + '</div></div>';
     });
-    document.getElementById('dbFotoGalerie').style.display = 'block';
+    headerWrap.style.display = 'block';
+  } else {
+    headerWrap.style.display = 'none';
   }
+
+  // Vollständige Foto-Sektion: ALLE Fotos je Bereich (auch Bonus-Fotos nach Freischaltung) — auch fürs PDF
+  var sectionGrid = document.getElementById('fotoGalerieGrid');
+  var section = document.getElementById('sectionFotos');
+  sectionGrid.innerHTML = '';
+  if (bereicheMitFoto.length > 0) {
+    fotos.forEach(function(arr, idx) {
+      arr.forEach(function(f, i) {
+        sectionGrid.innerHTML += '<div style="position:relative;">'
+          + '<img src="data:' + f.mime + ';base64,' + f.base64 + '" '
+          + 'style="width:100%;height:120px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block;" />'
+          + '<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(16,40,64,0.72);font-size:10px;'
+          + 'text-align:center;padding:3px;letter-spacing:0.04em;color:#fff;border-radius:0 0 6px 6px;">'
+          + fotoLabels[idx] + (arr.length > 1 ? ' (' + (i + 1) + '/' + arr.length + ')' : '') + '</div></div>';
+      });
+    });
+    section.style.display = 'block';
+  } else {
+    section.style.display = 'none';
+  }
+
+  updateGalerieUploaderUI();
+}
+
+// Zusätzliche Fotos NACH Freischaltung — fließen nur in die Galerie/das PDF, nicht erneut in die KI-Analyse
+function addGalerieFoto(input, idx) {
+  if (!input.files || !input.files.length) return;
+  var arr = fotos[idx];
+  var platz = Math.max(0, 5 - arr.length);
+  var files = Array.prototype.slice.call(input.files, 0, platz);
+  input.value = '';
+  if (!files.length) return;
+  var geladen = 0;
+  files.forEach(function(file) {
+    komprimiere(file, function(foto) {
+      arr.push(foto);
+      geladen++;
+      if (geladen === files.length) renderFotoGalerie();
+    });
+  });
+}
+
+// Zeigt an, wie viele Bonus-Fotos pro Bereich noch möglich sind (nur sichtbar wenn Premium freigeschaltet)
+function updateGalerieUploaderUI() {
+  for (var idx = 0; idx < 4; idx++) {
+    var hint = document.getElementById('galerieHint' + idx);
+    if (!hint) continue;
+    var rest = Math.max(0, 5 - fotos[idx].length);
+    hint.textContent = fotos[idx].length === 0
+      ? 'noch kein Foto'
+      : (rest > 0 ? 'noch ' + rest + ' Platz frei' : 'voll (5/5)');
+    var input = document.getElementById('galerieInput' + idx);
+    if (input) input.disabled = rest === 0;
+  }
+}
+
+function renderDatenblatt(d, dach, marke, modell, baureihe, baujahr, zustand) {
+  document.getElementById('dbTitel').textContent    = d.titel || (marke + ' ' + modell);
+  document.getElementById('dbBaureihe').textContent = d.baureihe_label || (baureihe + ' · Baujahr ' + baujahr);
+
+  renderFotoGalerie();
 
   // Badges
   var badgeEl = document.getElementById('dbBadges');
@@ -1204,7 +1300,8 @@ function renderDatenblatt(d, dach, marke, modell, baureihe, baujahr, zustand) {
     badgeEl.innerHTML += '<span class="' + cls + '">' + b + '</span>';
   });
   if (zustand) badgeEl.innerHTML += '<span class="badge badge-gray">Note ' + zustand + '</span>';
-  if (aktiveFotos.length > 0) badgeEl.innerHTML += '<span class="badge badge-gray">' + aktiveFotos.length + ' Bereich(e) · ' + fotos.reduce(function(s,a){return s+a.length;},0) + ' Foto(s)</span>';
+  var bereicheMitFoto = fotos.filter(function(arr) { return arr.length > 0; }).length;
+  if (bereicheMitFoto > 0) badgeEl.innerHTML += '<span class="badge badge-gray">' + bereicheMitFoto + ' Bereich(e) · ' + fotos.reduce(function(s,a){return s+a.length;},0) + ' Foto(s)</span>';
 
   // Quartett
   var qg = document.getElementById('quartettGrid');
@@ -1307,6 +1404,67 @@ function renderDatenblatt(d, dach, marke, modell, baureihe, baujahr, zustand) {
   for (var y = jetzt; y >= 1920; y--) html += '<option value="' + y + '">';
   dl.innerHTML = html;
 })();
+
+// ── FREE-TIER-BREMSE ───────────────────────────────────────
+// Weiche Bremse per localStorage (pro Browser/Gerät) — kein Account nötig, leicht
+// umgehbar (Browser-Cache leeren), aber genug um versehentliches/automatisiertes
+// Mehrfach-Klicken einzudämmen und gleichzeitig Leads für Riedel Classics zu sammeln.
+function getAnalysenCount() {
+  return parseInt(localStorage.getItem('rc_analysen_count') || '0', 10);
+}
+function incrementAnalysenCount() {
+  localStorage.setItem('rc_analysen_count', String(getAnalysenCount() + 1));
+}
+function getAnalysenLimit() {
+  var bonus = localStorage.getItem('rc_email_bonus') === '1';
+  return FREE_LIMIT_START + (bonus ? FREE_LIMIT_BONUS : 0);
+}
+
+function submitLeadGate() {
+  var email = document.getElementById('leadEmail').value.trim();
+  if (!email || email.indexOf('@') === -1) { alert('Bitte eine gültige E-Mail-Adresse eingeben.'); return; }
+
+  var btn = document.getElementById('leadSubmitBtn');
+  var originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Wird gesendet…';
+  hideError();
+
+  var payload = {
+    email: email,
+    marke: document.getElementById('marke').value.trim(),
+    modell: document.getElementById('modell').value.trim(),
+    baujahr: document.getElementById('baujahr').value.trim(),
+    bewertung_lack: document.getElementById('ratingLack').value || null,
+    bewertung_innenraum: document.getElementById('ratingInnenraum').value || null,
+    bewertung_technik: document.getElementById('ratingTechnik').value || null,
+    bewertung_unterboden: document.getElementById('ratingUnterboden').value || null,
+    marketing_consent: document.getElementById('leadConsent').checked
+  };
+
+  fetch(LEAD_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) {
+    if (!r.ok) return r.text().then(function(t) { throw new Error('Lead ' + r.status + ': ' + t); });
+    return r.json();
+  })
+  .then(function() {
+    localStorage.setItem('rc_email_bonus', '1');
+    document.getElementById('leadGate').style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+    startAnalyse(); // jetzt mit freigeschaltetem Bonus direkt weiteranalysieren
+  })
+  .catch(function(err) {
+    console.error(err);
+    showError('Danke senden hat nicht geklappt: ' + err.message + ' — bitte nochmal versuchen.');
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  });
+}
 
 function generateDossierId() {
   return 'd' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
