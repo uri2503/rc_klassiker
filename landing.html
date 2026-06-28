@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RC Klassiker Wertdossier – Sofort-Bewertung für Ihren Oldtimer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --navy:      #0e2236;
+    --navy-mid:  #1a3a5c;
+    --navy-soft: #1e3f5a;
+    --gold:      #b8960c;
+    --gold-lt:   #d4af37;
+    --gold-pale: #f5edcc;
+    --blue:      #2a6090;
+    --sky:       #7ab3d4;
+    --offwhite:  #f8f5ef;
+    --border:    #d4c9a8;
+    --text:      #1c2b3a;
+    --muted:     #6b7785;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--offwhite);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--navy);
+    border-bottom: 1px solid rgba(212,175,55,0.25);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .nav-mark {
+    width: 32px; height: 32px;
+    background: var(--blue); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .nav-mark span { color: #fff; font-weight: 800; font-size: 11px; letter-spacing: 0.05em; }
+  .nav-name { color: #fff; font-weight: 700; font-size: 14px; }
+  .nav-sub { color: var(--sky); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .nav-cta {
+    margin-left: auto;
+    background: var(--gold);
+    color: #fff; font-weight: 700; font-size: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border: none; border-radius: 4px;
+    padding: 9px 20px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--gold-lt); }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 120px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(212,175,55,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 80% 100%, rgba(42,96,144,0.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  /* Subtle car outline watermark */
+  .hero::after {
+    content: '🏎';
+    position: absolute; right: -20px; bottom: -20px;
+    font-size: 260px; opacity: 0.04;
+    pointer-events: none; line-height: 1;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(212,175,55,0.15);
+    border: 1px solid rgba(212,175,55,0.35);
+    border-radius: 2px;
+    color: var(--gold-lt); font-size: 10px;
+    font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 5px 14px; margin-bottom: 28px;
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold-lt); animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+  .hero h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(38px, 6vw, 68px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    max-width: 780px; margin: 0 auto 20px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--gold-lt) 0%, var(--gold) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    color: var(--sky); font-size: 18px; font-weight: 400;
+    max-width: 560px; margin: 0 auto 44px;
+    line-height: 1.55;
+  }
+  .hero-actions {
+    display: flex; align-items: center; justify-content: center;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: #fff; font-weight: 700; font-size: 14px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    border: none; border-radius: 4px;
+    padding: 16px 36px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-lt); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--sky); font-size: 13px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    border: 1px solid rgba(122,179,212,0.4); border-radius: 4px;
+    padding: 15px 28px; cursor: pointer; text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--sky); color: #fff; }
+  .hero-trust {
+    margin-top: 36px;
+    color: rgba(122,179,212,0.6); font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── PRICE BAND ── */
+  .price-band {
+    background: var(--gold-pale);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 24px;
+    text-align: center;
+  }
+  .price-band-inner {
+    display: inline-flex; align-items: center; gap: 28px; flex-wrap: wrap;
+    justify-content: center;
+  }
+  .price-pill {
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .price-pill .amount {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 32px; font-weight: 900; color: var(--navy);
+    line-height: 1;
+  }
+  .price-pill .label {
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-top: 2px;
+  }
+  .price-divider { width: 1px; height: 44px; background: var(--border); }
+  .price-compare {
+    font-size: 13px; color: var(--muted); text-align: left; max-width: 320px;
+    line-height: 1.5;
+  }
+  .price-compare strong { color: var(--text); }
+
+  /* ── SECTION WRAPPER ── */
+  section { padding: 80px 24px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 12px;
+  }
+  h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 900; color: var(--navy);
+    line-height: 1.15; margin-bottom: 20px;
+  }
+  .lead {
+    font-size: 17px; color: var(--muted); max-width: 620px;
+    line-height: 1.65; margin-bottom: 48px;
+  }
+
+  /* ── WHAT YOU GET ── */
+  .what-bg { background: #fff; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    background: var(--offwhite);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 22px;
+    position: relative;
+  }
+  .feature-card.highlight {
+    background: var(--navy);
+    border-color: var(--gold);
+  }
+  .feature-card.highlight .fc-title { color: #fff; }
+  .feature-card.highlight .fc-body { color: var(--sky); }
+  .fc-icon { font-size: 22px; margin-bottom: 12px; }
+  .fc-title { font-weight: 700; font-size: 14px; color: var(--navy); margin-bottom: 6px; }
+  .fc-body { font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .fc-badge {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--gold); color: #fff;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 2px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-bg { background: var(--navy); }
+  .how-bg h2 { color: #fff; }
+  .how-bg .lead { color: var(--sky); }
+  .how-bg .section-label { color: var(--gold-lt); }
+
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; }
+  .step { position: relative; }
+  .step-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px; font-weight: 900;
+    color: rgba(212,175,55,0.2);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .step-title { color: #fff; font-weight: 700; font-size: 15px; margin-bottom: 8px; }
+  .step-body { color: var(--sky); font-size: 13px; line-height: 1.6; }
+  .step-connector {
+    display: none;
+  }
+
+  /* ── COMPARISON ── */
+  .comp-bg { background: var(--offwhite); }
+  .comp-table {
+    width: 100%; border-collapse: collapse;
+    border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; background: #fff;
+  }
+  .comp-table th {
+    padding: 14px 18px; font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; font-weight: 700; text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  .comp-table th:nth-child(2) { background: var(--navy); color: var(--gold-lt); text-align: center; }
+  .comp-table th:nth-child(3) { background: #f0f0f0; color: var(--muted); text-align: center; }
+  .comp-table td {
+    padding: 13px 18px; font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table td:nth-child(2) { text-align: center; background: #f8f6ee; }
+  .comp-table td:nth-child(3) { text-align: center; color: var(--muted); }
+  .check { color: #2e7d32; font-size: 16px; font-weight: 700; }
+  .cross { color: #c0392b; font-size: 16px; }
+  .partial { color: var(--gold); font-size: 13px; }
+
+  /* ── TESTIMONIAL ── */
+  .testi-bg { background: var(--gold-pale); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .testi-inner {
+    max-width: 680px; margin: 0 auto; text-align: center;
+  }
+  .testi-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700; color: var(--navy);
+    line-height: 1.35; margin-bottom: 20px;
+  }
+  .testi-quote::before { content: '\201E'; }
+  .testi-quote::after  { content: '\201C'; }
+  .testi-meta { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  .testi-meta strong { color: var(--navy); }
+
+  /* ── FAQ ── */
+  .faq-bg { background: #fff; }
+  .faq-list { max-width: 680px; }
+  .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q { font-weight: 700; font-size: 15px; color: var(--navy); margin-bottom: 8px; cursor: pointer; }
+  .faq-a { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+  /* ── CTA FINAL ── */
+  .cta-final {
+    background: var(--navy);
+    text-align: center; padding: 90px 24px;
+    position: relative; overflow: hidden;
+  }
+  .cta-final::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(212,175,55,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .cta-final h2 { color: #fff; margin-bottom: 16px; }
+  .cta-final .lead { color: var(--sky); margin: 0 auto 40px; }
+  .cta-price-tag {
+    display: inline-block;
+    background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 4px; padding: 8px 20px;
+    color: var(--gold-lt); font-size: 13px; font-weight: 600;
+    letter-spacing: 0.05em; margin-bottom: 28px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #08161e;
+    padding: 32px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+    border-top: 1px solid rgba(42,96,144,0.3);
+  }
+  .footer-left { color: var(--sky); font-size: 11px; line-height: 1.7; }
+  .footer-left strong { color: #fff; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: var(--muted); font-size: 11px; text-decoration: none; letter-spacing: 0.04em; }
+  .footer-links a:hover { color: var(--sky); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .hero { padding: 100px 20px 60px; }
+    .steps { grid-template-columns: 1fr; gap: 28px; }
+    .comp-table th:nth-child(3), .comp-table td:nth-child(3) { display: none; }
+    .price-divider { display: none; }
+    footer { flex-direction: column; }
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; }
+    .eyebrow-dot { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-mark"><span>RC</span></div>
+    <div>
+      <div class="nav-name">Riedel Classics</div>
+      <div class="nav-sub">Klassiker Wertdossier</div>
+    </div>
+  </a>
+  <a class="nav-cta" href="index.html">Dossier erstellen →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <div class="eyebrow-dot"></div>
+    KI-Sofortbewertung · DACH-Marktpreise · Freemium
+  </div>
+  <h1>Was ist Ihr<br><em>Oldtimer wirklich</em> wert?</h1>
+  <p class="hero-sub">
+    In 60 Sekunden zu einem professionellen Wertdossier — mit aktuellen Marktpreisen aus Deutschland, Österreich und der Schweiz.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="index.html">Kostenlos analysieren</a>
+    <a class="btn-ghost" href="#so-funktionierts">Wie es funktioniert</a>
+  </div>
+  <div class="hero-trust">Keine Anmeldung · Soforturteil gratis · Volldossier ab 4,99 €</div>
+</section>
+
+<!-- PRICE BAND -->
+<div class="price-band">
+  <div class="price-band-inner">
+    <div class="price-pill">
+      <div class="amount">Gratis</div>
+      <div class="label">Sofort-Check</div>
+    </div>
+    <div class="price-divider"></div>
+    <div class="price-pill">
+      <div class="amount">4,99 €</div>
+      <div class="label">Vollständiges Dossier</div>
+    </div>
+    <div class="price-divider"></div>
+    <div class="price-compare">
+      <strong>Classic Data Kurzgutachten kostet 99–250 €.</strong><br>
+      Das RC Wertdossier: KI-Sofortanalyse für unter 5 €.
+    </div>
+  </div>
+</div>
+
+<!-- WHAT YOU GET -->
+<section class="what-bg">
+  <div class="container">
+    <div class="section-label reveal">Im Dossier enthalten</div>
+    <h2 class="reveal">Alles, was Käufer und<br>Verkäufer brauchen.</h2>
+    <p class="lead reveal">Das kostenlose Sourteil zeigt Ihnen den Marktwert-Korridor. Das Volldossier liefert die gesamte Grundlage für eine fundierte Kauf- oder Verkaufsentscheidung.</p>
+
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="fc-icon">💡</div>
+        <div class="fc-title">KI-Soforturteil</div>
+        <div class="fc-body">Technische Einschätzung, typische Schwachstellen und eine ehrliche Zustandsbewertung — in Sekunden.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="fc-icon">📊</div>
+        <div class="fc-title">Live-Marktpreise DACH</div>
+        <div class="fc-body">Aktuelle Angebote aus Deutschland, Österreich und der Schweiz: Einstiegspreis, Durchschnitt, Topzustand.</div>
+        <div class="fc-badge">Live</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="fc-icon">🔧</div>
+        <div class="fc-title">Verschleißpunkte & Kosten</div>
+        <div class="fc-body">Die 5 häufigsten Problemstellen dieser Baureihe mit geschätzten Reparaturkosten — damit Sie böse Überraschungen vermeiden.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="fc-icon">📈</div>
+        <div class="fc-title">Wertprognose 5 Jahre</div>
+        <div class="fc-body">Steigt dieser Oldtimer im Wert oder ist er bereits ausgereizt? Die KI liefert eine marktbasierte Einschätzung.</div>
+      </div>
+      <div class="feature-card highlight reveal">
+        <div class="fc-icon">📄</div>
+        <div class="fc-title">PDF-Export</div>
+        <div class="fc-body">Das fertige Dossier als druckbares PDF — ideal zur Verhandlung, als Kaufdokumentation oder für die Versicherung.</div>
+        <div class="fc-badge">Vollversion</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="fc-icon">📸</div>
+        <div class="fc-title">Fotos ins Dossier</div>
+        <div class="fc-body">Bis zu 4 Fahrzeugfotos werden direkt ins Dossier eingebettet — für ein professionelles Gesamtbild.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-bg" id="so-funktionierts">
+  <div class="container">
+    <div class="section-label reveal">So funktioniert's</div>
+    <h2 class="reveal">Drei Schritte zum Dossier.</h2>
+    <p class="lead reveal">Kein Formular-Chaos, kein Warten auf einen Gutachter.</p>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-number">1</div>
+        <div class="step-title">Fahrzeug eingeben</div>
+        <div class="step-body">Hersteller, Modell, Baujahr und Zustandsnote — optional ein Foto hochladen. Fertig in unter einer Minute.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">2</div>
+        <div class="step-title">KI analysiert live</div>
+        <div class="step-body">Claude Sonnet durchsucht aktuelle DACH-Marktangebote und wertet technische Daten zu Ihrem Fahrzeug aus.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">3</div>
+        <div class="step-title">Dossier lesen & nutzen</div>
+        <div class="step-body">Das Gratis-Urteil zeigt den Wertkorridor. Für 4,99 € erhalten Sie das vollständige Dossier inkl. PDF-Download.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="comp-bg">
+  <div class="container">
+    <div class="section-label reveal">Vergleich</div>
+    <h2 class="reveal">RC Wertdossier vs. Classic Data.</h2>
+    <p class="lead reveal">Für den Profi-Gutachter bezahlen Sie vierstellig. Für den schnellen Sofort-Check reicht das RC Dossier vollständig aus.</p>
+
+    <div class="reveal" style="overflow-x:auto;">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th style="background:#f9f9f9;color:var(--muted);">Kriterium</th>
+          <th>RC Wertdossier</th>
+          <th>Classic Data / Gutachter</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Marktpreise DACH (live)</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="partial">Verzögert / Datenbank</span></td>
+        </tr>
+        <tr>
+          <td>Wertprognose 5 Jahre</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Typische Verschleißkosten</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="partial">Nur im Vollgutachten</span></td>
+        </tr>
+        <tr>
+          <td>PDF-Export</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Sofort verfügbar (online)</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Rechtsgültig für Versicherung</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>Preis</strong></td>
+          <td><strong style="color:var(--gold-dark);">Gratis / 4,99 €</strong></td>
+          <td style="color:var(--muted);">99 – 250 €</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testi-bg">
+  <div class="testi-inner">
+    <div class="testi-quote reveal">
+      Hab das Dossier vor dem Kauf meines W107 genutzt — 
+      der Verkäufer hat sofort 1.200 Euro runtergemacht, als ich die Marktpreise vorgelegt habe.
+    </div>
+    <div class="testi-meta reveal">
+      <strong>M. Bruckner</strong> · MVC-Mitglied, München
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-bg">
+  <div class="container">
+    <div class="section-label reveal">Häufige Fragen</div>
+    <h2 class="reveal">Alles Wichtige auf einen Blick.</h2>
+
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-q">Was ist im kostenlosen Sofort-Check enthalten?</div>
+        <div class="faq-a">Sie erhalten eine KI-Einschätzung mit geschätztem Marktwert-Korridor, einer Kurz­beschreibung der Baureihe und den häufigsten Schwachstellen. Ohne Anmeldung, sofort.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">Was kostet das Volldossier — und was bekomme ich mehr?</div>
+        <div class="faq-a">4,99 € einmalig (Stripe, sicher). Dafür erhalten Sie Live-Marktpreise aus DACH-Inseraten, eine detaillierte Verschleißkostentabelle, die 5-Jahres-Wertprognose, Motorvarianten-Übersicht und den PDF-Export.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">Ist das Dossier rechtsgültig — z.B. für die Versicherung?</div>
+        <div class="faq-a">Nein. Das RC Wertdossier ist eine fundierte KI-gestützte Markt­einschätzung, kein offizielles Gutachten. Für Haftpflicht oder Versicherungsfragen empfehlen wir einen zertifizierten Gutachter.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">Welche Fahrzeuge werden unterstützt?</div>
+        <div class="faq-a">Alle klassischen Pkw-Marken ab Baujahr ca. 1950 bis Ende der 1990er Jahre. Motorräder und LKW sind derzeit nicht im Scope.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">Wird mein Fahrzeug gespeichert?</div>
+        <div class="faq-a">Nur wenn Sie Ihre E-Mail hinterlegen (für den Bonus-Freemium). Ansonsten läuft die Analyse anonym und nur für die aktuelle Sitzung.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <div class="cta-price-tag reveal">Kostenlos starten · Vollversion ab 4,99 €</div>
+    <h2 class="reveal">Jetzt Ihren Oldtimer bewerten.</h2>
+    <p class="lead reveal">
+      Kein Gutachter-Termin, keine Wartezeit. Einfach Fahrzeugdaten eingeben und in 60 Sekunden wissen, was Ihr Klassiker wert ist.
+    </p>
+    <a class="btn-primary" href="index.html">Kostenlose Analyse starten →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>Riedel Classics</strong><br>
+    Uwe Riedel · Esslinger Str. 5 · 73249 Wernau<br>
+    info@rc-digital.de · +49 172 7409769
+  </div>
+  <div class="footer-links">
+    <a href="#">Impressum</a>
+    <a href="#">Datenschutz</a>
+    <a href="index.html">Zum Tool</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  var reveals = document.querySelectorAll('.reveal');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(function(el) { observer.observe(el); });
+</script>
+</body>
+</html>
